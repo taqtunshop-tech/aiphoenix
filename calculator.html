@@ -52,12 +52,22 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
   .calc-form{width:100%!important;flex-shrink:0!important}
   .calc-form input,.calc-form select{padding:10px 12px;font-size:1rem;min-height:44px}
   .btn-calc{padding:14px 24px;font-size:1.15rem;width:100%;min-height:50px}
-  .result-row{gap:6px}
+  .result-row{grid-template-columns:repeat(3,1fr)!important;gap:6px}
   .result-cell{padding:8px 4px}
   .result-cell .val{font-size:1.1rem}
   .result-cell .lbl{font-size:.7rem}
-  .canvas-wrap{height:300px!important;min-height:280px!important}
-  #bp-controls{min-width:auto;width:90%}
+  .canvas-wrap{height:auto!important;min-height:0!important;aspect-ratio:4/3;padding:8px!important}
+  .canvas-wrap #viewer-container{min-height:280px!important;height:280px!important}
+  #bp-controls{position:relative!important;bottom:auto!important;left:auto!important;transform:none!important;margin:8px auto 0;width:fit-content!important;flex-wrap:wrap;justify-content:center}
+  #product-photo{height:120px!important}
+  #product-img{max-height:110px!important}
+  .photo-badge{font-size:.6rem;padding:2px 8px}
+  #product-caption{font-size:.7rem!important}
+  #model_info{font-size:.75rem!important}
+  .sketchy{border-radius:12px!important}
+  main{padding:0!important}
+  header h1{font-size:1.8rem!important}
+  header p{font-size:1rem!important}
 }
 </style>
 </head>
