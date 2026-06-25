@@ -189,12 +189,22 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
     </div>
   </div>
 
-  <!-- 3D Blueprint Viewer -->
+  <!-- 3D Blueprint Viewer + Real Photo -->
   <div class="flex-1">
+    <!-- Real product photo -->
+    <div class="section-card sketchy p-2 md:p-3 fade-up mb-3" style="text-align:center;background:#fff">
+      <div style="position:relative;display:inline-block;max-height:220px;overflow:hidden;border-radius:8px">
+        <img id="productPhoto" src="img/phoenix-apr7.png" alt="Phoenix SAPR-7" style="max-height:200px;max-width:100%;object-fit:contain;transition:opacity .3s">
+      </div>
+      <div style="font-family:'Architects Daughter',cursive;font-size:.75rem;color:#636e72;margin-top:4px">
+        Реальное изображение из каталога Феникс
+      </div>
+    </div>
+
+    <!-- 3D Blueprint -->
     <div class="section-card sketchy p-2 md:p-3 fade-up canvas-wrap" style="min-height:400px;position:relative">
       <div style="width:100%;height:100%;min-height:360px;position:relative;border-radius:12px;overflow:hidden;background:#ffffff">
         <canvas id="canvas3d"></canvas>
-        <!-- Blueprint controls overlay -->
         <div id="bp-controls" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.92);border:2px solid #2d3436;border-radius:16px 8px 14px 8px/8px 14px 8px 16px;padding:10px 16px;min-width:240px;box-shadow:2px 4px 0 rgba(45,52,54,.1);backdrop-filter:blur(4px)">
           <div style="font-family:'Architects Daughter',cursive;font-size:.8rem;color:#2d3436;margin-bottom:6px;font-weight:bold">Explode</div>
           <div class="slider-wrap">
@@ -206,7 +216,6 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
             <span class="tag active" id="btn_rotate" onclick="toggleRotate()" style="font-size:.8rem;padding:4px 12px">Auto</span>
           </div>
         </div>
-        <!-- Dimension annotations (positioned via JS) -->
         <div id="dim-labels" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden"></div>
       </div>
       <div class="text-center mt-1 md:mt-2">
@@ -575,6 +584,24 @@ function updatePlates(n){
   var pm=document.getElementById('plate_model').value;
   var mn={'APR-4':'Phoenix 2 SAPR-4','APR-7':'Phoenix 1 SAPR-7','APR-21':'Phoenix APR-21','APR-43':'Phoenix APR-43','APR-84':'Phoenix APR-84','APR-100':'Phoenix APR-100','TP-B-0.35':'Phoenix TP-B-0.35','TP-B-0.70':'Phoenix TP-B-0.70'};
   document.getElementById('model_info').textContent=(mn[pm]||pm)+' | '+n+' пластин | '+document.getElementById('plate_material').value+' | '+document.getElementById('gasket_material').value;
+
+  // Swap real product photo
+  var imgMap={
+    'APR-4':'img/phoenix-type-2.png',
+    'APR-7':'img/phoenix-apr7.png',
+    'APR-21':'img/phoenix-apr21.png',
+    'APR-43':'img/phoenix-apr43.png',
+    'APR-84':'img/phoenix-apr84.png',
+    'APR-100':'img/phoenix-apr100.png',
+    'TP-B-0.35':'img/phoenix-general.png',
+    'TP-B-0.70':'img/phoenix-general.png'
+  };
+  var photo=document.getElementById('productPhoto');
+  var newSrc=imgMap[pm]||'img/phoenix-general.png';
+  if(photo.src!==newSrc){
+    photo.style.opacity='0';
+    setTimeout(function(){photo.src=newSrc;photo.alt=mn[pm]||pm;photo.style.opacity='1'},200);
+  }
 }
 
 function toggleXRay(){
@@ -617,6 +644,24 @@ window.addEventListener('load',function(){
       var g=this.closest('.grid');if(g)g.classList.remove('field-error');
       if(document.querySelectorAll('.field-error').length===0){var eb=document.getElementById('error-box');if(eb)eb.classList.remove('visible')}
     });
+  });
+  // Update photo when model changes
+  document.getElementById('plate_model').addEventListener('change',function(){
+    var pm=this.value;
+    var imgMap={
+      'APR-4':'img/phoenix-type-2.png',
+      'APR-7':'img/phoenix-apr7.png',
+      'APR-21':'img/phoenix-apr21.png',
+      'APR-43':'img/phoenix-apr43.png',
+      'APR-84':'img/phoenix-apr84.png',
+      'APR-100':'img/phoenix-apr100.png',
+      'TP-B-0.35':'img/phoenix-general.png',
+      'TP-B-0.70':'img/phoenix-general.png'
+    };
+    var photo=document.getElementById('productPhoto');
+    var newSrc=imgMap[pm]||'img/phoenix-general.png';
+    photo.style.opacity='0';
+    setTimeout(function(){photo.src=newSrc;photo.style.opacity='1'},200);
   });
 });
 </script>
