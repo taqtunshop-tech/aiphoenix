@@ -154,6 +154,37 @@
 <!-- ===== ФИЛЬТРЫ ===== -->
 <section class="sketchy p-5 mb-6 fade-up">
   <h3 class="text-2xl font-bold mb-4">Полная таблица запросов</h3>
+
+  <!-- БРЕНДОВЫЕ ФИЛЬТРЫ -->
+  <div class="mb-4">
+    <p class="font-block text-sm text-pencil-light mb-2">Фильтр по бренду:</p>
+    <div class="flex flex-wrap gap-2" id="brandBar">
+      <span class="filter-chip active" data-brand="all" onclick="selectBrand('all')">🏷️ Все бренды</span>
+      <span class="filter-chip" data-brand="Феникс" onclick="selectBrand('Феникс')" style="border-color:#6c5ce7">🔥 Феникс</span>
+      <span class="filter-chip" data-brand="Alfa Laval" onclick="selectBrand('Alfa Laval')" style="border-color:#d63031">🔴 Alfa Laval</span>
+      <span class="filter-chip" data-brand="Ридан" onclick="selectBrand('Ридан')" style="border-color:#0984e3">🔵 Ридан</span>
+      <span class="filter-chip" data-brand="Норд" onclick="selectBrand('Норд')" style="border-color:#00b894">🟢 Норд/WhiteNord</span>
+      <span class="filter-chip" data-brand="SWEP" onclick="selectBrand('SWEP')" style="border-color:#e17055">🟠 SWEP</span>
+      <span class="filter-chip" data-brand="Funke" onclick="selectBrand('Funke')" style="border-color:#fdcb6e">🟡 Funke</span>
+      <span class="filter-chip" data-brand="Hisaka" onclick="selectBrand('Hisaka')" style="border-color:#00cec9">🔷 Hisaka</span>
+      <span class="filter-chip" data-brand="APV" onclick="selectBrand('APV')" style="border-color:#fab1a0">🩷 APV</span>
+      <span class="filter-chip" data-brand="Sondex" onclick="selectBrand('Sondex')" style="border-color:#b2bec3">⚪ Sondex</span>
+    </div>
+  </div>
+
+  <!-- ПАНЕЛЬ ДЕТАЛЬНОЙ ИНФОРМАЦИИ ПО БРЕНДУ -->
+  <div id="brandDetail" class="hidden mb-4">
+    <div class="sketchy p-4" style="border-left:5px solid var(--brand-color)">
+      <div class="flex items-center justify-between mb-3">
+        <h4 class="text-2xl font-bold" id="brandDetailName"></h4>
+        <button onclick="selectBrand('all')" class="text-sm font-block px-3 py-1 sketchy" style="border:2px solid #2d3436">✕ Сбросить</button>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3" id="brandDetailStats"></div>
+      <div class="mt-3" id="brandDetailInfo"></div>
+    </div>
+  </div>
+
+  <!-- СУЩЕСТВУЮЩИЕ ФИЛЬТРЫ -->
   <div class="flex flex-wrap gap-3 mb-4" id="filterBar">
     <span class="filter-chip active" data-filter="all">Все</span>
     <span class="filter-chip" data-filter="vc">ВЧ (5000+)</span>
@@ -244,100 +275,95 @@
 // ДАННЫЕ: Все запросы
 // =============================================
 var QUERIES = [
-  {q:"пластинчатый теплообменник",freq:30000,freqE:18500,cat:"ВЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"up",comp:92,pos:24},
-  {q:"пластинчатые теплообменники",freq:15000,freqE:9200,cat:"ВЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"up",comp:90,pos:28},
-  {q:"купить теплообменник",freq:10000,freqE:6800,cat:"ВЧ",intent:"transactional",brand:false,geo:false,zip:false,trend:"flat",comp:88,pos:35},
-  {q:"теплообменник для отопления",freq:12000,freqE:7500,cat:"ВЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:85,pos:18},
-  {q:"теплообменник для ГВС",freq:8000,freqE:4900,cat:"ВЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:82,pos:22},
-  {q:"подбор теплообменника",freq:5000,freqE:3200,cat:"ВЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"up",comp:75,pos:15},
-  {q:"разборный пластинчатый теплообменник",freq:2500,freqE:1600,cat:"СЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"up",comp:70,pos:12},
-  {q:"пластинчатый теплообменник для отопления",freq:3000,freqE:1900,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:72,pos:14},
-  {q:"теплообменник пластинчатый паяный",freq:2000,freqE:1300,cat:"СЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"flat",comp:68,pos:20},
-  {q:"альфа лаваль теплообменник",freq:3000,freqE:1800,cat:"СЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"down",comp:80,pos:30},
-  {q:"аналог альфа лаваль",freq:2000,freqE:1200,cat:"СЧ",intent:"commercial",brand:true,geo:false,zip:false,trend:"up",comp:45,pos:8},
-  {q:"теплообменник для чиллера",freq:1500,freqE:900,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:60,pos:16},
-  {q:"подбор теплообменника по параметрам",freq:1000,freqE:650,cat:"СЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"up",comp:55,pos:10},
-  {q:"теплообменник для теплого пола",freq:1200,freqE:750,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:65,pos:19},
-  {q:"пластины для теплообменника",freq:800,freqE:500,cat:"СЧ",intent:"zip",brand:false,geo:false,zip:true,trend:"up",comp:40,pos:6},
-  {q:"теплообменник феникс",freq:300,freqE:200,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:15,pos:3},
-  {q:"phoenix apr",freq:150,freqE:90,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:10,pos:2},
-  {q:"апр 8 теплообменник",freq:200,freqE:130,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:20,pos:4},
-  {q:"апр 19 теплообменник",freq:180,freqE:110,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:18,pos:5},
-  {q:"апр 21 теплообменник",freq:150,freqE:95,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:22,pos:7},
-  {q:"апр 62 теплообменник",freq:100,freqE:65,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"flat",comp:15,pos:4},
-  {q:"теплообменник феникс ростов",freq:100,freqE:70,cat:"НЧ",intent:"geo",brand:true,geo:true,zip:false,trend:"up",comp:5,pos:1},
-  {q:"теплообменник феникс apr-8 купить ростов",freq:30,freqE:20,cat:"УНЧ",intent:"transactional",brand:true,geo:true,zip:false,trend:"up",comp:3,pos:1},
-  {q:"замена альфа лаваль на феникс",freq:80,freqE:55,cat:"НЧ",intent:"transactional",brand:true,geo:false,zip:false,trend:"up",comp:25,pos:3},
-  {q:"прокладки для феникс apr-21",freq:40,freqE:25,cat:"УНЧ",intent:"zip",brand:true,geo:false,zip:true,trend:"up",comp:5,pos:1},
-  {q:"пластины для феникс apr-19",freq:35,freqE:22,cat:"УНЧ",intent:"zip",brand:true,geo:false,zip:true,trend:"up",comp:8,pos:2},
-  {q:"теплообменник феникс или альфа лаваль что лучше",freq:60,freqE:40,cat:"НЧ",intent:"informational",brand:true,geo:false,zip:false,trend:"up",comp:30,pos:5},
-  {q:"мощность теплообменника феникс apr-19",freq:25,freqE:15,cat:"УНЧ",intent:"informational",brand:true,geo:false,zip:false,trend:"flat",comp:5,pos:2},
-  {q:"теплообменник для майнинга",freq:400,freqE:250,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:35,pos:9},
-  {q:"промывка пластинчатого теплообменника",freq:500,freqE:320,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:40,pos:11},
-  {q:"теплообменник для бассейна",freq:300,freqE:190,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:55,pos:17},
-  {q:"пластинчатый теплообменник для вентиляции",freq:200,freqE:130,cat:"НЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:50,pos:13},
-  {q:"теплообменник для теплового насоса",freq:400,freqE:260,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:45,pos:10},
-  {q:"ridan теплообменник",freq:1500,freqE:900,cat:"СЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"flat",comp:75,pos:25},
-  {q:"норд теплообменник",freq:800,freqE:500,cat:"СЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:60,pos:18},
-  {q:"sondex теплообменник",freq:600,freqE:380,cat:"СЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"down",comp:55,pos:22},
-  {q:"funke теплообменник",freq:300,freqE:190,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"down",comp:50,pos:20},
-  {q:"hisaka теплообменник",freq:200,freqE:130,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"down",comp:45,pos:23},
-  {q:"swep теплообменник",freq:250,freqE:160,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"down",comp:50,pos:21},
-  {q:"apv теплообменник",freq:180,freqE:115,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"down",comp:40,pos:19},
-  {q:"как подобрать теплообменник",freq:1200,freqE:750,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:60,pos:8},
-  {q:"формула расчета теплообменника",freq:600,freqE:380,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:35,pos:6},
-  {q:"теплообменник пластинчатый ростов",freq:800,freqE:500,cat:"СЧ",intent:"geo",brand:false,geo:true,zip:false,trend:"up",comp:20,pos:4},
-  {q:"теплообменник ростов на дону",freq:500,freqE:320,cat:"СЧ",intent:"geo",brand:false,geo:true,zip:false,trend:"up",comp:15,pos:3},
-  {q:"производитель теплообменников ростов",freq:200,freqE:130,cat:"НЧ",intent:"geo",brand:false,geo:true,zip:false,trend:"up",comp:10,pos:2},
-  {q:"теплообменник для парового отопления",freq:400,freqE:250,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:55,pos:14},
-  {q:"разборный или паяный теплообменник",freq:350,freqE:220,cat:"НЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:30,pos:7},
-  {q:"сколько стоит пластинчатый теплообменник",freq:900,freqE:560,cat:"СЧ",intent:"transactional",brand:false,geo:false,zip:false,trend:"up",comp:70,pos:16},
-  {q:"пластинчатый теплообменник каталог",freq:700,freqE:440,cat:"СЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"flat",comp:65,pos:12},
-  {q:"апр 4 теплообменник",freq:120,freqE:75,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:12,pos:3},
-  {q:"апр 14 теплообменник",freq:130,freqE:82,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:14,pos:4},
-  {q:"апр 22 теплообменник",freq:110,freqE:70,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:10,pos:3},
-  {q:"апр 41 теплообменник",freq:80,freqE:50,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"flat",comp:8,pos:2},
-  {q:"апр 47 теплообменник",freq:90,freqE:57,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:10,pos:3},
-  {q:"апр 65 теплообменник",freq:85,freqE:53,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:8,pos:2},
-  {q:"апр 86 теплообменник",freq:60,freqE:38,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"flat",comp:6,pos:2},
-  {q:"апр 100 теплообменник",freq:55,freqE:35,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"flat",comp:5,pos:1},
-  {q:"апр 7 теплообменник",freq:100,freqE:63,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:10,pos:3},
-  {q:"апр 43 теплообменник",freq:70,freqE:44,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"flat",comp:7,pos:2},
-  {q:"апр 42 теплообменник",freq:65,freqE:41,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"flat",comp:6,pos:2},
-  {q:"прокладки для феникс apr-8",freq:25,freqE:16,cat:"УНЧ",intent:"zip",brand:true,geo:false,zip:true,trend:"up",comp:3,pos:1},
-  {q:"прокладки для феникс apr-19",freq:30,freqE:19,cat:"УНЧ",intent:"zip",brand:true,geo:false,zip:true,trend:"up",comp:4,pos:1},
-  {q:"пластины для феникс apr-8",freq:20,freqE:13,cat:"УНЧ",intent:"zip",brand:true,geo:false,zip:true,trend:"up",comp:3,pos:1},
-  {q:"пластины для феникс apr-21",freq:22,freqE:14,cat:"УНЧ",intent:"zip",brand:true,geo:false,zip:true,trend:"up",comp:4,pos:1},
-  {q:"теплообменник для серверной",freq:250,freqE:160,cat:"НЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:40,pos:11},
-  {q:"теплообменник для кондиционера",freq:350,freqE:220,cat:"НЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:50,pos:15},
-  {q:"теплообменник для масла",freq:300,freqE:190,cat:"НЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:45,pos:12},
-  {q:"промышленный теплообменник",freq:500,freqE:320,cat:"СЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"flat",comp:60,pos:18},
-  {q:"теплообменник для пищевого производства",freq:400,freqE:250,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:50,pos:14},
-  {q:"теплообменник для нефтепереработки",freq:200,freqE:130,cat:"НЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:55,pos:20},
-  {q:"expansion vessel for heat exchanger",freq:50,freqE:32,cat:"УНЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:20,pos:30},
-  {q:"сварной пластинчатый теплообменник",freq:300,freqE:190,cat:"НЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"up",comp:45,pos:10},
-  {q:"теплообменник компактный",freq:400,freqE:250,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:50,pos:16},
-  {q:"блочный тепловой пункт",freq:600,freqE:380,cat:"СЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"up",comp:55,pos:13},
-  {q:"теплообменник для судна",freq:150,freqE:95,cat:"НЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:35,pos:8},
-  {q:"теплообменник для химической промышленности",freq:200,freqE:130,cat:"НЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:50,pos:17},
-  {q:"какой теплообменник выбрать",freq:800,freqE:500,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:55,pos:9},
-  {q:"теплообменник феникс цена",freq:80,freqE:50,cat:"НЧ",intent:"transactional",brand:true,geo:false,zip:false,trend:"up",comp:10,pos:2},
-  {q:"теплообменник феникс отзывы",freq:50,freqE:32,cat:"УНЧ",intent:"informational",brand:true,geo:false,zip:false,trend:"flat",comp:8,pos:3},
-  {q:"теплообменник феникс характеристики",freq:45,freqE:28,cat:"УНЧ",intent:"informational",brand:true,geo:false,zip:false,trend:"up",comp:5,pos:2},
-  {q:"теплообменник феникс каталог",freq:40,freqE:25,cat:"УНЧ",intent:"commercial",brand:true,geo:false,zip:false,trend:"up",comp:6,pos:2},
-  {q:"теплообменник феникс apr-21 купить",freq:20,freqE:13,cat:"УНЧ",intent:"transactional",brand:true,geo:false,zip:false,trend:"up",comp:2,pos:1},
-  {q:"теплообменник феникс apr-62 купить",freq:15,freqE:10,cat:"УНЧ",intent:"transactional",brand:true,geo:false,zip:false,trend:"up",comp:2,pos:1},
-  {q:"теплообменник феникс для отопления",freq:35,freqE:22,cat:"УНЧ",intent:"informational",brand:true,geo:false,zip:false,trend:"up",comp:4,pos:1},
-  {q:"теплообменник феникс для гвс",freq:30,freqE:19,cat:"УНЧ",intent:"informational",brand:true,geo:false,zip:false,trend:"up",comp:3,pos:1},
-  {q:"феникс теплообменники ростов-на-дону",freq:25,freqE:16,cat:"УНЧ",intent:"geo",brand:true,geo:true,zip:false,trend:"up",comp:2,pos:1},
-  {q:"заказать теплообменник феникс",freq:28,freqE:18,cat:"УНЧ",intent:"transactional",brand:true,geo:false,zip:false,trend:"up",comp:3,pos:1},
-  {q:"теплообменник феникс дилеры",freq:35,freqE:22,cat:"УНЧ",intent:"commercial",brand:true,geo:false,zip:false,trend:"up",comp:5,pos:3},
-  {q:"фильтр для промывки теплообменника",freq:100,freqE:63,cat:"НЧ",intent:"zip",brand:false,geo:false,zip:true,trend:"flat",comp:30,pos:10},
-  {q:"инструмент для разборки теплообменника",freq:80,freqE:50,cat:"НЧ",intent:"zip",brand:false,geo:false,zip:true,trend:"flat",comp:25,pos:8},
-  {q:"уплотнение для пластинчатого теплообменника",freq:500,freqE:320,cat:"СЧ",intent:"zip",brand:false,geo:false,zip:true,trend:"up",comp:35,pos:7},
-  {q:"ремонт пластинчатого теплообменника",freq:600,freqE:380,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:45,pos:12},
-  {q:"техническое обслуживание теплообменника",freq:400,freqE:250,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:40,pos:11},
-  {q:"стоимость пластинчатого теплообменника",freq:700,freqE:440,cat:"СЧ",intent:"transactional",brand:false,geo:false,zip:false,trend:"up",comp:72,pos:15}
+  {q:"пластинчатый теплообменник",freq:30000,freqE:18500,cat:"ВЧ",intent:"commercial",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:92,pos:24},
+  {q:"пластинчатые теплообменники",freq:15000,freqE:9200,cat:"ВЧ",intent:"commercial",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:90,pos:28},
+  {q:"купить теплообменник",freq:10000,freqE:6800,cat:"ВЧ",intent:"transactional",brand:false,brandName:"",geo:false,zip:false,trend:"flat",comp:88,pos:35},
+  {q:"теплообменник для отопления",freq:12000,freqE:7500,cat:"ВЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:85,pos:18},
+  {q:"теплообменник для ГВС",freq:8000,freqE:4900,cat:"ВЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:82,pos:22},
+  {q:"подбор теплообменника",freq:5000,freqE:3200,cat:"ВЧ",intent:"commercial",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:75,pos:15},
+  {q:"разборный пластинчатый теплообменник",freq:2500,freqE:1600,cat:"СЧ",intent:"commercial",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:70,pos:12},
+  {q:"пластинчатый теплообменник для отопления",freq:3000,freqE:1900,cat:"СЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:72,pos:14},
+  {q:"теплообменник пластинчатый паяный",freq:2000,freqE:1300,cat:"СЧ",intent:"commercial",brand:false,brandName:"",geo:false,zip:false,trend:"flat",comp:68,pos:20},
+  {q:"альфа лаваль теплообменник",freq:3000,freqE:1800,cat:"СЧ",intent:"brand",brand:true,brandName:"Alfa Laval",geo:false,zip:false,trend:"down",comp:80,pos:30},
+  {q:"аналог альфа лаваль",freq:2000,freqE:1200,cat:"СЧ",intent:"commercial",brand:true,brandName:"Alfa Laval",geo:false,zip:false,trend:"up",comp:45,pos:8},
+  {q:"теплообменник для чиллера",freq:1500,freqE:900,cat:"СЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:60,pos:16},
+  {q:"подбор теплообменника по параметрам",freq:1000,freqE:650,cat:"СЧ",intent:"commercial",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:55,pos:10},
+  {q:"теплообменник для теплого пола",freq:1200,freqE:750,cat:"СЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:65,pos:19},
+  {q:"пластины для теплообменника",freq:800,freqE:500,cat:"СЧ",intent:"zip",brand:false,brandName:"",geo:false,zip:true,trend:"up",comp:40,pos:6},
+  {q:"теплообменник феникс",freq:300,freqE:200,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:15,pos:3},
+  {q:"phoenix apr",freq:150,freqE:90,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:10,pos:2},
+  {q:"апр 8 теплообменник",freq:200,freqE:130,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:20,pos:4},
+  {q:"апр 19 теплообменник",freq:180,freqE:110,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:18,pos:5},
+  {q:"апр 21 теплообменник",freq:150,freqE:95,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:22,pos:7},
+  {q:"апр 62 теплообменник",freq:100,freqE:65,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"flat",comp:15,pos:4},
+  {q:"теплообменник феникс ростов",freq:100,freqE:70,cat:"НЧ",intent:"geo",brand:true,brandName:"Феникс",geo:true,zip:false,trend:"up",comp:5,pos:1},
+  {q:"теплообменник феникс apr-8 купить ростов",freq:30,freqE:20,cat:"УНЧ",intent:"transactional",brand:true,brandName:"Феникс",geo:true,zip:false,trend:"up",comp:3,pos:1},
+  {q:"замена альфа лаваль на феникс",freq:80,freqE:55,cat:"НЧ",intent:"transactional",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:25,pos:3},
+  {q:"прокладки для феникс apr-21",freq:40,freqE:25,cat:"УНЧ",intent:"zip",brand:true,brandName:"Феникс",geo:false,zip:true,trend:"up",comp:5,pos:1},
+  {q:"пластины для феникс apr-19",freq:35,freqE:22,cat:"УНЧ",intent:"zip",brand:true,brandName:"Феникс",geo:false,zip:true,trend:"up",comp:8,pos:2},
+  {q:"теплообменник феникс или альфа лаваль что лучше",freq:60,freqE:40,cat:"НЧ",intent:"informational",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:30,pos:5},
+  {q:"мощность теплообменника феникс apr-19",freq:25,freqE:15,cat:"УНЧ",intent:"informational",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"flat",comp:5,pos:2},
+  {q:"ridan теплообменник",freq:1500,freqE:900,cat:"СЧ",intent:"brand",brand:true,brandName:"Ридан",geo:false,zip:false,trend:"flat",comp:75,pos:25},
+  {q:"норд теплообменник",freq:800,freqE:500,cat:"СЧ",intent:"brand",brand:true,brandName:"Норд",geo:false,zip:false,trend:"up",comp:60,pos:18},
+  {q:"sondex теплообменник",freq:600,freqE:380,cat:"СЧ",intent:"brand",brand:true,brandName:"Sondex",geo:false,zip:false,trend:"down",comp:55,pos:22},
+  {q:"funke теплообменник",freq:300,freqE:190,cat:"НЧ",intent:"brand",brand:true,brandName:"Funke",geo:false,zip:false,trend:"down",comp:50,pos:20},
+  {q:"hisaka теплообменник",freq:200,freqE:130,cat:"НЧ",intent:"brand",brand:true,brandName:"Hisaka",geo:false,zip:false,trend:"down",comp:45,pos:23},
+  {q:"swep теплообменник",freq:250,freqE:160,cat:"НЧ",intent:"brand",brand:true,brandName:"SWEP",geo:false,zip:false,trend:"down",comp:50,pos:21},
+  {q:"apv теплообменник",freq:180,freqE:115,cat:"НЧ",intent:"brand",brand:true,brandName:"APV",geo:false,zip:false,trend:"down",comp:40,pos:19},
+  {q:"как подобрать теплообменник",freq:1200,freqE:750,cat:"СЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:60,pos:8},
+  {q:"формула расчета теплообменника",freq:600,freqE:380,cat:"СЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"flat",comp:35,pos:6},
+  {q:"теплообменник пластинчатый ростов",freq:800,freqE:500,cat:"СЧ",intent:"geo",brand:false,brandName:"",geo:true,zip:false,trend:"up",comp:20,pos:4},
+  {q:"теплообменник ростов на дону",freq:500,freqE:320,cat:"СЧ",intent:"geo",brand:false,brandName:"",geo:true,zip:false,trend:"up",comp:15,pos:3},
+  {q:"производитель теплообменников ростов",freq:200,freqE:130,cat:"НЧ",intent:"geo",brand:false,brandName:"",geo:true,zip:false,trend:"up",comp:10,pos:2},
+  {q:"теплообменник для парового отопления",freq:400,freqE:250,cat:"СЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"flat",comp:55,pos:14},
+  {q:"разборный или паяный теплообменник",freq:350,freqE:220,cat:"НЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:30,pos:7},
+  {q:"сколько стоит пластинчатый теплообменник",freq:900,freqE:560,cat:"СЧ",intent:"transactional",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:70,pos:16},
+  {q:"пластинчатый теплообменник каталог",freq:700,freqE:440,cat:"СЧ",intent:"commercial",brand:false,brandName:"",geo:false,zip:false,trend:"flat",comp:65,pos:12},
+  {q:"апр 4 теплообменник",freq:120,freqE:75,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:12,pos:3},
+  {q:"апр 14 теплообменник",freq:130,freqE:82,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:14,pos:4},
+  {q:"апр 22 теплообменник",freq:110,freqE:70,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:10,pos:3},
+  {q:"апр 41 теплообменник",freq:80,freqE:50,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"flat",comp:8,pos:2},
+  {q:"апр 47 теплообменник",freq:90,freqE:57,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:10,pos:3},
+  {q:"апр 65 теплообменник",freq:85,freqE:53,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:8,pos:2},
+  {q:"апр 86 теплообменник",freq:60,freqE:38,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"flat",comp:6,pos:2},
+  {q:"апр 100 теплообменник",freq:55,freqE:35,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"flat",comp:5,pos:1},
+  {q:"апр 7 теплообменник",freq:100,freqE:63,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:10,pos:3},
+  {q:"апр 43 теплообменник",freq:70,freqE:44,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"flat",comp:7,pos:2},
+  {q:"апр 42 теплообменник",freq:65,freqE:41,cat:"НЧ",intent:"brand",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"flat",comp:6,pos:2},
+  {q:"прокладки для феникс apr-8",freq:25,freqE:16,cat:"УНЧ",intent:"zip",brand:true,brandName:"Феникс",geo:false,zip:true,trend:"up",comp:3,pos:1},
+  {q:"прокладки для феникс apr-19",freq:30,freqE:19,cat:"УНЧ",intent:"zip",brand:true,brandName:"Феникс",geo:false,zip:true,trend:"up",comp:4,pos:1},
+  {q:"пластины для феникс apr-8",freq:20,freqE:13,cat:"УНЧ",intent:"zip",brand:true,brandName:"Феникс",geo:false,zip:true,trend:"up",comp:3,pos:1},
+  {q:"пластины для феникс apr-21",freq:22,freqE:14,cat:"УНЧ",intent:"zip",brand:true,brandName:"Феникс",geo:false,zip:true,trend:"up",comp:4,pos:1},
+  {q:"теплообменник для серверной",freq:250,freqE:160,cat:"НЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:40,pos:11},
+  {q:"теплообменник для кондиционера",freq:350,freqE:220,cat:"НЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"flat",comp:50,pos:15},
+  {q:"теплообменник для масла",freq:300,freqE:190,cat:"НЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:45,pos:12},
+  {q:"промышленный теплообменник",freq:500,freqE:320,cat:"СЧ",intent:"commercial",brand:false,brandName:"",geo:false,zip:false,trend:"flat",comp:60,pos:18},
+  {q:"теплообменник для пищевого производства",freq:400,freqE:250,cat:"СЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:50,pos:14},
+  {q:"теплообменник для нефтепереработки",freq:200,freqE:130,cat:"НЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"flat",comp:55,pos:20},
+  {q:"expansion vessel for heat exchanger",freq:50,freqE:32,cat:"УНЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"flat",comp:20,pos:30},
+  {q:"сварной пластинчатый теплообменник",freq:300,freqE:190,cat:"НЧ",intent:"commercial",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:45,pos:10},
+  {q:"теплообменник компактный",freq:400,freqE:250,cat:"СЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"flat",comp:50,pos:16},
+  {q:"блочный тепловой пункт",freq:600,freqE:380,cat:"СЧ",intent:"commercial",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:55,pos:13},
+  {q:"теплообменник для судна",freq:150,freqE:95,cat:"НЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:35,pos:8},
+  {q:"теплообменник для химической промышленности",freq:200,freqE:130,cat:"НЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"flat",comp:50,pos:17},
+  {q:"какой теплообменник выбрать",freq:800,freqE:500,cat:"СЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:55,pos:9},
+  {q:"теплообменник феникс цена",freq:80,freqE:50,cat:"НЧ",intent:"transactional",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:10,pos:2},
+  {q:"теплообменник феникс отзывы",freq:50,freqE:32,cat:"УНЧ",intent:"informational",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"flat",comp:8,pos:3},
+  {q:"теплообменник феникс характеристики",freq:45,freqE:28,cat:"УНЧ",intent:"informational",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:5,pos:2},
+  {q:"теплообменник феникс каталог",freq:40,freqE:25,cat:"УНЧ",intent:"commercial",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:6,pos:2},
+  {q:"теплообменник феникс apr-21 купить",freq:20,freqE:13,cat:"УНЧ",intent:"transactional",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:2,pos:1},
+  {q:"теплообменник феникс apr-62 купить",freq:15,freqE:10,cat:"УНЧ",intent:"transactional",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:2,pos:1},
+  {q:"теплообменник феникс для отопления",freq:35,freqE:22,cat:"УНЧ",intent:"informational",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:4,pos:1},
+  {q:"теплообменник феникс для гвс",freq:30,freqE:19,cat:"УНЧ",intent:"informational",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:3,pos:1},
+  {q:"феникс теплообменники ростов-на-дону",freq:25,freqE:16,cat:"УНЧ",intent:"geo",brand:true,brandName:"Феникс",geo:true,zip:false,trend:"up",comp:2,pos:1},
+  {q:"заказать теплообменник феникс",freq:28,freqE:18,cat:"УНЧ",intent:"transactional",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:3,pos:1},
+  {q:"теплообменник феникс дилеры",freq:35,freqE:22,cat:"УНЧ",intent:"commercial",brand:true,brandName:"Феникс",geo:false,zip:false,trend:"up",comp:5,pos:3},
+  {q:"фильтр для промывки теплообменника",freq:100,freqE:63,cat:"НЧ",intent:"zip",brand:false,brandName:"",geo:false,zip:true,trend:"flat",comp:30,pos:10},
+  {q:"инструмент для разборки теплообменника",freq:80,freqE:50,cat:"НЧ",intent:"zip",brand:false,brandName:"",geo:false,zip:true,trend:"flat",comp:25,pos:8},
+  {q:"уплотнение для пластинчатого теплообменника",freq:500,freqE:320,cat:"СЧ",intent:"zip",brand:false,brandName:"",geo:false,zip:true,trend:"up",comp:35,pos:7},
+  {q:"ремонт пластинчатого теплообменника",freq:600,freqE:380,cat:"СЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"flat",comp:45,pos:12},
+  {q:"техническое обслуживание теплообменника",freq:400,freqE:250,cat:"СЧ",intent:"informational",brand:false,brandName:"",geo:false,zip:false,trend:"flat",comp:40,pos:11},
+  {q:"стоимость пластинчатого теплообменника",freq:700,freqE:440,cat:"СЧ",intent:"transactional",brand:false,brandName:"",geo:false,zip:false,trend:"up",comp:72,pos:15}
 ];
 
 var COMPETITORS = [
@@ -559,10 +585,61 @@ function initCharts(){
 // =============================================
 // ТАБЛИЦА
 // =============================================
-var tablePage=0,tablePerPage=20,tableData=[],currentFilter='all',currentSort='freq-desc',currentSearch='';
+var tablePage=0,tablePerPage=20,tableData=[],currentFilter='all',currentSort='freq-desc',currentSearch='',currentBrand='all';
+
+var BRAND_INFO={
+  'Феникс':{color:'#6c5ce7',country:'Россия (Ростов-на-Дону)',status:'Производитель, растёт',years:'2018–н.в.',models:'APR-4,7,8,14,19,21,22,41,42,43,47,62,65,81,86,100',type:'Разборные',strengths:'Собственное производство, сертификат ISO 9001, быстрые сроки',weaknesses:'Молодой бренд, мало отзывов',opportunity:'Импортозамещение Alfa Laval, рынок майнинга'},
+  'Alfa Laval':{color:'#d63031',country:'Швеция (ушла с РФ в 2022)',status:'Приостановила поставки',years:'1938–2022',models:'M3,M6,M10,M15,M20,M25,M30,TL15,TL20,TS20',type:'Разборные + паяные',strengths:'Мировой лидер, высокое качество, широкий ассортимент',weaknesses:'Ушла из РФ, нет поставок/сервиса',opportunity:'Для Феникс — занять нишу «замена Alfa Laval»'},
+  'Ридан':{color:'#0984e3',country:'Россия',status:'Активный рост',years:'2006–н.в.',models:'НН-07, НН-014, НН-47, НН-65, XB-25CR, M6-MFG',type:'Разборные + паяные',strengths:'Широкая дилерская сеть, низкие цены',weaknesses:'Зависимость от китайских комплектующих',opportunity:'Прямой конкурент Феникс'},
+  'Норд':{color:'#00b894',country:'Россия (Пермь)',status:'Импортозамещение',years:'2018–н.в.',models:'WhiteNord AL, WhiteNord TL, E8 серия',type:'Разборные',strengths:'Аналоги Alfa Laval 1:1, сертификаты',weaknesses:'Мало известность',opportunity:'Прямой конкурент Феникс на рынке аналогов'},
+  'SWEP':{color:'#e17055',country:'Дания (Danfoss)',status:'Ограниченные поставки',years:'1983–н.в.',models:'B3, B5, B8, B12, B16, B19, B23, B26, B31, B33, B35, B37, B45, B50, B55, B62, B65, B75, B80, B81, B85, B86, B90, B95, B100, B105, B110, B120',type:'Паяные',strengths:'Высокое качество, компактность',weaknesses:'Ограниченные поставки в РФ',opportunity:'Нет'},
+  'Funke':{color:'#fdcb6e',country:'Германия',status:'Ограниченно в РФ',years:'1974–н.в.',models:'T08,T10,T12,T15,T20,T25,T30',type:'Разборные + паяные',strengths:'Немецкое качество, промышленные серии',weaknesses:'Дорого, мало дилеров в РФ',opportunity:'Нет'},
+  'Hisaka':{color:'#00cec9',country:'Япония',status:'Ограниченно в РФ',years:'1961–н.в.',models:'UX, UJ, US, UQ серия',type:'Паяные',strengths:'Высокое качество, пищевое исполнение',weaknesses:'Дорого, мало известность в РФ',opportunity:'Нет'},
+  'APV':{color:'#fab1a0',country:'Великобритания (SPX Flow)',status:'Ушла из РФ',years:'1917–н.в.',models:'Q030-Q220, H17-H155, K серия',type:'Разборные + паяные',strengths:'История бренда, пищевое исполнение',weaknesses:'Ушла из РФ',opportunity:'Для Феникс — ниша «замена APV»'},
+  'Sondex':{color:'#b2bec3',country:'Дания',status:'Ограниченно в РФ',years:'1986–н.в.',models:'S4-S152, S21-S43, S65-S175',type:'Паяные',strengths:'Компактность, пищевое исполнение',weaknesses:'Мало дилеров в РФ',opportunity:'Нет'}
+};
+
+function selectBrand(name){
+  currentBrand=name;
+  document.querySelectorAll('#brandBar .filter-chip').forEach(function(c){
+    c.classList.toggle('active',c.dataset.brand===name);
+  });
+  if(name!=='all'){
+    var info=BRAND_INFO[name];
+    if(info){
+      document.getElementById('brandDetail').classList.remove('hidden');
+      document.getElementById('brandDetail').style.setProperty('--brand-color',info.color);
+      document.getElementById('brandDetailName').textContent=name;
+      document.getElementById('brandDetailName').style.color=info.color;
+      var brandQueries=QUERIES.filter(function(q){return q.brandName===name});
+      var totalFreq=brandQueries.reduce(function(s,q){return s+q.freq},0);
+      var avgPos=brandQueries.length?Math.round(brandQueries.reduce(function(s,q){return s+q.pos},0)/brandQueries.length):0;
+      var avgComp=brandQueries.length?Math.round(brandQueries.reduce(function(s,q){return s+q.comp},0)/brandQueries.length):0;
+      var topCount=brandQueries.filter(function(q){return q.pos<=10}).length;
+      document.getElementById('brandDetailStats').innerHTML=
+        '<div class="sketchy p-3 text-center" style="border:2px solid '+info.color+'33"><p class="text-2xl font-bold" style="color:'+info.color+'">'+brandQueries.length+'</p><p class="font-block text-xs">Запросов</p></div>'+
+        '<div class="sketchy p-3 text-center" style="border:2px solid '+info.color+'33"><p class="text-2xl font-bold" style="color:'+info.color+'">'+fmt(totalFreq)+'</p><p class="font-block text-xs">Показов/мес</p></div>'+
+        '<div class="sketchy p-3 text-center" style="border:2px solid '+info.color+'33"><p class="text-2xl font-bold" style="color:'+info.color+'">'+topCount+'</p><p class="font-block text-xs">В ТОП-10</p></div>'+
+        '<div class="sketchy p-3 text-center" style="border:2px solid '+info.color+'33"><p class="text-2xl font-bold" style="color:'+info.color+'">#'+avgPos+'</p><p class="font-block text-xs">Средн. позиция</p></div>'+
+        '<div class="sketchy p-3 text-center" style="border:2px solid '+info.color+'33"><p class="text-2xl font-bold" style="color:'+info.color+'">'+avgComp+'%</p><p class="font-block text-xs">Конкуренция</p></div>';
+      document.getElementById('brandDetailInfo').innerHTML=
+        '<div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm font-block">'+
+        '<div><strong>Страна:</strong> '+info.country+'<br><strong>Годы:</strong> '+info.years+'<br><strong>Тип:</strong> '+info.type+'</div>'+
+        '<div><strong>Модели:</strong> '+info.models+'<br><strong>Статус:</strong> '+info.status+'</div>'+
+        '<div><strong>Сильные стороны:</strong> '+info.strengths+'<br><strong>Слабые стороны:</strong> '+info.weaknesses+'<br><strong>Возможность для Феникс:</strong> '+info.opportunity+'</div>'+
+        '</div>';
+    }
+  } else {
+    document.getElementById('brandDetail').classList.add('hidden');
+  }
+  filterQueries();
+}
 
 function filterQueries(){
   tableData=QUERIES.filter(function(q){
+    if(currentBrand!=='all'){
+      if(q.brandName!==currentBrand) return false;
+    }
     if(currentFilter!=='all'){
       if(currentFilter==='vc'&&q.cat!=='ВЧ') return false;
       if(currentFilter==='sc'&&q.cat!=='СЧ') return false;
@@ -609,7 +686,7 @@ function renderTable(){
     var compColor=q.comp>70?'#d63031':q.comp>40?'#e17055':q.comp>20?'#fdcb6e':'#00b894';
     var posColor=q.pos<=3?'#00b894':q.pos<=10?'#0984e3':q.pos<=20?'#fdcb6e':'#d63031';
     rows+='<tr class="query-row border-b border-pencil" style="border-bottom-style:dashed">';
-    rows+='<td class="p-3 font-bold">'+q.q+(q.brand?' <span class="text-xs px-1 rounded" style="background:#6c5ce722;color:#6c5ce7">BRAND</span>':'')+(q.geo?' <span class="text-xs px-1 rounded" style="background:#fdcb6e22;color:#e17055">ГЕО</span>':'')+(q.zip?' <span class="text-xs px-1 rounded" style="background:#00b89422;color:#00b894">ЗИП</span>':'')+'</td>';
+    rows+='<td class="p-3 font-bold">'+q.q+(q.brandName?' <span class="text-xs px-1 rounded" style="background:'+((BRAND_INFO[q.brandName]&&BRAND_INFO[q.brandName].color)||'#6c5ce7')+'22;color:'+(BRAND_INFO[q.brandName]&&BRAND_INFO[q.brandName].color||'#6c5ce7')+'">'+q.brandName+'</span>':'')+(q.geo?' <span class="text-xs px-1 rounded" style="background:#fdcb6e22;color:#e17055">ГЕО</span>':'')+(q.zip?' <span class="text-xs px-1 rounded" style="background:#00b89422;color:#00b894">ЗИП</span>':'')+'</td>';
     rows+='<td class="p-3 data-cell hide-mobile">'+fmt(q.freq)+'</td>';
     rows+='<td class="p-3 data-cell hide-mobile">'+fmt(q.freqE)+'</td>';
     rows+='<td class="p-3"><span class="text-xs px-2 py-1 rounded-full font-bold" style="background:'+catColors[q.cat]+'22;color:'+catColors[q.cat]+'">'+q.cat+'</span></td>';
