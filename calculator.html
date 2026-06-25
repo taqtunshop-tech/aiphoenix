@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Калькулятор теплообменников — AIPhoenix</title>
 <link rel="stylesheet" href="shared.css">
+<!-- APS Viewer SDK -->
+<link rel="stylesheet" href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.min.css">
+<script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.min.js"></script>
+<!-- Three.js fallback -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Architects+Daughter&display=swap');
@@ -34,8 +38,6 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
 .btn-calc{padding:12px 32px;background:#2d3436;color:#fff;border:2.5px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;font-family:'Architects Daughter',cursive;font-size:1.1rem;cursor:pointer;transition:all .2s;box-shadow:3px 4px 0 rgba(45,52,54,.15);user-select:none;-webkit-tap-highlight-color:transparent}
 .btn-calc:hover{background:#636e72;transform:rotate(-1deg) scale(1.03);box-shadow:4px 6px 0 rgba(45,52,54,.2)}
 .btn-calc:active{transform:scale(.97);box-shadow:1px 2px 0 rgba(45,52,54,.15)}
-#canvas3d{width:100%;height:100%;display:block;border-radius:12px;cursor:grab;touch-action:none}
-#canvas3d:active{cursor:grabbing}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .result-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
 .result-cell{text-align:center;padding:10px 6px;background:#fff;border:2px solid #2d3436;border-radius:16px 8px 14px 8px/8px 14px 8px 16px}
@@ -50,12 +52,20 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
 #error-box ul{margin:6px 0 0 18px;padding:0;list-style:none}
 #error-box li{position:relative;padding-left:14px;margin:3px 0}
 #error-box li::before{content:'\2192';position:absolute;left:0;color:#d63031;font-weight:700}
-/* Blueprint slider */
 .slider-wrap{display:flex;align-items:center;gap:10px;width:100%}
 .slider-wrap input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;background:linear-gradient(90deg,#d63031,#0984e3);border-radius:3px;outline:none;cursor:pointer}
 .slider-wrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#2d3436;border:3px solid #fff;box-shadow:0 0 0 2px #2d3436;cursor:grab}
 .slider-wrap input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#2d3436;border:3px solid #fff;box-shadow:0 0 0 2px #2d3436;cursor:grab}
 .slider-val{font-family:'Architects Daughter',cursive;font-size:.85rem;color:#636e72;min-width:36px;text-align:right}
+#aps-viewer-container{width:100%;min-height:500px;position:relative;border-radius:12px;overflow:hidden;background:#f0f0f0}
+#aps-viewer-container .adsk-viewing-ui{border-radius:12px}
+#viewer-loading{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font-family:'Architects Daughter',cursive;color:#636e72;z-index:10;pointer-events:none}
+#viewer-loading .spinner{width:40px;height:40px;border:4px solid #e0e0e0;border-top:4px solid #d63031;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+#viewer-status{position:absolute;top:8px;left:8px;background:rgba(255,255,255,.9);border:1px solid #2d3436;border-radius:8px;padding:4px 10px;font-family:'Architects Daughter',cursive;font-size:.75rem;color:#636e72;z-index:10}
+#bp-controls{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.92);border:2px solid #2d3436;border-radius:16px 8px 14px 8px/8px 14px 8px 16px;padding:10px 16px;min-width:240px;box-shadow:2px 4px 0 rgba(45,52,54,.1);backdrop-filter:blur(4px);z-index:10}
+#canvas3d{width:100%;height:100%;display:block;border-radius:12px;cursor:grab;touch-action:none}
+#canvas3d:active{cursor:grabbing}
 #device-badge{display:none;position:fixed;bottom:12px;right:12px;z-index:999;background:#2d3436;color:#fff;font-family:'Architects Daughter',cursive;font-size:.75rem;padding:4px 10px;border-radius:20px;opacity:.6}
 
 @media(max-width:768px){
@@ -82,8 +92,7 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
   .model-info{font-size:.7rem!important}
   .flow-legend{font-size:.65rem!important}
   #device-badge{display:block}
-  .hint-desktop{display:none}
-  .hint-mobile{display:block!important}
+  #aps-viewer-container{min-height:350px}
 }
 @media(min-width:769px){
   .hint-mobile{display:none!important}
@@ -189,51 +198,49 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
     </div>
   </div>
 
-  <!-- 3D Blueprint Viewer + Real Photo -->
+  <!-- 3D Viewer (APS SDK or Blueprint fallback) -->
   <div class="flex-1">
     <!-- Real product photo -->
     <div class="section-card sketchy p-2 md:p-3 fade-up mb-3" style="text-align:center;background:#fff">
       <div style="position:relative;display:inline-block;max-height:220px;overflow:hidden;border-radius:8px">
         <img id="productPhoto" src="img/phoenix-apr7.png" alt="Phoenix SAPR-7" style="max-height:200px;max-width:100%;object-fit:contain;transition:opacity .3s">
       </div>
-      <div style="font-family:'Architects Daughter',cursive;font-size:.75rem;color:#636e72;margin-top:4px">
-        Реальное изображение из каталога Феникс
-      </div>
+      <div style="font-family:'Architects Daughter',cursive;font-size:.75rem;color:#636e72;margin-top:4px">Реальное изображение из каталога Феникс</div>
     </div>
 
-    <!-- 3D Blueprint -->
-    <div class="section-card sketchy p-2 md:p-3 fade-up canvas-wrap" style="min-height:400px;position:relative">
-      <div style="width:100%;height:100%;min-height:360px;position:relative;border-radius:12px;overflow:hidden;background:#ffffff">
-        <canvas id="canvas3d"></canvas>
-        <div id="bp-controls" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.92);border:2px solid #2d3436;border-radius:16px 8px 14px 8px/8px 14px 8px 16px;padding:10px 16px;min-width:240px;box-shadow:2px 4px 0 rgba(45,52,54,.1);backdrop-filter:blur(4px)">
-          <div style="font-family:'Architects Daughter',cursive;font-size:.8rem;color:#2d3436;margin-bottom:6px;font-weight:bold">Explode</div>
-          <div class="slider-wrap">
-            <input type="range" id="explodeSlider" min="0" max="1" step="0.01" value="0">
-            <span class="slider-val" id="explodeVal">0%</span>
-          </div>
-          <div style="display:flex;gap:6px;margin-top:8px;justify-content:center">
-            <span class="tag" id="btn_xray" onclick="toggleXRay()" style="font-size:.8rem;padding:4px 12px">X-Ray</span>
-            <span class="tag active" id="btn_rotate" onclick="toggleRotate()" style="font-size:.8rem;padding:4px 12px">Auto</span>
-          </div>
-        </div>
-        <div id="dim-labels" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden"></div>
+    <!-- 3D Viewer -->
+    <div class="section-card sketchy p-2 md:p-3 fade-up canvas-wrap" style="min-height:500px;position:relative">
+      <div id="aps-viewer-container" style="width:100%;min-height:500px;position:relative;border-radius:12px;overflow:hidden;background:#f5f5f5">
+        <div id="viewer-loading"><div class="spinner"></div>Инициализация 3D-вьювера...</div>
+        <div id="viewer-status"></div>
       </div>
+
+      <!-- Blueprint controls (shown when APS is active or fallback) -->
+      <div id="bp-controls" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.92);border:2px solid #2d3436;border-radius:16px 8px 14px 8px/8px 14px 8px 16px;padding:10px 16px;min-width:280px;box-shadow:2px 4px 0 rgba(45,52,54,.1);backdrop-filter:blur(4px);z-index:10">
+        <div style="font-family:'Architects Daughter',cursive;font-size:.8rem;color:#2d3436;margin-bottom:6px;font-weight:bold">Explode / Слои</div>
+        <div class="slider-wrap">
+          <input type="range" id="explodeSlider" min="0" max="10" step="0.1" value="0">
+          <span class="slider-val" id="explodeVal">0</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px;justify-content:center;flex-wrap:wrap">
+          <span class="tag" id="btn_layers" onclick="toggleLayers()" style="font-size:.8rem;padding:4px 12px">Слои</span>
+          <span class="tag" id="btn_section" onclick="toggleSection()" style="font-size:.8rem;padding:4px 12px">Сечение</span>
+          <span class="tag" id="btn_fullscreen" onclick="toggleFullscreen()" style="font-size:.8rem;padding:4px 12px">Full</span>
+        </div>
+      </div>
+
       <div class="text-center mt-1 md:mt-2">
-        <span class="model-info text-xs md:text-sm font-bold" id="model_info" style="font-family:'Architects Daughter',cursive;color:#636e72">31 пластина - AISI 316 - EPDM</span>
+        <span class="model-info text-xs md:text-bold" id="model_info" style="font-family:'Architects Daughter',cursive;color:#636e72;font-size:.85rem">31 пластина - AISI 316 - EPDM</span>
         <div class="flow-legend flex justify-center gap-3 md:gap-4 mt-1" style="font-size:.7rem;color:#636e72;font-family:'Architects Daughter',cursive">
           <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#e74c3c;animation:pulse 1.5s infinite;vertical-align:middle"></span> Горячий</span>
           <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3498db;animation:pulse 1.5s infinite;vertical-align:middle"></span> Холодный</span>
         </div>
       </div>
     </div>
+
     <div class="hint-desktop">
       <div class="hero-note alt mt-4 fade-up">
-        <strong>Blueprint-режим:</strong> Серые поверхности с чёрной обводкой — как на инженерном чертеже. Ползунок <em>Explode</em> разносит пластины для просмотра внутренней структуры. <em>X-Ray</em> — полупрозрачные рамы.
-      </div>
-    </div>
-    <div class="hint-mobile" style="display:none">
-      <div class="hero-note alt mt-3 fade-up" style="font-size:.8rem">
-        <strong>Подсказка:</strong> Проводите пальцем для вращения. Двумя пальцами — масштаб. Ползунок внизу 3D — разнесение пластин.
+        <strong>3D-вьювер:</strong> Autodesk Viewer SDK — тот же движок, что на select.phoenix-apr.ru. Вращайте, масштабируйте, используйте ползунок Explode для разборки. Кнопка «Сечение» — разрез модели.
       </div>
     </div>
   </div>
@@ -248,6 +255,29 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
 
 <script>
 /* ═══════════════════════════════════════════════════════
+   CONFIGURATION
+   ═══════════════════════════════════════════════════════ */
+var APS_CONFIG = {
+  clientId: '',         // ← ВСТАВЬТЕ Client ID из Autodesk Developer Portal
+  workerUrl: '',        // ← URL Cloudflare Worker: https://aps-token-worker.<account>.workers.dev
+  dwgBase: 'models/',   // базовая папка для DWG файлов (GitHub Pages / R2)
+};
+
+// Маппинг моделей → DWG файлы
+var DWG_MAP = {
+  'APR-4':   'apr4.dwg',
+  'APR-7':   'apr7.dwg',
+  'APR-21':  'apr21.dwg',
+  'APR-43':  'apr43.dwg',
+  'APR-84':  'apr84.dwg',
+  'APR-100': 'apr100.dwg',
+  'TP-B-0.35': 'tpb035.dwg',
+  'TP-B-0.70': 'tpb070.dwg'
+};
+
+var isConfigured = APS_CONFIG.clientId && APS_CONFIG.workerUrl;
+
+/* ═══════════════════════════════════════════════════════
    DEVICE DETECTION
    ═══════════════════════════════════════════════════════ */
 var isMobile=(function(){
@@ -257,7 +287,7 @@ var isMobile=(function(){
 })();
 var badge=document.getElementById('device-badge');
 if(badge){
-  badge.textContent=isMobile?'Мобильная версия':'Десктоп';
+  badge.textContent=isMobile?'Мобильная':'Десктоп';
   setTimeout(function(){badge.style.opacity='0';badge.style.transition='opacity 1s'},3000);
 }
 
@@ -274,8 +304,7 @@ function clearErrors(){
 }
 function markError(id){
   var el=document.getElementById(id);if(!el)return;
-  var g=el.closest('.grid');
-  if(g)g.classList.add('field-error');
+  var g=el.closest('.grid');if(g)g.classList.add('field-error');
   else el.parentElement.classList.add('field-error');
 }
 
@@ -293,23 +322,23 @@ function doCalc(){
   var pm=document.getElementById('plate_model').value;
   var pa=PA[pm]||0.042;
 
-  if(hf<=0){errors.push('Расход горячей среды должен быть > 0 т/ч');markError('hot_flow')}
-  if(cf<=0){errors.push('Расход холодной среды должен быть > 0 т/ч');markError('cold_flow')}
-  if(t1<=0){errors.push('T входа горячей > 0\u00B0C');markError('hot_tin')}
-  if(t2<=0){errors.push('T выхода горячей > 0\u00B0C');markError('hot_tout')}
-  if(t3<0){errors.push('T входа холодной \u2265 0\u00B0C');markError('cold_tin')}
-  if(t4<=0){errors.push('T выхода холодной > 0\u00B0C');markError('cold_tout')}
-  if(t1<=t2){errors.push('T вход горячей ('+t1+'\u00B0C) > T выход ('+t2+'\u00B0C) \u2014 среда охлаждается');markError('hot_tin');markError('hot_tout')}
-  if(t4<=t3){errors.push('T выход холодной ('+t4+'\u00B0C) > T вход ('+t3+'\u00B0C) \u2014 среда нагревается');markError('cold_tin');markError('cold_tout')}
-  if(t3>=t1){errors.push('T вход холодной ('+t3+'\u00B0C) < T вход горячей ('+t1+'\u00B0C)');markError('cold_tin');markError('hot_tin')}
+  if(hf<=0){errors.push('Расход горячей > 0');markError('hot_flow')}
+  if(cf<=0){errors.push('Расход холодной > 0');markError('cold_flow')}
+  if(t1<=0){errors.push('T вход горячей > 0');markError('hot_tin')}
+  if(t2<=0){errors.push('T выход горячей > 0');markError('hot_tout')}
+  if(t3<0){errors.push('T вход холодной >= 0');markError('cold_tin')}
+  if(t4<=0){errors.push('T выход холодной > 0');markError('cold_tout')}
+  if(t1<=t2){errors.push('T вход горячей ('+t1+') > T выход ('+t2+')');markError('hot_tin');markError('hot_tout')}
+  if(t4<=t3){errors.push('T выход холодной ('+t4+') > T вход ('+t3+')');markError('cold_tin');markError('cold_tout')}
+  if(t3>=t1){errors.push('T вход холодной ('+t3+') < T вход горячей ('+t1+')');markError('cold_tin');markError('hot_tin')}
   var d1=t1-t4,d2=t2-t3;
-  if(d1<=0){errors.push('T выход холодной ('+t4+'\u00B0C) < T вход горячей ('+t1+'\u00B0C) \u2014 невозможно');markError('hot_tin');markError('cold_tout')}
-  if(d2<=0){errors.push('T выход горячей ('+t2+'\u00B0C) > T вход холодной ('+t3+'\u00B0C) \u2014 невозможно');markError('hot_tout');markError('cold_tin')}
-  if(rv<0||rv>50){errors.push('Запас поверхности 0\u201350%');markError('surface_reserve')}
+  if(d1<=0){errors.push('T выход холодной ('+t4+') < T вход горячей ('+t1+')');markError('hot_tin');markError('cold_tout')}
+  if(d2<=0){errors.push('T выход горячей ('+t2+') > T вход холодной ('+t3+')');markError('hot_tout');markError('cold_tin')}
+  if(rv<0||rv>50){errors.push('Запас 0-50%');markError('surface_reserve')}
 
   if(errors.length>0){
     var eb=document.getElementById('error-box');
-    eb.innerHTML='<strong>\u26A0\uFE0F Расчёт невозможен: '+errors.length+'</strong><ul><li>'+errors.join('</li><li>')+'</li></ul>';
+    eb.innerHTML='<strong>Ошибок: '+errors.length+'</strong><ul><li>'+errors.join('</li><li>')+'</li></ul>';
     eb.classList.add('visible');
     document.getElementById('results').classList.add('hidden');
     if(isMobile){eb.scrollIntoView({behavior:'smooth',block:'center'});navigator.vibrate&&navigator.vibrate([100,50,100])}
@@ -334,18 +363,104 @@ function doCalc(){
 }
 
 /* ═══════════════════════════════════════════════════════
-   BLUEPRINT 3D — Three.js
+   AUTODESK VIEWER SDK
+   ═══════════════════════════════════════════════════════ */
+var apsViewer = null;
+var apsToken = null;
+
+function initApsViewer() {
+  if (!isConfigured) {
+    initBlueprintFallback();
+    return;
+  }
+
+  var statusEl = document.getElementById('viewer-status');
+  statusEl.textContent = 'APS Viewer · Загрузка SDK...';
+
+  // Check if Autodesk SDK loaded
+  if (typeof Autodesk === 'undefined' || !Autodesk.Viewing) {
+    statusEl.textContent = 'APS Viewer · SDK не загружен — fallback';
+    initBlueprintFallback();
+    return;
+  }
+
+  Autodesk.Viewing.Initializer({
+    env: 'Local',
+    useADP: false
+  }, function() {
+    var container = document.getElementById('aps-viewer-container');
+    var loadingEl = document.getElementById('viewer-loading');
+    if (loadingEl) loadingEl.style.display = 'none';
+
+    var opts = {
+      disabledExtensions: {},
+      memory: { limit: 1024 }
+    };
+
+    apsViewer = new Autodesk.Viewing.GuiViewer3D(container, opts);
+    apsViewer.start();
+
+    // Set nice defaults
+    apsViewer.setTheme('light');
+    apsViewer.autocam.setCurrentViewAsHome();
+
+    statusEl.textContent = 'APS Viewer · Готов';
+    loadDwgByModel(document.getElementById('plate_model').value);
+
+  }, function(err) {
+    console.error('APS init error:', err);
+    document.getElementById('viewer-status').textContent = 'APS ошибка — fallback на blueprint';
+    initBlueprintFallback();
+  });
+}
+
+function getApsToken() {
+  return new Promise(function(resolve, reject) {
+    if (APS_CONFIG.workerUrl) {
+      fetch(APS_CONFIG.workerUrl + '/api/token')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.access_token) resolve(data.access_token);
+          else reject(new Error('No token'));
+        })
+        .catch(reject);
+    } else {
+      // Use anonymous token for local env
+      reject(new Error('No worker URL'));
+    }
+  });
+}
+
+function loadDwgByModel(model) {
+  var dwgFile = DWG_MAP[model];
+  if (!dwgFile || !apsViewer) return;
+
+  var statusEl = document.getElementById('viewer-status');
+  statusEl.textContent = 'Загрузка ' + dwgFile + '...';
+
+  var dwgUrl = APS_CONFIG.dwgBase + dwgFile;
+
+  getApsToken().then(function(token) {
+    var documentId = 'urn:' + btoa(dwgUrl).replace(/=/g, '');
+    Autodesk.Viewing.Document.load(documentId,
+      function(doc) { /* success */ },
+      function(err) { statusEl.textContent = 'DWG не найден: ' + dwgFile; }
+    );
+  }).catch(function() {
+    statusEl.textContent = 'Нет токена — загрузите DWG через «Загрузить файл»';
+  });
+}
+
+/* ═══════════════════════════════════════════════════════
+   BLUEPRINT 3D FALLBACK (Three.js)
    ═══════════════════════════════════════════════════════ */
 var scene,camera,renderer,group;
-var nPlates=31,isXRay=false,isRotating=true;
-var explode=0;
+var nPlates=31,explode=0;
 var sph={t:Math.PI/4,p:Math.PI/4,r:12};
 var dragging=false,mx=0,my=0,tick=0,pinchDist=0;
 var PW=2.2,PH=4.5,PT=0.04,PG=0.06,FT=0.4;
 var dots=[];
 var autoRotSpeed=isMobile?0.006:0.004;
-
-// Blueprint materials
 var bpMat,bpEdgeMat,bpAccentMat,bpFrameMat,bpDarkMat;
 
 function initMaterials(){
@@ -358,8 +473,7 @@ function initMaterials(){
 
 function addEdges(mesh){
   var eg=new THREE.EdgesGeometry(mesh.geometry,15);
-  var line=new THREE.LineSegments(eg,bpEdgeMat);
-  mesh.add(line);
+  mesh.add(new THREE.LineSegments(eg,bpEdgeMat));
 }
 
 function bpMesh(geo,mat,pos,rot){
@@ -370,18 +484,26 @@ function bpMesh(geo,mat,pos,rot){
   return m;
 }
 
-function init3D(){
-  var c=document.getElementById('canvas3d');
-  var wrap=c.parentElement;
-  var w=wrap.clientWidth;
-  var h=wrap.clientHeight||360;
+function initBlueprintFallback(){
+  document.getElementById('viewer-loading').style.display='none';
+  document.getElementById('viewer-status').textContent='Blueprint 3D · Fallback';
+
+  var container=document.getElementById('aps-viewer-container');
+  var w=container.clientWidth;
+  var h=container.clientHeight||500;
   if(w<10)w=300;if(h<10)h=300;
 
   initMaterials();
 
+  // Create canvas inside container
+  var c=document.createElement('canvas');
+  c.id='canvas3d';
+  c.style.cssText='width:100%;height:100%;display:block;border-radius:12px;cursor:grab;touch-action:none';
+  container.innerHTML='';
+  container.appendChild(c);
+
   scene=new THREE.Scene();
   scene.background=new THREE.Color(0xffffff);
-
   camera=new THREE.PerspectiveCamera(30,w/h,0.1,100);
   camera.position.set(8,5,8);
   camera.lookAt(0,0,0);
@@ -389,29 +511,23 @@ function init3D(){
   renderer=new THREE.WebGLRenderer({canvas:c,antialias:true});
   renderer.setSize(w,h);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-  renderer.shadowMap.enabled=false;
 
-  // Flat uniform lighting — no harsh shadows
   scene.add(new THREE.AmbientLight(0xffffff,0.8));
-  var dl=new THREE.DirectionalLight(0xffffff,0.5);
-  dl.position.set(10,10,10);scene.add(dl);
-  var dl2=new THREE.DirectionalLight(0xffffff,0.3);
-  dl2.position.set(-10,5,-10);scene.add(dl2);
+  var dl=new THREE.DirectionalLight(0xffffff,0.5);dl.position.set(10,10,10);scene.add(dl);
+  var dl2=new THREE.DirectionalLight(0xffffff,0.3);dl2.position.set(-10,5,-10);scene.add(dl2);
 
   group=new THREE.Group();
   scene.add(group);
-
-  buildModel();
+  buildBpModel();
 
   // Explode slider
-  var slider=document.getElementById('explodeSlider');
-  slider.addEventListener('input',function(){
+  document.getElementById('explodeSlider').addEventListener('input',function(){
     explode=parseFloat(this.value);
-    document.getElementById('explodeVal').textContent=Math.round(explode*100)+'%';
+    document.getElementById('explodeVal').textContent=explode.toFixed(1);
   });
 
   // Mouse
-  c.addEventListener('mousedown',function(e){dragging=true;mx=e.clientX;my=e.clientY;isRotating=false;document.getElementById('btn_rotate').className='tag'});
+  c.addEventListener('mousedown',function(e){dragging=true;mx=e.clientX;my=e.clientY});
   c.addEventListener('mousemove',function(e){
     if(!dragging)return;
     sph.t-=(e.clientX-mx)*0.008;
@@ -424,82 +540,72 @@ function init3D(){
 
   // Touch
   c.addEventListener('touchstart',function(e){
-    if(e.touches.length===1){dragging=true;mx=e.touches[0].clientX;my=e.touches[0].clientY;isRotating=false;document.getElementById('btn_rotate').className='tag'}
+    if(e.touches.length===1){dragging=true;mx=e.touches[0].clientX;my=e.touches[0].clientY}
     else if(e.touches.length===2){dragging=false;var dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;pinchDist=Math.sqrt(dx*dx+dy*dy)}
   },{passive:true});
   c.addEventListener('touchmove',function(e){
     if(e.touches.length===1&&dragging){sph.t-=(e.touches[0].clientX-mx)*0.008;sph.p=Math.max(0.2,Math.min(2.8,sph.p-(e.touches[0].clientY-my)*0.008));mx=e.touches[0].clientX;my=e.touches[0].clientY;e.preventDefault()}
-    else if(e.touches.length===2){var dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY,dist=Math.sqrt(dx*dx+dy*dy);if(pinchDist>0){sph.r=Math.max(4,Math.min(25,sph.r+(pinchDist-dist)*0.03))}pinchDist=dist;e.preventDefault()}
+    else if(e.touches.length===2){var dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY,dist=Math.sqrt(dx*dx+dy*dy);if(pinchDist>0)sph.r=Math.max(4,Math.min(25,sph.r+(pinchDist-dist)*0.03));pinchDist=dist;e.preventDefault()}
   },{passive:false});
   c.addEventListener('touchend',function(e){if(e.touches.length===0)dragging=false;pinchDist=0});
 
-  animate();
+  // Resize
+  window.addEventListener('resize',function(){
+    var w2=container.clientWidth,h2=container.clientHeight||500;
+    camera.aspect=w2/h2;camera.updateProjectionMatrix();renderer.setSize(w2,h2);
+  });
+
+  animateBp();
 }
 
-function buildModel(){
+function buildBpModel(){
   while(group.children.length>0)group.remove(group.children[0]);
   dots=[];
-
   var pLen=nPlates*PG+FT*2;
 
-  // === BACK FRAME ===
-  var bf=bpMesh(new THREE.BoxGeometry(2.8,5.2,FT),bpFrameMat);
-  bf.position.z=pLen;group.add(bf);
+  group.add(bpMesh(new THREE.BoxGeometry(2.8,5.2,FT),bpFrameMat,null,null).translateZ(pLen));
+  group.add(bpMesh(new THREE.BoxGeometry(2.8,5.2,FT*1.2),bpMat));
 
-  // === FRONT FRAME ===
-  var ff=bpMesh(new THREE.BoxGeometry(2.8,5.2,FT*1.2),bpMat);
-  group.add(ff);
-
-  // === BLUE SUPPORT FEET (as dark gray) ===
   var footG=new THREE.BoxGeometry(0.35,0.6,0.8);
   var footBarG=new THREE.BoxGeometry(2.2,0.12,0.8);
   var vBarG=new THREE.BoxGeometry(0.12,5.6,0.12);
   [-2.8,2.8].forEach(function(y){
-    var foot=bpMesh(footG,bpDarkMat);foot.position.set(0,y,pLen/2);group.add(foot);
-    var bar=bpMesh(footBarG,bpDarkMat);bar.position.set(0,y,pLen/2);group.add(bar);
+    var f=bpMesh(footG,bpDarkMat);f.position.set(0,y,pLen/2);group.add(f);
+    var b=bpMesh(footBarG,bpDarkMat);b.position.set(0,y,pLen/2);group.add(b);
   });
   [-1.3,1.3].forEach(function(x){
-    var vb=bpMesh(vBarG,bpDarkMat);vb.position.set(x,0,pLen/2);group.add(vb);
+    var v=bpMesh(vBarG,bpDarkMat);v.position.set(x,0,pLen/2);group.add(v);
   });
 
-  // === PORT FLANGES ===
   var portG=new THREE.CylinderGeometry(0.2,0.2,0.6,16);
   var flG=new THREE.CylinderGeometry(0.3,0.3,0.08,16);
-  var portPositions=[[-0.6,1.6],[0.6,1.6],[-0.6,-1.6],[0.6,-1.6]];
-  portPositions.forEach(function(p){
-    var pp=bpMesh(portG,bpAccentMat);pp.position.set(p[0],p[1],-0.3);pp.rotation.x=Math.PI/2;group.add(pp);
-    var fl=bpMesh(flG,bpDarkMat);fl.position.set(p[0],p[1],-0.65);group.add(fl);
-    var pp2=bpMesh(portG,bpAccentMat);pp2.position.set(p[0],p[1],pLen+0.3);pp2.rotation.x=Math.PI/2;group.add(pp2);
-    var fl2=bpMesh(flG,bpDarkMat);fl2.position.set(p[0],p[1],pLen+0.65);group.add(fl2);
+  var pp=[[-0.6,1.6],[0.6,1.6],[-0.6,-1.6],[0.6,-1.6]];
+  pp.forEach(function(p){
+    var a=bpMesh(portG,bpAccentMat);a.position.set(p[0],p[1],-0.3);a.rotation.x=Math.PI/2;group.add(a);
+    var b=bpMesh(flG,bpDarkMat);b.position.set(p[0],p[1],-0.65);group.add(b);
+    var c=bpMesh(portG,bpAccentMat);c.position.set(p[0],p[1],pLen+0.3);c.rotation.x=Math.PI/2;group.add(c);
+    var d=bpMesh(flG,bpDarkMat);d.position.set(p[0],p[1],pLen+0.65);group.add(d);
   });
 
-  // === PLATES with chevron corrugations ===
   var plG=new THREE.BoxGeometry(PW,PH,PT);
   for(var i=0;i<nPlates;i++){
     var m=bpMesh(plG,bpMat);m.userData={tp:'p',ix:i};group.add(m);
-
-    // Chevron corrugations
     for(var g=0;g<10;g++){
       var gy=-PH*0.4+(g/10)*PH*0.8;
       var gr=bpMesh(new THREE.BoxGeometry(PW*0.7,0.02,0.005),bpAccentMat);
-      gr.position.set(0,gy,0);gr.rotation.z=g%2===0?0.15:-0.15;
-      m.add(gr);
+      gr.position.set(0,gy,0);gr.rotation.z=g%2===0?0.15:-0.15;m.add(gr);
     }
-
-    // Port holes
-    portPositions.forEach(function(p){
-      var hole=bpMesh(new THREE.CylinderGeometry(0.12,0.12,PT+0.01,12),bpDarkMat);
-      hole.position.set(p[0],p[1],0);hole.rotation.x=Math.PI/2;m.add(hole);
+    pp.forEach(function(p){
+      var h=bpMesh(new THREE.CylinderGeometry(0.12,0.12,PT+0.01,12),bpDarkMat);
+      h.position.set(p[0],p[1],0);h.rotation.x=Math.PI/2;m.add(h);
     });
   }
 
-  // === GUIDE RODS ===
   var rodG=new THREE.CylinderGeometry(0.06,0.06,pLen+1.5,12);
   [2.5,-2.5].forEach(function(y){
-    var rod=bpMesh(rodG,bpDarkMat);rod.rotation.x=Math.PI/2;rod.position.set(0,y,pLen/2);group.add(rod);
+    var r=bpMesh(rodG,bpDarkMat);r.rotation.x=Math.PI/2;r.position.set(0,y,pLen/2);group.add(r);
   });
 
-  // === TIE BOLTS ===
   var boltG=new THREE.CylinderGeometry(0.04,0.04,1,8);
   var nutG=new THREE.CylinderGeometry(0.09,0.09,0.12,6);
   [-1.15,1.15].forEach(function(x){
@@ -510,63 +616,42 @@ function buildModel(){
     });
   });
 
-  // === BRAND LABEL (as blueprint annotation) ===
-  var lblBg=bpMesh(new THREE.BoxGeometry(0.9,0.3,0.02),bpAccentMat);
-  lblBg.position.set(0,0.8,-FT-0.02);group.add(lblBg);
-  var lblBorder=bpMesh(new THREE.BoxGeometry(0.94,0.34,0.015),bpDarkMat);
-  lblBorder.position.set(0,0.8,-FT-0.025);group.add(lblBorder);
+  var lb=bpMesh(new THREE.BoxGeometry(0.9,0.3,0.02),bpAccentMat);lb.position.set(0,0.8,-FT-0.02);group.add(lb);
+  var lbb=bpMesh(new THREE.BoxGeometry(0.94,0.34,0.015),bpDarkMat);lbb.position.set(0,0.8,-FT-0.025);group.add(lbb);
 
-  // === FLOW PARTICLES (red/blue arrows) ===
   var dotG=new THREE.SphereGeometry(0.06,6,6);
   var hotMat=new THREE.MeshBasicMaterial({color:0xe74c3c});
   var coldMat=new THREE.MeshBasicMaterial({color:0x3498db});
   for(var d=0;d<12;d++){
     var hd=new THREE.Mesh(dotG,hotMat);
-    hd.userData={tp:'hot',dl:d/12,sp:0.3+Math.random()*0.2,a:new THREE.Vector3(-0.6,1.6,-0.7),b:new THREE.Vector3(0.6,-1.6,pLen+0.7)};
+    hd.userData={dl:d/12,sp:0.3+Math.random()*0.2,a:new THREE.Vector3(-0.6,1.6,-0.7),b:new THREE.Vector3(0.6,-1.6,pLen+0.7)};
     group.add(hd);dots.push(hd);
     var cd=new THREE.Mesh(dotG,coldMat);
-    cd.userData={tp:'cold',dl:d/12,sp:0.3+Math.random()*0.2,a:new THREE.Vector3(-0.6,-1.6,-0.7),b:new THREE.Vector3(0.6,1.6,pLen+0.7)};
+    cd.userData={dl:d/12,sp:0.3+Math.random()*0.2,a:new THREE.Vector3(-0.6,-1.6,-0.7),b:new THREE.Vector3(0.6,1.6,pLen+0.7)};
     group.add(cd);dots.push(cd);
   }
-
-  // === FLOW LIGHTS ===
-  var hl=new THREE.PointLight(0xe74c3c,0.4,4);hl.position.set(-0.6,1.6,pLen/2);group.add(hl);
-  var cl=new THREE.PointLight(0x3498db,0.4,4);cl.position.set(0.6,-1.6,pLen/2);group.add(cl);
-
   group.position.z=-pLen/2;
 }
 
-function animate(){
-  requestAnimationFrame(animate);
+function animateBp(){
+  requestAnimationFrame(animateBp);
   tick+=0.016;
-
-  if(isRotating)sph.t+=autoRotSpeed;
-
-  camera.position.set(
-    sph.r*Math.sin(sph.p)*Math.cos(sph.t),
-    sph.r*Math.cos(sph.p),
-    sph.r*Math.sin(sph.p)*Math.sin(sph.t)
-  );
+  sph.t+=autoRotSpeed;
+  camera.position.set(sph.r*Math.sin(sph.p)*Math.cos(sph.t),sph.r*Math.cos(sph.p),sph.r*Math.sin(sph.p)*Math.sin(sph.t));
   camera.lookAt(0,0,0);
 
-  // Animate plates with explode
   var pLen=nPlates*PG+FT*2;
   for(var i=0;i<group.children.length;i++){
     var c=group.children[i];
     if(c.userData&&c.userData.tp==='p'){
       var base=FT+c.userData.ix*PG+PG/2;
-      var target=base+c.userData.ix*explode*0.5;
-      c.position.z+=(target-c.position.z)*0.1;
+      c.position.z+=(base+c.userData.ix*explode*0.5-c.position.z)*0.1;
     }
   }
-
-  // Back frame follows explode
   if(group.children[1]){
     var bz=pLen+nPlates*explode*0.5;
     group.children[1].position.z+=(bz-group.children[1].position.z)*0.08;
   }
-
-  // Flow dots
   for(var d=0;d<dots.length;d++){
     var dot=dots[d];
     var t=(tick*dot.userData.sp+dot.userData.dl)%1;
@@ -574,94 +659,93 @@ function animate(){
     var sc=0.5+Math.sin(t*Math.PI*4)*0.3;
     dot.scale.set(sc,sc,sc);
   }
-
   renderer.render(scene,camera);
 }
 
+/* ═══════════════════════════════════════════════════════
+   UI CONTROLS
+   ═══════════════════════════════════════════════════════ */
 function updatePlates(n){
   nPlates=n;
-  buildModel();
+  if(apsViewer){/* APS handles rebuild */}
+  else if(group){buildBpModel()}
   var pm=document.getElementById('plate_model').value;
   var mn={'APR-4':'Phoenix 2 SAPR-4','APR-7':'Phoenix 1 SAPR-7','APR-21':'Phoenix APR-21','APR-43':'Phoenix APR-43','APR-84':'Phoenix APR-84','APR-100':'Phoenix APR-100','TP-B-0.35':'Phoenix TP-B-0.35','TP-B-0.70':'Phoenix TP-B-0.70'};
   document.getElementById('model_info').textContent=(mn[pm]||pm)+' | '+n+' пластин | '+document.getElementById('plate_material').value+' | '+document.getElementById('gasket_material').value;
 
-  // Swap real product photo
-  var imgMap={
-    'APR-4':'img/phoenix-type-2.png',
-    'APR-7':'img/phoenix-apr7.png',
-    'APR-21':'img/phoenix-apr21.png',
-    'APR-43':'img/phoenix-apr43.png',
-    'APR-84':'img/phoenix-apr84.png',
-    'APR-100':'img/phoenix-apr100.png',
-    'TP-B-0.35':'img/phoenix-general.png',
-    'TP-B-0.70':'img/phoenix-general.png'
-  };
+  // Swap photo
+  var imgMap={'APR-4':'img/phoenix-type-2.png','APR-7':'img/phoenix-apr7.png','APR-21':'img/phoenix-apr21.png','APR-43':'img/phoenix-apr43.png','APR-84':'img/phoenix-apr84.png','APR-100':'img/phoenix-apr100.png','TP-B-0.35':'img/phoenix-general.png','TP-B-0.70':'img/phoenix-general.png'};
   var photo=document.getElementById('productPhoto');
   var newSrc=imgMap[pm]||'img/phoenix-general.png';
-  if(photo.src!==newSrc){
-    photo.style.opacity='0';
-    setTimeout(function(){photo.src=newSrc;photo.alt=mn[pm]||pm;photo.style.opacity='1'},200);
+  if(photo.src.indexOf(newSrc)===-1){photo.style.opacity='0';setTimeout(function(){photo.src=newSrc;photo.style.opacity='1'},200)}
+
+  // Load DWG in APS viewer
+  if(apsViewer)loadDwgByModel(pm);
+}
+
+function toggleLayers(){
+  if(!apsViewer)return;
+  var btn=document.getElementById('btn_layers');
+  btn.className=btn.className==='tag active'?'tag':'tag active';
+  // Toggle layer visibility via APS API
+  var model = apsViewer.model;
+  if(model){
+    var it = new Autodesk.Viewing.InstanceTree(model.getInstanceTree());
+    // Simple toggle
   }
 }
 
-function toggleXRay(){
-  isXRay=!isXRay;
-  document.getElementById('btn_xray').className=isXRay?'tag active':'tag';
-  for(var i=0;i<group.children.length;i++){
-    var c=group.children[i];
-    if(c.isMesh&&(i===0||i===1)){
-      if(isXRay){
-        c.material=new THREE.MeshStandardMaterial({color:0xf3f4f6,transparent:true,opacity:0.15,roughness:1,metalness:0});
-      }else{
-        c.material=i===0?bpMat:bpFrameMat;
-      }
-    }
+function toggleSection(){
+  if(!apsViewer)return;
+  var btn=document.getElementById('btn_section');
+  btn.className=btn.className==='tag active'?'tag':'tag active';
+  if(btn.className.indexOf('active')>-1){
+    apsViewer.setSectionPlane(new THREE.Vector4(0,0,-1,0));
+  }else{
+    apsViewer.clearSectionPlane();
   }
 }
-function toggleRotate(){
-  isRotating=!isRotating;
-  document.getElementById('btn_rotate').className=isRotating?'tag active':'tag';
+
+function toggleFullscreen(){
+  var container=document.getElementById('aps-viewer-container');
+  if(!document.fullscreenElement){
+    container.requestFullscreen().catch(function(){});
+  }else{
+    document.exitFullscreen();
+  }
 }
 
-var resizeTimer;
-window.addEventListener('resize',function(){
-  clearTimeout(resizeTimer);
-  resizeTimer=setTimeout(function(){
-    var c=document.getElementById('canvas3d');
-    var wrap=c.parentElement;
-    var w=wrap.clientWidth;var h=wrap.clientHeight||360;
-    if(w<10)w=300;if(h<10)h=300;
-    camera.aspect=w/h;camera.updateProjectionMatrix();
-    renderer.setSize(w,h);
-  },200);
-});
-
+/* ═══════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════ */
 window.addEventListener('load',function(){
-  init3D();
   doCalc();
+  // Initialize viewer after a short delay to let SDK load
+  setTimeout(function(){
+    initApsViewer();
+  },500);
+
   document.querySelectorAll('input[type=number],select').forEach(function(el){
     el.addEventListener('input',function(){
       var g=this.closest('.grid');if(g)g.classList.remove('field-error');
       if(document.querySelectorAll('.field-error').length===0){var eb=document.getElementById('error-box');if(eb)eb.classList.remove('visible')}
     });
   });
-  // Update photo when model changes
+
   document.getElementById('plate_model').addEventListener('change',function(){
     var pm=this.value;
-    var imgMap={
-      'APR-4':'img/phoenix-type-2.png',
-      'APR-7':'img/phoenix-apr7.png',
-      'APR-21':'img/phoenix-apr21.png',
-      'APR-43':'img/phoenix-apr43.png',
-      'APR-84':'img/phoenix-apr84.png',
-      'APR-100':'img/phoenix-apr100.png',
-      'TP-B-0.35':'img/phoenix-general.png',
-      'TP-B-0.70':'img/phoenix-general.png'
-    };
+    var imgMap={'APR-4':'img/phoenix-type-2.png','APR-7':'img/phoenix-apr7.png','APR-21':'img/phoenix-apr21.png','APR-43':'img/phoenix-apr43.png','APR-84':'img/phoenix-apr84.png','APR-100':'img/phoenix-apr100.png','TP-B-0.35':'img/phoenix-general.png','TP-B-0.70':'img/phoenix-general.png'};
     var photo=document.getElementById('productPhoto');
     var newSrc=imgMap[pm]||'img/phoenix-general.png';
-    photo.style.opacity='0';
-    setTimeout(function(){photo.src=newSrc;photo.style.opacity='1'},200);
+    photo.style.opacity='0';setTimeout(function(){photo.src=newSrc;photo.style.opacity='1'},200);
+    if(apsViewer)loadDwgByModel(pm);
+  });
+
+  // Explode slider for APS
+  document.getElementById('explodeSlider').addEventListener('input',function(){
+    var val=parseFloat(this.value);
+    document.getElementById('explodeVal').textContent=val.toFixed(1);
+    if(apsViewer){apsViewer.setExplodeValue(val/10)}
   });
 });
 </script>

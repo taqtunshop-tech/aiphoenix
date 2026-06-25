@@ -1,0 +1,7 @@
+name = "aps-token-worker"
+main = "aps-token.js"
+compatibility_date = "2024-12-01"
+
+# Деплой: npx wrangler deploy
+# Секреты: npx wrangler secret put APS_CLIENT_ID
+#          npx wrangler secret put APS_CLIENT_SECRET
