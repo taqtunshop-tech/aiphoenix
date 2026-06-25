@@ -652,6 +652,7 @@ function buildAssembly(){
   heatGroup.add(frontFrame);heatGroup.add(backFrame);
 
   plateGroup=new THREE.Group();
+  plateGroup.userData.visPlates=visPlates;
   var plateGeo=makePlateGeo();
   var gkGeo=makeGasketGeo();
   for(var i=0;i<visPlates;i++){
@@ -707,13 +708,13 @@ var flowPlaying=true;
 var flowSpeedMul=5;
 var flowTime=0;
 
-function tempToThreeColor(t){
-  t=Math.max(0,Math.min(200,t));
+function tempToColor(t,tMin,tMax){
+  var f=Math.max(0,Math.min(1,(t-tMin)/(tMax-tMin||1)));
   var r,g,b;
-  if(t<50){r=0;g=t/50*0.7;b=1.0-t/50*0.3}
-  else if(t<100){r=(t-50)/50;g=0.7;b=0}
-  else if(t<150){r=1.0;g=0.7-(t-100)/50*0.35;b=0}
-  else{r=1.0;g=0.35-(t-150)/50*0.35;b=0}
+  if(f<0.25){r=f*4;g=0;b=1-f*4*0.5}
+  else if(f<0.5){r=1;g=(f-0.25)*4;b=0}
+  else if(f<0.75){r=1-(f-0.5)*4*0.3;g=1;g=0.7;b=(f-0.5)*4*0.3}
+  else{r=0.7+(f-0.75)*4*0.3;g=1-(f-0.75)*4*0.5;b=0}
   return new THREE.Color(r,g,b);
 }
 
@@ -722,31 +723,33 @@ function buildFlowSystem(){
   flowGroup=new THREE.Group();
   flowParticles=[];
   var gap=C.plateGap+C.plateTh;
-  var visPlates=Math.min(nPlates,20);
-  var packLen=Math.max(0,(visPlates-1)*gap);
+  var vp=Math.min(nPlates,20);
+  var packLen=Math.max(0,(vp-1)*gap);
   var frontZ=-packLen/2-C.frameTh/2-0.006;
 
-  var nHot=Math.ceil(visPlates/2);
-  var nCold=Math.floor(visPlates/2);
-  var ppc=5;
+  var nHot=Math.ceil(vp/2);
+  var nCold=Math.floor(vp/2);
+  var ppc=8;
 
-  var hotGeo=new THREE.SphereGeometry(0.012,6,6);
-  var hotMat=new THREE.MeshPhongMaterial({color:0xff2200,emissive:0x440000,transparent:true,opacity:0.9});
+  var hotGeo=new THREE.SphereGeometry(0.010,6,6);
+  var hotMat=new THREE.MeshPhongMaterial({color:0xffffff,emissive:0x331100,transparent:true,opacity:0.92,vertexColors:true});
   var hotMesh=new THREE.InstancedMesh(hotGeo,hotMat,nHot*ppc);
   hotMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  hotMesh.instanceColor=new THREE.InstancedBufferAttribute(new Float32Array(nHot*ppc*3),3);
   flowGroup.add(hotMesh);
 
-  var coldGeo=new THREE.SphereGeometry(0.012,6,6);
-  var coldMat=new THREE.MeshPhongMaterial({color:0x0055ff,emissive:0x001144,transparent:true,opacity:0.9});
+  var coldGeo=new THREE.SphereGeometry(0.010,6,6);
+  var coldMat=new THREE.MeshPhongMaterial({color:0xffffff,emissive:0x001133,transparent:true,opacity:0.92,vertexColors:true});
   var coldMesh=new THREE.InstancedMesh(coldGeo,coldMat,nCold*ppc);
   coldMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  coldMesh.instanceColor=new THREE.InstancedBufferAttribute(new Float32Array(nCold*ppc*3),3);
   flowGroup.add(coldMesh);
 
   var hotIdx=0;
   for(var ch=0;ch<nHot;ch++){
     var zPos=frontZ+(ch*2)*gap+gap/2;
     for(var p=0;p<ppc;p++){
-      flowParticles.push({type:'hot',mesh:hotMesh,instanceId:hotIdx,channel:ch,zBase:zPos,t:p/ppc,speed:0.25+Math.random()*0.15});
+      flowParticles.push({type:'hot',mesh:hotMesh,instanceId:hotIdx,channel:ch,zBase:zPos,t:p/ppc,speed:0.22+Math.random()*0.08});
       hotIdx++;
     }
   }
@@ -754,7 +757,7 @@ function buildFlowSystem(){
   for(var ch=0;ch<nCold;ch++){
     var zPos=frontZ+(ch*2+1)*gap+gap/2;
     for(var p=0;p<ppc;p++){
-      flowParticles.push({type:'cold',mesh:coldMesh,instanceId:coldIdx,channel:ch,zBase:zPos,t:p/ppc,speed:0.25+Math.random()*0.15});
+      flowParticles.push({type:'cold',mesh:coldMesh,instanceId:coldIdx,channel:ch,zBase:zPos,t:p/ppc,speed:0.22+Math.random()*0.08});
       coldIdx++;
     }
   }
@@ -765,30 +768,51 @@ function buildFlowSystem(){
 function updateFlow(dt){
   if(!flowVisible||!flowPlaying||!flowGroup)return;
   flowTime+=dt*flowSpeedMul*0.3;
-  var t1=parseFloat(document.getElementById('hot_tin').value)||120;
-  var t2=parseFloat(document.getElementById('hot_tout').value)||90;
-  var t3=parseFloat(document.getElementById('cold_tin').value)||5;
-  var t4=parseFloat(document.getElementById('cold_tout').value)||60;
+  var tHotIn=parseFloat(document.getElementById('hot_tin').value)||120;
+  var tHotOut=parseFloat(document.getElementById('hot_tout').value)||90;
+  var tColdIn=parseFloat(document.getElementById('cold_tin').value)||5;
+  var tColdOut=parseFloat(document.getElementById('cold_tout').value)||60;
   var dummy=new THREE.Object3D();
+  var plateTop=C.frameH*0.42;
+  var plateBot=-C.frameH*0.42;
+  var nozL=C.frameW*0.23;
+  var nozR=-C.frameW*0.23;
+
+  var hotMesh=flowGroup.children[0];
+  var coldMesh=flowGroup.children[1];
+
   for(var i=0;i<flowParticles.length;i++){
     var p=flowParticles[i];
     var progress=(p.t+flowTime*p.speed)%1.0;
     var x,y,z=p.zBase;
+    var zigzag=Math.sin(progress*Math.PI*4+p.channel*1.3)*C.frameW*0.10;
+
     if(p.type==='hot'){
-      x=C.nozzlePos[0][0]+(C.nozzlePos[1][0]-C.nozzlePos[0][0])*progress;
-      y=C.nozzlePos[0][1]+Math.sin(progress*Math.PI*2.5+i*0.7)*C.plateH*0.06;
+      x=nozL+(nozR-nozL)*progress*0.3+zigzag;
+      y=plateTop+(plateBot-plateTop)*progress;
+      var curTemp=tHotIn+(tHotOut-tHotIn)*progress;
+      var tRange=tHotIn-tColdIn||1;
+      var f=Math.max(0,Math.min(1,(curTemp-tColdIn)/tRange));
+      var r=1.0,g=0.15+f*0.55,b=f*0.15;
     }else{
-      x=C.nozzlePos[3][0]+(C.nozzlePos[2][0]-C.nozzlePos[3][0])*progress;
-      y=C.nozzlePos[2][1]+Math.sin(progress*Math.PI*2.5+i*0.7)*C.plateH*0.06;
+      x=nozR+(nozL-nozR)*(1-progress)*0.3+zigzag;
+      y=plateBot+(plateTop-plateBot)*progress;
+      var curTemp=tColdIn+(tColdOut-tColdIn)*progress;
+      var tRange=tHotIn-tColdIn||1;
+      var f=Math.max(0,Math.min(1,(curTemp-tColdIn)/tRange));
+      var r=f*0.2,g=0.25+f*0.55,b=1.0-f*0.35;
     }
+
     dummy.position.set(x,y,z);
-    var sc=1+0.3*Math.sin(progress*Math.PI*2);
-    dummy.scale.setScalar(sc);
+    dummy.scale.setScalar(0.85+0.2*Math.sin(progress*Math.PI*3));
     dummy.updateMatrix();
     p.mesh.setMatrixAt(p.instanceId,dummy.matrix);
+    if(p.mesh.setColorAt)p.mesh.setColorAt(p.instanceId,new THREE.Color(r,g,b));
   }
-  if(flowGroup.children[0])flowGroup.children[0].instanceMatrix.needsUpdate=true;
-  if(flowGroup.children[1])flowGroup.children[1].instanceMatrix.needsUpdate=true;
+  if(hotMesh)hotMesh.instanceMatrix.needsUpdate=true;
+  if(coldMesh)coldMesh.instanceMatrix.needsUpdate=true;
+  if(hotMesh&&hotMesh.instanceColor)hotMesh.instanceColor.needsUpdate=true;
+  if(coldMesh&&coldMesh.instanceColor)coldMesh.instanceColor.needsUpdate=true;
 }
 
 /* ═══════ ИНИЦИАЛИЗАЦИЯ 3D ═══════ */
@@ -979,17 +1003,18 @@ function init3D(){
       if(Math.abs(explodeCurrent-explodeTarget)<0.0005)explodeCurrent=explodeTarget;
       var ec=explodeCurrent;
       if(plateGroup){
-        var half=(visPlates-1)/2;
+        var vp=plateGroup.userData.visPlates||20;
+        var half=(vp-1)/2;
         for(var k=0;k<plateGroup.children.length;k++){
           var ch=plateGroup.children[k];
           if(ch.userData.baseZ!==undefined&&ch.userData.plateIdx!==undefined){
             var idx=ch.userData.plateIdx;
-            var spread=(idx-half)*ec*0.025;
+            var spread=(idx-half)*ec*0.08;
             ch.position.z=ch.userData.baseZ+spread;
           }
         }
       }
-      if(backFrame)backFrame.position.z=backFrame.userData.baseZ+ec*0.15;
+      if(backFrame)backFrame.position.z=backFrame.userData.baseZ+ec*0.3;
     }
     if(currentMode==='rotate'&&heatGroup)heatGroup.rotation.y+=0.004;
     updateFlow(dt);
