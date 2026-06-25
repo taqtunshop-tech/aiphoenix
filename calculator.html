@@ -442,8 +442,8 @@ function initMAT(){
   var op=xrayOn?0.25:1.0;
   MAT.frameF=new THREE.MeshPhongMaterial({color:0x1a3a8a,specular:0x444444,shininess:25,transparent:xrayOn,opacity:op});
   MAT.frameB=new THREE.MeshPhongMaterial({color:0xcc2222,specular:0x444444,shininess:25,transparent:xrayOn,opacity:op});
-  MAT.plate=new THREE.MeshPhongMaterial({color:0xc0c0c0,specular:0x999999,shininess:50,side:2,transparent:xrayOn,opacity:xrayOn?0.12:1});
-  MAT.gasket=new THREE.MeshPhongMaterial({color:0x222222,specular:0x333333,shininess:10});
+  MAT.plate=new THREE.MeshPhongMaterial({color:0xc0c0c0,specular:0x999999,shininess:50,side:2,transparent:xrayOn,opacity:xrayOn?0.12:1,map:makePlateTexture()});
+  MAT.gasket=new THREE.MeshPhongMaterial({color:0x111111,specular:0x222222,shininess:5,side:2});
   MAT.nozzle=new THREE.MeshPhongMaterial({color:0x888888,specular:0xaaaaaa,shininess:40});
   MAT.flange=new THREE.MeshPhongMaterial({color:0x777777,specular:0x999999,shininess:50});
   MAT.bolt=new THREE.MeshPhongMaterial({color:0x888888,specular:0xaaaaaa,shininess:50});
@@ -454,10 +454,64 @@ function initMAT(){
   MAT.pipeCold=new THREE.MeshPhongMaterial({color:0x2255cc,specular:0x666666,shininess:30,transparent:true,opacity:0.7});
 }
 
-/* ═══════ ГЕОМЕТРИЯ ПЛАСТИНЫ — ГОФРА ═══════ */
+/* ═══════ ГЕОМЕТРИЯ ПЛАСТИНЫ — ГОФРА (ОПТИМИЗИРОВАНО) ═══════ */
+var _plateTexCache=null;
+function makePlateTexture(){
+  if(_plateTexCache)return _plateTexCache;
+  var c=document.createElement('canvas');c.width=256;c.height=512;
+  var ctx=c.getContext('2d');
+  ctx.fillStyle='#b8b8b8';ctx.fillRect(0,0,256,512);
+  ctx.strokeStyle='#999999';ctx.lineWidth=2;
+  var size=16;
+  for(var y=-512;y<1024;y+=size){
+    ctx.beginPath();ctx.moveTo(128,y);ctx.lineTo(256,y+256);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(128,y);ctx.lineTo(0,y+256);ctx.stroke();
+  }
+  ctx.strokeStyle='#aaaaaa';ctx.lineWidth=1;
+  for(var y=-512;y<1024;y+=size/2){
+    ctx.beginPath();ctx.moveTo(128,y);ctx.lineTo(256,y+256);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(128,y);ctx.lineTo(0,y+256);ctx.stroke();
+  }
+  ctx.fillStyle='#888888';
+  ctx.beginPath();ctx.arc(64,50,28,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(192,50,28,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(64,462,28,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(192,462,28,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#b0b0b0';
+  ctx.beginPath();ctx.arc(64,50,24,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(192,50,24,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(64,462,24,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(192,462,24,0,Math.PI*2);ctx.fill();
+  _plateTexCache=new THREE.CanvasTexture(c);
+  _plateTexCache.wrapS=_plateTexCache.wrapT=THREE.RepeatWrapping;
+  return _plateTexCache;
+}
+
+/* ═══════ ПРОКЛАДКА (рамка с 4 отверстиями) ═══════ */
+var _gasketGeoCache=null;
+function makeGasketGeo(){
+  if(_gasketGeoCache)return _gasketGeoCache;
+  var w=C.frameW*0.92,h=C.frameH*0.92;
+  var holeR=C.nozzleR*1.15;
+  var npx=[C.nozzlePos[0][0],C.nozzlePos[1][0],C.nozzlePos[2][0],C.nozzlePos[3][0]];
+  var npy=[C.nozzlePos[0][1],C.nozzlePos[1][1],C.nozzlePos[2][1],C.nozzlePos[3][1]];
+  var outer=[
+    new THREE.Vector2(-w/2,-h/2),new THREE.Vector2(w/2,-h/2),
+    new THREE.Vector2(w/2,h/2),new THREE.Vector2(-w/2,h/2)
+  ];
+  var hole1=THREE.Path.prototype.absarc.call(new THREE.Path(),npx[0],npy[0],holeR,0,Math.PI*2,false);
+  var hole2=THREE.Path.prototype.absarc.call(new THREE.Path(),npx[1],npy[1],holeR,0,Math.PI*2,false);
+  var hole3=THREE.Path.prototype.absarc.call(new THREE.Path(),npx[2],npy[2],holeR,0,Math.PI*2,false);
+  var hole4=THREE.Path.prototype.absarc.call(new THREE.Path(),npx[3],npy[3],holeR,0,Math.PI*2,false);
+  var shape=new THREE.Shape(outer);
+  shape.holes=[hole1,hole2,hole3,hole4];
+  _gasketGeoCache=new THREE.ShapeGeometry(shape);
+  return _gasketGeoCache;
+}
+
 function makePlateGeo(){
   var w=C.plateW,h=C.plateH;
-  var segX=24,segY=36;
+  var segX=12,segY=18;
   var pos=[],idxArr=[];
   for(var iy=0;iy<=segY;iy++){
     for(var ix=0;ix<=segX;ix++){
@@ -498,9 +552,9 @@ function makeFrameGroup(z,isFront){
 
   if(isFront){
     C.nozzlePos.forEach(function(np,idx){
-      var pipe=new THREE.Mesh(new THREE.CylinderGeometry(C.nozzleR,C.nozzleR,C.nozzleLen,20),MAT.nozzle);
+      var pipe=new THREE.Mesh(new THREE.CylinderGeometry(C.nozzleR,C.nozzleR,C.nozzleLen,12),MAT.nozzle);
       pipe.rotation.x=Math.PI/2;pipe.position.set(np[0],np[1],-C.frameTh/2-C.nozzleLen/2);g.add(pipe);
-      var fl=new THREE.Mesh(new THREE.CylinderGeometry(C.flangeR,C.flangeR,C.flangeTh,24),MAT.flange);
+      var fl=new THREE.Mesh(new THREE.CylinderGeometry(C.flangeR,C.flangeR,C.flangeTh,16),MAT.flange);
       fl.rotation.x=Math.PI/2;fl.position.set(np[0],np[1],-C.frameTh/2-C.nozzleLen-C.flangeTh/2);g.add(fl);
       for(var j=0;j<6;j++){
         var a=(Math.PI*2*j)/6;
@@ -521,10 +575,12 @@ function makeFrameGroup(z,isFront){
     var tc=document.createElement('canvas');tc.width=512;tc.height=128;
     var tx=tc.getContext('2d');
     tx.fillStyle='#ffffff';tx.fillRect(0,0,512,128);
+    tx.save();tx.translate(512,0);tx.scale(-1,1);
     tx.fillStyle='#1a3a8a';tx.font='bold 56px Arial';tx.textAlign='center';tx.textBaseline='middle';
     tx.fillText('\u0424\u0415\u041D\u0418\u041A\u0421',256,48);
     tx.font='22px Arial';tx.fillStyle='#666666';
     tx.fillText('Phoenix Heat Exchangers',256,95);
+    tx.restore();
     var tt=new THREE.CanvasTexture(tc);
     var tp=new THREE.Mesh(
       new THREE.PlaneGeometry(C.frameW*0.33,C.frameH*0.13),
@@ -538,8 +594,10 @@ function makeFrameGroup(z,isFront){
       var ltx=ltc.getContext('2d');
       ltx.fillStyle='#ffffff';ltx.beginPath();ltx.arc(32,32,28,0,Math.PI*2);ltx.fill();
       ltx.fillStyle=idx<2?'#cc2222':'#2255cc';ltx.beginPath();ltx.arc(32,32,24,0,Math.PI*2);ltx.fill();
+      ltx.save();ltx.translate(64,0);ltx.scale(-1,1);
       ltx.fillStyle='#ffffff';ltx.font='bold 26px Arial';ltx.textAlign='center';ltx.textBaseline='middle';
       ltx.fillText(labels[idx],32,32);
+      ltx.restore();
       var lt=new THREE.CanvasTexture(ltc);
       var lm=new THREE.Mesh(new THREE.PlaneGeometry(0.03,0.03),new THREE.MeshBasicMaterial({map:lt,transparent:true,side:2}));
       lm.position.set(np[0],np[1],-C.frameTh/2-C.nozzleLen-C.flangeTh-0.005);
@@ -554,7 +612,8 @@ function buildAssembly(){
   if(heatGroup&&scene)scene.remove(heatGroup);
   heatGroup=new THREE.Group();
   var gap=C.plateGap+C.plateTh;
-  var packLen=Math.max(0,(nPlates-1)*gap);
+  var visPlates=Math.min(nPlates,20);
+  var packLen=Math.max(0,(visPlates-1)*gap);
   var frontZ=-packLen/2-C.frameTh/2-0.006;
   var backZ=packLen/2+C.frameTh/2+0.006;
   var midZ=(frontZ+backZ)/2;
@@ -567,29 +626,22 @@ function buildAssembly(){
 
   plateGroup=new THREE.Group();
   var plateGeo=makePlateGeo();
-  for(var i=0;i<nPlates;i++){
+  var gkGeo=makeGasketGeo();
+  for(var i=0;i<visPlates;i++){
     var zm=new THREE.Mesh(plateGeo,MAT.plate);
     zm.position.z=-packLen/2+i*gap;
     zm.castShadow=true;zm.receiveShadow=true;
     plateGroup.add(zm);
 
-    var gkGeo=new THREE.RingGeometry(C.frameW*0.16,C.frameW*0.19,24);
     var gk=new THREE.Mesh(gkGeo,MAT.gasket);
     gk.position.z=zm.position.z+0.001;
     plateGroup.add(gk);
-
-    if(i<nPlates-1){
-      var gkOuterGeo=new THREE.RingGeometry(C.frameW*0.44,C.frameW*0.47,24);
-      var gkOuter=new THREE.Mesh(gkOuterGeo,MAT.gasket);
-      gkOuter.position.z=zm.position.z+gap/2+0.001;
-      plateGroup.add(gkOuter);
-    }
   }
   heatGroup.add(plateGroup);
 
   var guideLen=totalSpan+0.06;
   [C.guideYTop,C.guideYBot].forEach(function(gy){
-    var guide=new THREE.Mesh(new THREE.CylinderGeometry(C.guideR,C.guideR,guideLen,16),MAT.bolt);
+    var guide=new THREE.Mesh(new THREE.CylinderGeometry(C.guideR,C.guideR,guideLen,8),MAT.bolt);
     guide.rotation.x=Math.PI/2;guide.position.set(0,gy,midZ);heatGroup.add(guide);
   });
   C.boltPos.forEach(function(bp){
@@ -638,20 +690,21 @@ function buildFlowSystem(){
   flowGroup=new THREE.Group();
   flowParticles=[];
   var gap=C.plateGap+C.plateTh;
-  var packLen=Math.max(0,(nPlates-1)*gap);
+  var visPlates=Math.min(nPlates,20);
+  var packLen=Math.max(0,(visPlates-1)*gap);
   var frontZ=-packLen/2-C.frameTh/2-0.006;
 
-  var nHot=Math.ceil(nPlates/2);
-  var nCold=Math.floor(nPlates/2);
-  var ppc=8;
+  var nHot=Math.ceil(visPlates/2);
+  var nCold=Math.floor(visPlates/2);
+  var ppc=5;
 
-  var hotGeo=new THREE.SphereGeometry(0.012,8,8);
+  var hotGeo=new THREE.SphereGeometry(0.012,6,6);
   var hotMat=new THREE.MeshPhongMaterial({color:0xff2200,emissive:0x440000,transparent:true,opacity:0.9});
   var hotMesh=new THREE.InstancedMesh(hotGeo,hotMat,nHot*ppc);
   hotMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
   flowGroup.add(hotMesh);
 
-  var coldGeo=new THREE.SphereGeometry(0.012,8,8);
+  var coldGeo=new THREE.SphereGeometry(0.012,6,6);
   var coldMat=new THREE.MeshPhongMaterial({color:0x0055ff,emissive:0x001144,transparent:true,opacity:0.9});
   var coldMesh=new THREE.InstancedMesh(coldGeo,coldMat,nCold*ppc);
   coldMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
@@ -728,7 +781,7 @@ function init3D(){
   scene.add(new THREE.HemisphereLight(0xddeeff,0x888888,0.4));
   var dl=new THREE.DirectionalLight(0xffffff,0.85);
   dl.position.set(2,4,3);dl.castShadow=true;
-  dl.shadow.mapSize.set(1024,1024);
+  dl.shadow.mapSize.set(512,512);
   dl.shadow.camera.near=0.1;dl.shadow.camera.far=15;
   dl.shadow.camera.left=-1;dl.shadow.camera.right=1;dl.shadow.camera.top=1;dl.shadow.camera.bottom=-1;
   scene.add(dl);
