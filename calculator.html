@@ -460,8 +460,8 @@ function initMAT(){
   var op=xrayOn?0.25:1.0;
   MAT.frameF=new THREE.MeshPhongMaterial({color:0x1a3a8a,specular:0x444444,shininess:25,transparent:xrayOn,opacity:op});
   MAT.frameB=new THREE.MeshPhongMaterial({color:0xcc2222,specular:0x444444,shininess:25,transparent:xrayOn,opacity:op});
-  MAT.plate=new THREE.MeshPhongMaterial({color:0xc0c0c0,specular:0x999999,shininess:50,side:2,transparent:xrayOn,opacity:xrayOn?0.12:1,map:makePlateTexture()});
-  MAT.gasket=new THREE.MeshPhongMaterial({color:0x111111,specular:0x222222,shininess:5,side:2});
+  MAT.plate=new THREE.MeshPhongMaterial({color:0xd0d0d0,specular:0xaaaaaa,shininess:60,side:2,transparent:xrayOn,opacity:xrayOn?0.12:1,map:makePlateTexture()});
+  MAT.gasket=new THREE.MeshPhongMaterial({color:0x1a1a1a,specular:0x111111,shininess:3,side:2});
   MAT.nozzle=new THREE.MeshPhongMaterial({color:0x888888,specular:0xaaaaaa,shininess:40});
   MAT.flange=new THREE.MeshPhongMaterial({color:0x777777,specular:0x999999,shininess:50});
   MAT.bolt=new THREE.MeshPhongMaterial({color:0x888888,specular:0xaaaaaa,shininess:50});
@@ -478,28 +478,28 @@ function makePlateTexture(){
   if(_plateTexCache)return _plateTexCache;
   var c=document.createElement('canvas');c.width=256;c.height=512;
   var ctx=c.getContext('2d');
-  ctx.fillStyle='#b8b8b8';ctx.fillRect(0,0,256,512);
-  ctx.strokeStyle='#999999';ctx.lineWidth=2;
-  var size=16;
-  for(var y=-512;y<1024;y+=size){
+  ctx.fillStyle='#c8c8c8';ctx.fillRect(0,0,256,512);
+  ctx.strokeStyle='#a0a0a0';ctx.lineWidth=2;
+  var sz=18;
+  for(var y=-512;y<1024;y+=sz){
     ctx.beginPath();ctx.moveTo(128,y);ctx.lineTo(256,y+256);ctx.stroke();
     ctx.beginPath();ctx.moveTo(128,y);ctx.lineTo(0,y+256);ctx.stroke();
   }
-  ctx.strokeStyle='#aaaaaa';ctx.lineWidth=1;
-  for(var y=-512;y<1024;y+=size/2){
+  ctx.strokeStyle='#b5b5b5';ctx.lineWidth=1;
+  for(var y=-512;y<1024;y+=sz/2){
     ctx.beginPath();ctx.moveTo(128,y);ctx.lineTo(256,y+256);ctx.stroke();
     ctx.beginPath();ctx.moveTo(128,y);ctx.lineTo(0,y+256);ctx.stroke();
   }
-  ctx.fillStyle='#888888';
-  ctx.beginPath();ctx.arc(64,50,28,0,Math.PI*2);ctx.fill();
-  ctx.beginPath();ctx.arc(192,50,28,0,Math.PI*2);ctx.fill();
-  ctx.beginPath();ctx.arc(64,462,28,0,Math.PI*2);ctx.fill();
-  ctx.beginPath();ctx.arc(192,462,28,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#b0b0b0';
-  ctx.beginPath();ctx.arc(64,50,24,0,Math.PI*2);ctx.fill();
-  ctx.beginPath();ctx.arc(192,50,24,0,Math.PI*2);ctx.fill();
-  ctx.beginPath();ctx.arc(64,462,24,0,Math.PI*2);ctx.fill();
-  ctx.beginPath();ctx.arc(192,462,24,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#999999';
+  ctx.beginPath();ctx.arc(64,50,26,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(192,50,26,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(64,462,26,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(192,462,26,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#b8b8b8';
+  ctx.beginPath();ctx.arc(64,50,22,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(192,50,22,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(64,462,22,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(192,462,22,0,Math.PI*2);ctx.fill();
   _plateTexCache=new THREE.CanvasTexture(c);
   _plateTexCache.wrapS=_plateTexCache.wrapT=THREE.RepeatWrapping;
   return _plateTexCache;
@@ -565,6 +565,17 @@ function makeFrameGroup(z,isFront){
     rib.position.set(0,y,zOff);g.add(rib);
   }
 
+  var edgeBoltGeo=new THREE.CylinderGeometry(0.006,0.006,0.012,6);
+  var edgeBoltPositions=[];
+  var ebw=C.frameW*0.46,ebh=C.frameH*0.46;
+  for(var bx=-ebw;bx<=ebw;bx+=ebw/4){edgeBoltPositions.push([bx,-ebh]);edgeBoltPositions.push([bx,ebh]);}
+  for(var by=-ebh+ebh/4;by<ebh;by+=ebh/3){edgeBoltPositions.push([-ebw,by]);edgeBoltPositions.push([ebw,by]);}
+  edgeBoltPositions.forEach(function(bp){
+    var eb=new THREE.Mesh(edgeBoltGeo,MAT.nut);
+    var zOff=isFront?-C.frameTh/2-0.006:C.frameTh/2+0.006;
+    eb.position.set(bp[0],bp[1],zOff);g.add(eb);
+  });
+
   if(isFront){
     C.nozzlePos.forEach(function(np,idx){
       var pipe=new THREE.Mesh(new THREE.CylinderGeometry(C.nozzleR,C.nozzleR,C.nozzleLen,12),MAT.nozzle);
@@ -589,45 +600,37 @@ function makeFrameGroup(z,isFront){
 
     var tc=document.createElement('canvas');tc.width=1024;tc.height=256;
     var tx=tc.getContext('2d');
-    tx.fillStyle='#ffffff';tx.fillRect(0,0,1024,256);
-    tx.save();tx.translate(1024,0);tx.scale(-1,1);
-    tx.fillStyle='#cc2222';
-    tx.beginPath();
-    tx.moveTo(128,20);tx.bezierCurveTo(148,10,168,5,178,25);
-    tx.bezierCurveTo(188,45,168,55,158,50);
-    tx.bezierCurveTo(168,60,188,65,178,85);
-    tx.bezierCurveTo(168,105,148,100,128,90);
-    tx.bezierCurveTo(108,100,88,105,78,85);
-    tx.bezierCurveTo(68,65,88,60,98,50);
-    tx.bezierCurveTo(88,55,68,45,78,25);
-    tx.bezierCurveTo(88,5,108,10,128,20);tx.fill();
-    tx.beginPath();
-    tx.moveTo(128,45);tx.lineTo(122,88);tx.lineTo(128,80);tx.lineTo(134,88);tx.closePath();tx.fill();
-    tx.fillStyle='#1a3a8a';tx.font='bold 90px Arial';tx.textAlign='center';tx.textBaseline='middle';
-    tx.fillText('\u0424\u0415\u041D\u0418\u041A\u0421',512,100);
-    tx.fillStyle='#666666';tx.font='36px Arial';
-    tx.fillText('Phoenix Heat Exchangers \u2014 \u0420\u043E\u0441\u0442\u043E\u0432-\u043D\u0430-\u0414\u043E\u043D\u0443',512,185);
+    tx.fillStyle='#c0c0c0';tx.fillRect(0,0,1024,256);
+    tx.strokeStyle='#a0a0a0';tx.lineWidth=1;tx.strokeRect(2,2,1020,252);
+    tx.save();tx.translate(512,0);
+    tx.strokeStyle='#cc3333';tx.lineWidth=8;tx.lineCap='round';
+    tx.beginPath();tx.moveTo(-300,40);tx.bezierCurveTo(-260,20,-220,60,-250,80);
+    tx.bezierCurveTo(-280,100,-310,60,-300,40);tx.stroke();
+    tx.beginPath();tx.moveTo(-300,60);tx.lineTo(-250,60);tx.stroke();
+    tx.strokeStyle='#2255cc';tx.lineWidth=8;
+    tx.beginPath();tx.moveTo(-270,30);tx.bezierCurveTo(-230,50,-210,90,-240,80);
+    tx.bezierCurveTo(-270,70,-290,30,-270,30);tx.stroke();
+    tx.beginPath();tx.moveTo(-270,50);tx.lineTo(-240,70);tx.stroke();
+    tx.fillStyle='#1a3a8a';tx.font='bold 80px Arial';tx.textAlign='center';tx.textBaseline='middle';
+    tx.fillText('\u0424\u0415\u041D\u0418\u041A\u0421',0,130);
     tx.restore();
     var tt=new THREE.CanvasTexture(tc);tt.minFilter=THREE.LinearFilter;
     var tp=new THREE.Mesh(
-      new THREE.PlaneGeometry(C.frameW*0.40,C.frameH*0.18),
+      new THREE.PlaneGeometry(C.frameW*0.42,C.frameH*0.18),
       new THREE.MeshBasicMaterial({map:tt,side:2})
     );
     tp.position.set(0,0,-C.frameTh/2-0.004);g.add(tp);
 
-    var labels=['П1','П2','П3','П4'];
+    var labels=['\u041F1','\u041F4','\u041F2','\u041F3'];
     C.nozzlePos.forEach(function(np,idx){
-      var ltc=document.createElement('canvas');ltc.width=128;ltc.height=128;
+      var ltc=document.createElement('canvas');ltc.width=128;ltc.height=64;
       var ltx=ltc.getContext('2d');
-      ltx.fillStyle='#ffffff';ltx.beginPath();ltx.arc(64,64,58,0,Math.PI*2);ltx.fill();
-      ltx.fillStyle=idx<2?'#cc2222':'#2255cc';ltx.beginPath();ltx.arc(64,64,50,0,Math.PI*2);ltx.fill();
-      ltx.save();ltx.translate(128,0);ltx.scale(-1,1);
-      ltx.fillStyle='#ffffff';ltx.font='bold 48px Arial';ltx.textAlign='center';ltx.textBaseline='middle';
-      ltx.fillText(labels[idx],64,68);
-      ltx.restore();
+      ltx.clearRect(0,0,128,64);
+      ltx.fillStyle='#ffffff';ltx.font='bold 42px Arial';ltx.textAlign='center';ltx.textBaseline='middle';
+      ltx.fillText(labels[idx],64,32);
       var lt=new THREE.CanvasTexture(ltc);lt.minFilter=THREE.LinearFilter;
-      var lm=new THREE.Mesh(new THREE.PlaneGeometry(0.04,0.04),new THREE.MeshBasicMaterial({map:lt,transparent:true,side:2}));
-      lm.position.set(np[0],np[1],-C.frameTh/2-C.nozzleLen-C.flangeTh-0.005);
+      var lm=new THREE.Mesh(new THREE.PlaneGeometry(0.05,0.025),new THREE.MeshBasicMaterial({map:lt,transparent:true,side:2}));
+      lm.position.set(np[0],np[1]-C.flangeR-0.02,-C.frameTh/2-C.nozzleLen-C.flangeTh-0.005);
       g.add(lm);
     });
   }
