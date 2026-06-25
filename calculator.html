@@ -846,17 +846,18 @@ function init3D(){
   scene.add(new THREE.AmbientLight(0xffffff,0.5));
   scene.add(new THREE.HemisphereLight(0xddeeff,0x888888,0.4));
   var dl=new THREE.DirectionalLight(0xffffff,0.85);
-  dl.position.set(2,4,3);dl.castShadow=true;
-  dl.shadow.mapSize.set(512,512);
-  dl.shadow.camera.near=0.1;dl.shadow.camera.far=15;
-  dl.shadow.camera.left=-1;dl.shadow.camera.right=1;dl.shadow.camera.top=1;dl.shadow.camera.bottom=-1;
+  dl.position.set(1.5,3,2);dl.castShadow=true;
+  dl.shadow.mapSize.set(1024,1024);
+  dl.shadow.camera.near=0.5;dl.shadow.camera.far=12;
+  dl.shadow.camera.left=-1.2;dl.shadow.camera.right=1.2;dl.shadow.camera.top=1.2;dl.shadow.camera.bottom=-1.2;
+  dl.shadow.bias=-0.002;
   scene.add(dl);
   scene.add(new THREE.DirectionalLight(0xe0e8f0,0.3).translateX(-3).translateY(2));
   scene.add(new THREE.DirectionalLight(0xffffff,0.25).translateZ(3));
   var fl=new THREE.DirectionalLight(0xffffff,0.15);fl.position.set(-1,-2,2);scene.add(fl);
 
-  var ground=new THREE.Mesh(new THREE.PlaneGeometry(5,5),new THREE.ShadowMaterial({opacity:0.15}));
-  ground.rotation.x=-Math.PI/2;ground.position.y=-0.01;ground.receiveShadow=true;scene.add(ground);
+  var ground=new THREE.Mesh(new THREE.PlaneGeometry(6,6),new THREE.ShadowMaterial({opacity:0.18}));
+  ground.rotation.x=-Math.PI/2;ground.position.y=-0.02;ground.receiveShadow=true;scene.add(ground);
 
   scaleCforModel(document.getElementById('plate_model').value);
   initMAT();buildAssembly();
