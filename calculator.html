@@ -606,45 +606,23 @@ function makeFrameGroup(z,isFront){
       }
     });
 
-    var tc=document.createElement('canvas');tc.width=1024;tc.height=512;
-    var tx=tc.getContext('2d');
-    tx.fillStyle='#1a3a8a';tx.fillRect(0,0,1024,512);
-    tx.strokeStyle='#ffffff';tx.lineWidth=3;tx.strokeRect(6,6,1012,500);
+    var plateW=C.frameW*0.40,plateH=C.frameH*0.20;
+    var plateMesh=new THREE.Mesh(
+      new THREE.BoxGeometry(plateW,plateH,0.004),
+      new THREE.MeshStandardMaterial({color:0x1a3a8a,metalness:0.55,roughness:0.35})
+    );
+    plateMesh.position.set(0,0,-C.frameTh/2-0.004);
+    addEdges(plateMesh,0xffffff);
+    g.add(plateMesh);
 
-    function drawF(cx,cy,scale,color){
-      tx.save();tx.translate(cx,cy);tx.scale(scale,scale);
-      tx.strokeStyle=color;tx.lineWidth=18;tx.lineCap='round';tx.lineJoin='round';
-      tx.beginPath();tx.ellipse(0,0,38,72,0,0,Math.PI*2);tx.stroke();
-      tx.beginPath();tx.moveTo(0,-72);tx.lineTo(0,72);tx.stroke();
-      tx.beginPath();tx.moveTo(-48,-14);tx.lineTo(48,-14);tx.stroke();
-      tx.beginPath();tx.moveTo(-48,14);tx.lineTo(48,14);tx.stroke();
-      tx.lineWidth=8;tx.strokeStyle='rgba(255,255,255,0.35)';
-      tx.beginPath();tx.moveTo(-20,-60);tx.lineTo(-20,-20);tx.stroke();
-      tx.beginPath();tx.moveTo(-40,-14);tx.lineTo(-10,-14);tx.stroke();
-      tx.restore();
-    }
-    drawF(440,160,1.0,'#e8e8e8');
-    drawF(584,160,1.0,'#cc2222');
-
-    tx.save();tx.translate(440,160);
-    tx.strokeStyle='rgba(255,255,255,0.5)';tx.lineWidth=18;tx.lineCap='round';
-    tx.beginPath();tx.ellipse(0,0,38,72,0,Math.PI*1.2,Math.PI*1.8);tx.stroke();
-    tx.restore();
-    tx.save();tx.translate(584,160);
-    tx.strokeStyle='rgba(255,255,255,0.5)';tx.lineWidth=18;tx.lineCap='round';
-    tx.beginPath();tx.ellipse(0,0,38,72,0,Math.PI*0.2,Math.PI*0.8);tx.stroke();
-    tx.restore();
-
-    tx.save();tx.translate(512,390);
-    tx.fillStyle='#ffffff';tx.font='bold 96px Arial';tx.textAlign='center';tx.textBaseline='middle';
-    tx.fillText('\u0424\u0415\u041D\u0418\u041A\u0421',0,0);
-    tx.restore();
-
-    var tt=new THREE.CanvasTexture(tc);tt.minFilter=THREE.LinearFilter;
-    var tp=new THREE.Sprite(new THREE.SpriteMaterial({map:tt,depthWrite:false}));
-    tp.position.set(0,0,-C.frameTh/2-0.002);
-    tp.scale.set(C.frameW*0.35,C.frameH*0.28,1);
-    g.add(tp);
+    var logoTex=new THREE.TextureLoader().load('logo.png');
+    logoTex.minFilter=THREE.LinearFilter;
+    var logoMesh=new THREE.Mesh(
+      new THREE.PlaneGeometry(plateW*0.88,plateH*0.76),
+      new THREE.MeshBasicMaterial({map:logoTex,transparent:true,side:THREE.FrontSide})
+    );
+    logoMesh.position.set(0,0,-C.frameTh/2-0.0065);
+    g.add(logoMesh);
 
     var labels=['\u041F1','\u041F4','\u041F2','\u041F3'];
     C.nozzlePos.forEach(function(np,idx){
@@ -936,7 +914,7 @@ function init3D(){
   renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
   renderer.setSize(w,h);
-  renderer.shadowMap.enabled=true;
+  renderer.shadowMap.enabled=false;
   renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
   renderer.domElement.id='canvas3d';
@@ -945,7 +923,7 @@ function init3D(){
   scene.add(new THREE.AmbientLight(0xffffff,0.45));
   scene.add(new THREE.HemisphereLight(0xddeeff,0x888888,0.3));
   var dl=new THREE.DirectionalLight(0xffffff,1.0);
-  dl.position.set(4,8,5);dl.castShadow=true;
+  dl.position.set(4,8,5);
   dl.shadow.mapSize.set(1024,1024);
   dl.shadow.camera.near=0.5;dl.shadow.camera.far=15;
   dl.shadow.camera.left=-2.0;dl.shadow.camera.right=2.0;dl.shadow.camera.top=2.0;dl.shadow.camera.bottom=-2.0;
@@ -965,8 +943,8 @@ function init3D(){
   envTex.mapping=THREE.EquirectangularReflectionMapping;
   scene.environment=envTex;
 
-  var ground=new THREE.Mesh(new THREE.PlaneGeometry(8,8),new THREE.ShadowMaterial({opacity:0.25}));
-  ground.rotation.x=-Math.PI/2;ground.position.y=-0.02;ground.receiveShadow=true;scene.add(ground);
+  var ground=new THREE.Mesh(new THREE.PlaneGeometry(8,8),new THREE.MeshBasicMaterial({color:0xeef1f5}));
+  ground.rotation.x=-Math.PI/2;ground.position.y=-0.02;scene.add(ground);
 
   bumpLoad(70,'Построение модели...');
   scaleCforModel(document.getElementById('plate_model').value);
