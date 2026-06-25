@@ -1,45 +1,547 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" content="0;url=calculator-app/index.html">
-  <title>Калькулятор теплообменников — AIPhoenix</title>
-  <style>
-    body {
-      background: #f9f7f3;
-      font-family: 'Caveat', cursive;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-    }
-    .loader {
-      text-align: center;
-      font-size: 1.5rem;
-      color: #636e72;
-    }
-    .loader::after {
-      content: '';
-      display: block;
-      width: 40px;
-      height: 40px;
-      margin: 20px auto;
-      border: 4px solid #e0e0e0;
-      border-top: 4px solid #d63031;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Калькулятор теплообменников — AIPhoenix</title>
+<link rel="stylesheet" href="shared.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Architects+Daughter&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f9f7f3;font-family:'Caveat',cursive;color:#2d3436;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 31px,rgba(45,52,54,.06) 31px,rgba(45,52,54,.06) 32px),
+    repeating-linear-gradient(90deg,transparent,transparent 31px,rgba(45,52,54,.04) 31px,rgba(45,52,54,.04) 32px);
+  background-size:32px 32px}
+
+.sketchy{border:2.5px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;background:#fffefc;box-shadow:3px 6px 0 rgba(45,52,54,.07);position:relative}
+.sketchy:hover{transform:rotate(-.5deg) scale(1.005);box-shadow:5px 10px 0 rgba(45,52,54,.1)}
+.tag{border:2px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:6px 16px;display:inline-block;background:#fffefc;font-family:'Architects Daughter',cursive;font-size:.95rem;cursor:pointer;transition:all .15s;box-shadow:1px 2px 0 rgba(45,52,54,.08);user-select:none}
+.tag:hover{background:#2d3436;color:#fff;transform:rotate(-1deg) scale(1.04)}
+.tag.active{background:#2d3436;color:#fff}
+
+.nav-link{border:2px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:8px 18px;background:#fffefc;transition:all .2s;text-decoration:none;color:#2d3436;font-family:'Architects Daughter',cursive;font-size:1.05rem;display:inline-flex;align-items:center;gap:6px;user-select:none}
+.nav-link:hover,.nav-link:active{background:#2d3436;color:#fff;transform:rotate(-2deg) scale(1.04)}
+.nav-link.active{background:#2d3436;color:#fff}
+.nav-link svg{width:18px;height:18px;flex-shrink:0}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .6s ease-out both}
+
+input[type=number],select{background:#fff;border:2px solid #2d3436;color:#2d3436;padding:8px 12px;border-radius:12px;font-family:'Architects Daughter',cursive;font-size:.95rem;width:100%;transition:all .2s;outline:none;-webkit-appearance:none}
+input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 rgba(9,132,227,.15)}
+
+.btn-calc{padding:12px 32px;background:#2d3436;color:#fff;border:2.5px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;font-family:'Architects Daughter',cursive;font-size:1.1rem;cursor:pointer;transition:all .2s;box-shadow:3px 4px 0 rgba(45,52,54,.15);user-select:none}
+.btn-calc:hover{background:#636e72;transform:rotate(-1deg) scale(1.03);box-shadow:4px 6px 0 rgba(45,52,54,.2)}
+.btn-calc:active{transform:scale(.97);box-shadow:1px 2px 0 rgba(45,52,54,.15)}
+
+.result-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.result-cell{text-align:center;padding:10px 6px;background:#fff;border:2px solid #2d3436;border-radius:16px 8px 14px 8px/8px 14px 8px 16px}
+.result-cell .val{font-size:1.4rem;font-weight:700;color:#d63031}
+.result-cell .lbl{font-size:.8rem;color:#636e72;font-family:'Architects Daughter',cursive}
+
+.field-error input,.field-error select{border-color:#d63031!important;box-shadow:0 0 0 2px rgba(214,48,49,.25)!important;background:#fff5f5!important}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
+.field-error{animation:shake .4s ease}
+
+#error-box{display:none;background:#fff5f5;border:2.5px solid #d63031;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:14px 18px;font-family:'Architects Daughter',cursive;color:#c0392b;font-size:.95rem;line-height:1.5}
+#error-box::before{content:'\26A0';font-size:1.3rem;margin-right:6px}
+#error-box.visible{display:block;animation:fadeUp .3s ease-out}
+#error-box ul{margin:6px 0 0 18px;padding:0;list-style:none}
+#error-box li{position:relative;padding-left:14px;margin:3px 0}
+#error-box li::before{content:'\2192';position:absolute;left:0;color:#d63031;font-weight:700}
+
+.slider-wrap{display:flex;align-items:center;gap:10px;width:100%}
+.slider-wrap input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;background:linear-gradient(90deg,#d63031,#0984e3);border-radius:3px;outline:none;cursor:pointer}
+.slider-wrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#2d3436;border:3px solid #fff;box-shadow:0 0 0 2px #2d3436;cursor:grab}
+.slider-val{font-family:'Architects Daughter',cursive;font-size:.85rem;color:#636e72;min-width:36px;text-align:right}
+
+#canvas3d{width:100%;height:100%;display:block;border-radius:12px;cursor:grab;touch-action:none}
+#canvas3d:active{cursor:grabbing}
+
+@media(max-width:768px){
+  body{padding:8px}
+  .nav-link{padding:6px 10px;font-size:.82rem;gap:3px}
+  .nav-link svg{width:14px;height:14px}
+  h1{font-size:1.6rem!important;line-height:1.2}
+  .section-card{padding:12px!important}
+  .section-card h3{font-size:1.15rem!important;margin-bottom:8px!important}
+  .section-card label{font-size:.75rem!important}
+  .section-card input,.section-card select{padding:10px 12px;font-size:1rem;min-height:44px}
+  .btn-calc{padding:14px 24px;font-size:1.15rem;width:100%;min-height:50px}
+  .result-row{grid-template-columns:repeat(3,1fr);gap:6px}
+  .result-cell{padding:8px 4px}
+  .result-cell .val{font-size:1.1rem}
+  .result-cell .lbl{font-size:.7rem}
+  .canvas-wrap{height:300px!important;min-height:280px!important}
+  .form-3d-layout{flex-direction:column!important}
+  .form-panel{width:100%!important;flex-shrink:0!important}
+}
+</style>
 </head>
-<body>
-  <div class="loader">
-    Загрузка калькулятора...
-    <br><small>Если не перенаправляет — <a href="calculator-app/index.html">нажмите сюда</a></small>
+<body class="min-h-screen p-2 md:p-8 overflow-x-hidden">
+
+<nav class="max-w-7xl mx-auto mb-4 md:mb-6 flex flex-wrap justify-center gap-1.5 md:gap-3 relative z-10">
+  <a href="index.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/></svg><span class="nav-text">Главная</span></a>
+  <a href="catalog.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span class="nav-text">Каталог</span></a>
+  <a href="products.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8h20"/></svg><span class="nav-text">Товары</span></a>
+  <a href="calculator.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16"/><path d="M9 4v16"/></svg><span class="nav-text">Калькулятор</span></a>
+  <a href="hardware.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg><span class="nav-text">Железо</span></a>
+  <a href="seo.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 5-9"/></svg><span class="nav-text">SEO</span></a>
+</nav>
+
+<header class="max-w-7xl mx-auto mb-4 md:mb-6 text-center relative z-10">
+  <h1 class="page-title text-3xl md:text-5xl font-bold mb-1 md:mb-2" style="font-family:'Caveat',cursive">Калькулятор теплообменников Феникс</h1>
+  <p class="page-subtitle text-base md:text-xl font-bold" style="color:#636e72;font-family:'Architects Daughter',cursive">Расчёт мощности, подбор пластин APR-4/7/21/43/84/100 и 3D-визуализация</p>
+</header>
+
+<div class="max-w-7xl mx-auto relative z-10 flex form-3d-layout gap-4 md:gap-6">
+
+  <!-- Форма -->
+  <div class="form-panel lg:w-[370px] flex-shrink-0 space-y-3 md:space-y-4">
+
+    <div class="section-card sketchy p-3 md:p-5 fade-up">
+      <h3 class="text-xl font-bold mb-3" style="color:#d63031;font-family:'Caveat',cursive">Горячая сторона</h3>
+      <div class="space-y-3">
+        <div><label class="text-sm font-bold" style="color:#636e72">Среда</label>
+          <select id="hot_medium">
+            <option value="water">Вода</option>
+            <option value="glycol30">Гликоль 30%</option>
+            <option value="glycol50">Гликоль 50%</option>
+            <option value="oil">Масло</option>
+            <option value="steam">Пар</option>
+          </select></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="text-sm font-bold" style="color:#636e72">Расход, т/ч</label><input type="number" id="hot_flow" value="25" min="0" step="0.1" inputmode="decimal"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">dP, м.в.ст.</label><input type="number" id="hot_dp" value="2.93" min="0" step="0.01" inputmode="decimal"></div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="text-sm font-bold" style="color:#636e72">T вход, C</label><input type="number" id="hot_tin" value="120" min="0" max="200" inputmode="numeric"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">T выход, C</label><input type="number" id="hot_tout" value="90" min="0" max="200" inputmode="numeric"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card sketchy p-3 md:p-5 fade-up">
+      <h3 class="text-xl font-bold mb-3" style="color:#0984e3;font-family:'Caveat',cursive">Холодная сторона</h3>
+      <div class="space-y-3">
+        <div><label class="text-sm font-bold" style="color:#636e72">Среда</label>
+          <select id="cold_medium">
+            <option value="water">Вода</option>
+            <option value="glycol30">Гликоль 30%</option>
+            <option value="glycol50">Гликоль 50%</option>
+            <option value="oil">Масло</option>
+          </select></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="text-sm font-bold" style="color:#636e72">Расход, т/ч</label><input type="number" id="cold_flow" value="13.78" min="0" step="0.01" inputmode="decimal"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">dP, м.в.ст.</label><input type="number" id="cold_dp" value="1.13" min="0" step="0.01" inputmode="decimal"></div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="text-sm font-bold" style="color:#636e72">T вход, C</label><input type="number" id="cold_tin" value="5" min="0" max="200" inputmode="numeric"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">T выход, C</label><input type="number" id="cold_tout" value="60" min="0" max="200" inputmode="numeric"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card sketchy p-3 md:p-5 fade-up">
+      <h3 class="text-xl font-bold mb-3" style="font-family:'Caveat',cursive">Параметры аппарата</h3>
+      <div class="space-y-3">
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="text-sm font-bold" style="color:#636e72">Материал</label>
+            <select id="plate_material">
+              <option value="AISI316">AISI 316</option>
+              <option value="AISI304">AISI 304</option>
+              <option value="Titanium">Титан</option>
+            </select></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">Уплотнения</label>
+            <select id="gasket_material">
+              <option value="EPDM">EPDM</option>
+              <option value="NBR">NBR</option>
+              <option value="Viton">Viton</option>
+            </select></div>
+        </div>
+        <div><label class="text-sm font-bold" style="color:#636e72">Модель пластины</label>
+          <select id="plate_model">
+            <option value="APR-4">APR-4 (0.03 м2)</option>
+            <option value="APR-7" selected>APR-7 (0.23 м2)</option>
+            <option value="APR-21">APR-21 (0.042 м2)</option>
+            <option value="APR-43">APR-43 (0.442 м2)</option>
+            <option value="APR-84">APR-84 (0.646 м2)</option>
+            <option value="APR-100">APR-100 (1.0 м2)</option>
+            <option value="TP-B-0.35">TP-B-0.35 (0.099 м2)</option>
+            <option value="TP-B-0.70">TP-B-0.70 (0.70 м2)</option>
+          </select></div>
+        <div><label class="text-sm font-bold" style="color:#636e72">Запас поверхности, %</label><input type="number" id="surface_reserve" value="10" min="0" max="50" inputmode="numeric"></div>
+      </div>
+    </div>
+
+    <button onclick="doCalc()" class="btn-calc w-full" id="btnCalc">Рассчитать теплообменник</button>
+
+    <div id="error-box"></div>
+
+    <div id="results" class="section-card sketchy p-3 md:p-5 fade-up hidden" style="background:linear-gradient(135deg,#fffdf7,#fff5eb);border-color:#d63031">
+      <h3 class="text-xl font-bold mb-2" style="color:#d63031;font-family:'Caveat',cursive">Результат расчёта</h3>
+      <div class="result-row">
+        <div class="result-cell"><div class="val" id="r_power">-</div><div class="lbl">Мощность, кВт</div></div>
+        <div class="result-cell"><div class="val" id="r_area">-</div><div class="lbl">Площадь, м2</div></div>
+        <div class="result-cell"><div class="val" id="r_plates">-</div><div class="lbl">Пластин</div></div>
+      </div>
+      <div class="result-row" style="grid-template-columns:1fr 1fr;margin-top:8px">
+        <div class="result-cell"><div class="val" style="font-size:1rem" id="r_model">-</div><div class="lbl">Модель</div></div>
+        <div class="result-cell"><div class="val" style="font-size:1rem" id="r_dT">-</div><div class="lbl">dT лн, C</div></div>
+      </div>
+    </div>
   </div>
+
+  <!-- 3D Viewer -->
+  <div class="flex-1">
+    <div class="section-card sketchy p-2 md:p-3 fade-up canvas-wrap" style="min-height:500px;position:relative">
+      <div id="viewer-container" style="width:100%;min-height:500px;position:relative;border-radius:12px;overflow:hidden;background:#f5f5f5">
+        <div id="viewer-loading" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font-family:'Architects Daughter',cursive;color:#636e72;z-index:10">
+          <div style="width:40px;height:40px;border:4px solid #e0e0e0;border-top:4px solid #d63031;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 10px"></div>
+          Загрузка 3D-модели...
+        </div>
+      </div>
+
+      <div id="bp-controls" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.92);border:2px solid #2d3436;border-radius:16px 8px 14px 8px/8px 14px 8px 16px;padding:10px 16px;min-width:280px;box-shadow:2px 4px 0 rgba(45,52,54,.1);backdrop-filter:blur(4px);z-index:10">
+        <div style="font-family:'Architects Daughter',cursive;font-size:.8rem;color:#2d3436;margin-bottom:6px;font-weight:bold">Explode / Слои</div>
+        <div class="slider-wrap">
+          <input type="range" id="explodeSlider" min="0" max="10" step="0.1" value="0">
+          <span class="slider-val" id="explodeVal">0</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px;justify-content:center;flex-wrap:wrap">
+          <span class="tag" id="btn_wireframe" onclick="toggleWireframe()" style="font-size:.8rem;padding:4px 12px">Wireframe</span>
+          <span class="tag" id="btn_flows" onclick="toggleFlows()" style="font-size:.8rem;padding:4px 12px">Потоки</span>
+          <span class="tag" id="btn_reset" onclick="resetView()" style="font-size:.8rem;padding:4px 12px">Сброс</span>
+        </div>
+      </div>
+
+      <div class="text-center mt-1 md:mt-2">
+        <span id="model_info" style="font-family:'Architects Daughter',cursive;color:#636e72;font-size:.85rem">Phoenix 1 SAPR-7 | 31 пластина | AISI 316 | EPDM</span>
+        <div class="flex justify-center gap-3 md:gap-4 mt-1" style="font-size:.7rem;color:#636e72;font-family:'Architects Daughter',cursive">
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#e74c3c;vertical-align:middle"></span> Горячий</span>
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3498db;vertical-align:middle"></span> Холодный</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="max-w-7xl mx-auto mt-2 md:mt-4 mb-4 text-center">
+  <p style="font-size:.8rem;color:#636e72;font-family:'Architects Daughter',cursive">AIPhoenix - Калькулятор теплообменников - Завод Феникс, Ростов-на-Дону</p>
+</footer>
+
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   THERMAL CALCULATION
+   ═══════════════════════════════════════════════════════ */
+var CP={water:4.18,glycol30:3.85,glycol50:3.45,oil:2.0,steam:2.05};
+var PA={'APR-4':0.03,'APR-7':0.23,'APR-21':0.042,'APR-43':0.442,'APR-84':0.646,'APR-100':1.0,'TP-B-0.35':0.099,'TP-B-0.70':0.70};
+var KT={'water-water':{s:3500,h:5500},'water-glycol30':{s:2800,h:4500},'water-glycol50':{s:2400,h:3800},'water-oil':{s:600,h:950},'glycol30-water':{s:2800,h:4500},'oil-water':{s:500,h:800},'steam-water':{s:4000,h:6000}};
+
+function clearErrors(){
+  document.querySelectorAll('.field-error').forEach(function(el){el.classList.remove('field-error')});
+  var eb=document.getElementById('error-box');eb.classList.remove('visible');eb.innerHTML='';
+}
+function markError(id){
+  var el=document.getElementById(id);if(!el)return;
+  var g=el.closest('.grid');if(g)g.classList.add('field-error');
+  else el.parentElement.classList.add('field-error');
+}
+
+function doCalc(){
+  clearErrors();var errors=[];
+  var hm=document.getElementById('hot_medium').value;
+  var cm=document.getElementById('cold_medium').value;
+  var hf=parseFloat(document.getElementById('hot_flow').value)||0;
+  var cf=parseFloat(document.getElementById('cold_flow').value)||0;
+  var t1=parseFloat(document.getElementById('hot_tin').value)||0;
+  var t2=parseFloat(document.getElementById('hot_tout').value)||0;
+  var t3=parseFloat(document.getElementById('cold_tin').value)||0;
+  var t4=parseFloat(document.getElementById('cold_tout').value)||0;
+  var rv=parseFloat(document.getElementById('surface_reserve').value)||10;
+  var pm=document.getElementById('plate_model').value;
+  var pa=PA[pm]||0.042;
+
+  if(hf<=0){errors.push('Расход горячей > 0');markError('hot_flow')}
+  if(cf<=0){errors.push('Расход холодной > 0');markError('cold_flow')}
+  if(t1<=0){errors.push('T вход горячей > 0');markError('hot_tin')}
+  if(t2<=0){errors.push('T выход горячей > 0');markError('hot_tout')}
+  if(t3<0){errors.push('T вход холодной >= 0');markError('cold_tin')}
+  if(t4<=0){errors.push('T выход холодной > 0');markError('cold_tout')}
+  if(t1<=t2){errors.push('T вход горячей ('+t1+') > T выход ('+t2+')');markError('hot_tin');markError('hot_tout')}
+  if(t4<=t3){errors.push('T выход холодной ('+t4+') > T вход ('+t3+')');markError('cold_tin');markError('cold_tout')}
+  if(t3>=t1){errors.push('T вход холодной ('+t3+') < T вход горячей ('+t1+')');markError('cold_tin');markError('hot_tin')}
+  var d1=t1-t4,d2=t2-t3;
+  if(d1<=0){errors.push('T выход холодной ('+t4+') < T вход горячей ('+t1+')');markError('hot_tin');markError('cold_tout')}
+  if(d2<=0){errors.push('T выход горячей ('+t2+') > T вход холодной ('+t3+')');markError('hot_tout');markError('cold_tin')}
+  if(rv<0||rv>50){errors.push('Запас 0-50%');markError('surface_reserve')}
+
+  if(errors.length>0){
+    var eb=document.getElementById('error-box');
+    eb.innerHTML='<strong>Ошибок: '+errors.length+'</strong><ul><li>'+errors.join('</li><li>')+'</li></ul>';
+    eb.classList.add('visible');
+    document.getElementById('results').classList.add('hidden');
+    return;
+  }
+
+  var G=hf/3.6,cp=CP[hm]||4.18,Q=G*cp*(t1-t2);
+  var dT=Math.abs(d1-d2)<0.01?d1:(d1-d2)/Math.log(d1/d2);
+  var k=(KT[hm+'-'+cm]||KT[cm+'-'+hm]||KT['water-water']).h;
+  var F=(Q*1000)/(k*dT);
+  var Fr=F*(1+rv/100);
+  var nP=Math.max(12,Math.ceil(Fr/pa)+2);
+
+  document.getElementById('r_power').textContent=Q.toFixed(1);
+  document.getElementById('r_area').textContent=Fr.toFixed(2);
+  document.getElementById('r_plates').textContent=nP;
+  var mn={'APR-4':'Phoenix 2 SAPR-4','APR-7':'Phoenix 1 SAPR-7','APR-21':'Phoenix APR-21','APR-43':'Phoenix APR-43','APR-84':'Phoenix APR-84','APR-100':'Phoenix APR-100','TP-B-0.35':'Phoenix TP-B-0.35','TP-B-0.70':'Phoenix TP-B-0.70'};
+  document.getElementById('r_model').textContent=mn[pm]||pm;
+  document.getElementById('r_dT').textContent=dT.toFixed(1);
+  document.getElementById('results').classList.remove('hidden');
+  updateModel(nP);
+}
+
+/* ═══════════════════════════════════════════════════════
+   3D VISUALIZATION (Three.js)
+   ═══════════════════════════════════════════════════════ */
+var scene,camera,renderer,group;
+var nPlates=31,explode=0;
+var sph={t:Math.PI/4,p:Math.PI/4,r:12};
+var dragging=false,mx=0,my=0,tick=0,pinchDist=0;
+var PW=2.2,PH=4.5,PT=0.04,PG=0.06,FT=0.4;
+var dots=[];
+var autoRotSpeed=0.004;
+var wireframeMode=false,showFlows=true;
+var meshMaterials=[];
+
+function init3D(){
+  document.getElementById('viewer-loading').style.display='none';
+
+  var container=document.getElementById('viewer-container');
+  var w=container.clientWidth;
+  var h=container.clientHeight||500;
+  if(w<10)w=300;if(h<10)h=300;
+
+  var c=document.createElement('canvas');
+  c.id='canvas3d';
+  c.style.cssText='width:100%;height:100%;display:block;border-radius:12px;cursor:grab;touch-action:none';
+  container.innerHTML='';
+  container.appendChild(c);
+
+  scene=new THREE.Scene();
+  scene.background=new THREE.Color(0xffffff);
+
+  camera=new THREE.PerspectiveCamera(30,w/h,0.1,100);
+  camera.position.set(8,5,8);
+  camera.lookAt(0,0,0);
+
+  renderer=new THREE.WebGLRenderer({canvas:c,antialias:true});
+  renderer.setSize(w,h);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+
+  scene.add(new THREE.AmbientLight(0xffffff,0.8));
+  var dl=new THREE.DirectionalLight(0xffffff,0.5);dl.position.set(10,10,10);scene.add(dl);
+  var dl2=new THREE.DirectionalLight(0xffffff,0.3);dl2.position.set(-10,5,-10);scene.add(dl2);
+
+  group=new THREE.Group();
+  scene.add(group);
+
+  buildModel();
+
+  document.getElementById('explodeSlider').addEventListener('input',function(){
+    explode=parseFloat(this.value);
+    document.getElementById('explodeVal').textContent=explode.toFixed(1);
+  });
+
+  c.addEventListener('mousedown',function(e){dragging=true;mx=e.clientX;my=e.clientY});
+  c.addEventListener('mousemove',function(e){
+    if(!dragging)return;
+    sph.t-=(e.clientX-mx)*0.008;
+    sph.p=Math.max(0.2,Math.min(2.8,sph.p-(e.clientY-my)*0.008));
+    mx=e.clientX;my=e.clientY;
+  });
+  c.addEventListener('mouseup',function(){dragging=false});
+  c.addEventListener('mouseleave',function(){dragging=false});
+  c.addEventListener('wheel',function(e){sph.r=Math.max(4,Math.min(25,sph.r+e.deltaY*0.01));e.preventDefault()},{passive:false});
+
+  c.addEventListener('touchstart',function(e){
+    if(e.touches.length===1){dragging=true;mx=e.touches[0].clientX;my=e.touches[0].clientY}
+    else if(e.touches.length===2){dragging=false;var dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;pinchDist=Math.sqrt(dx*dx+dy*dy)}
+  },{passive:true});
+  c.addEventListener('touchmove',function(e){
+    if(e.touches.length===1&&dragging){sph.t-=(e.touches[0].clientX-mx)*0.008;sph.p=Math.max(0.2,Math.min(2.8,sph.p-(e.touches[0].clientY-my)*0.008));mx=e.touches[0].clientX;my=e.touches[0].clientY;e.preventDefault()}
+    else if(e.touches.length===2){var dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY,dist=Math.sqrt(dx*dx+dy*dy);if(pinchDist>0)sph.r=Math.max(4,Math.min(25,sph.r+(pinchDist-dist)*0.03));pinchDist=dist;e.preventDefault()}
+  },{passive:false});
+  c.addEventListener('touchend',function(e){if(e.touches.length===0)dragging=false;pinchDist=0});
+
+  window.addEventListener('resize',function(){
+    var w2=container.clientWidth,h2=container.clientHeight||500;
+    camera.aspect=w2/h2;camera.updateProjectionMatrix();renderer.setSize(w2,h2);
+  });
+
+  animate();
+}
+
+function addEdges(mesh,color){
+  var eg=new THREE.EdgesGeometry(mesh.geometry,15);
+  mesh.add(new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:color||0x000000,linewidth:1})));
+}
+
+function bpMesh(geo,mat,pos,rot){
+  var m=new THREE.Mesh(geo,mat);
+  if(pos)m.position.set(pos[0],pos[1],pos[2]);
+  if(rot)m.rotation.set(rot[0],rot[1],rot[2]);
+  addEdges(m);
+  return m;
+}
+
+function buildModel(){
+  while(group.children.length>0)group.remove(group.children[0]);
+  dots=[];meshMaterials=[];
+
+  var pLen=nPlates*PG+FT*2;
+
+  var frameMat=new THREE.MeshStandardMaterial({color:0xd1d5db,roughness:1,metalness:0});
+  var plateMat=new THREE.MeshStandardMaterial({color:0xf3f4f6,roughness:1,metalness:0});
+  var accentMat=new THREE.MeshStandardMaterial({color:0xe5e7eb,roughness:1,metalness:0});
+  var darkMat=new THREE.MeshStandardMaterial({color:0x9ca3af,roughness:1,metalness:0});
+  var hotMat=new THREE.MeshBasicMaterial({color:0xe74c3c});
+  var coldMat=new THREE.MeshBasicMaterial({color:0x3498db});
+
+  meshMaterials.push(frameMat,plateMat,accentMat,darkMat);
+
+  group.add(bpMesh(new THREE.BoxGeometry(2.8,5.2,FT),frameMat,null,null).translateZ(pLen));
+  group.add(bpMesh(new THREE.BoxGeometry(2.8,5.2,FT*1.2),plateMat));
+
+  var footG=new THREE.BoxGeometry(0.35,0.6,0.8);
+  var footBarG=new THREE.BoxGeometry(2.2,0.12,0.8);
+  var vBarG=new THREE.BoxGeometry(0.12,5.6,0.12);
+  [-2.8,2.8].forEach(function(y){
+    group.add(bpMesh(footG,darkMat,[0,y,pLen/2]));
+    group.add(bpMesh(footBarG,darkMat,[0,y,pLen/2]));
+  });
+  [-1.3,1.3].forEach(function(x){
+    group.add(bpMesh(vBarG,darkMat,[x,0,pLen/2]));
+  });
+
+  var portG=new THREE.CylinderGeometry(0.2,0.2,0.6,16);
+  var flG=new THREE.CylinderGeometry(0.3,0.3,0.08,16);
+  var pp=[[-0.6,1.6],[0.6,1.6],[-0.6,-1.6],[0.6,-1.6]];
+  pp.forEach(function(p){
+    group.add(bpMesh(portG,accentMat,[p[0],p[1],-0.3],[Math.PI/2,0,0]));
+    group.add(bpMesh(flG,darkMat,[p[0],p[1],-0.65]));
+    group.add(bpMesh(portG,accentMat,[p[0],p[1],pLen+0.3],[Math.PI/2,0,0]));
+    group.add(bpMesh(flG,darkMat,[p[0],p[1],pLen+0.65]));
+  });
+
+  var plG=new THREE.BoxGeometry(PW,PH,PT);
+  for(var i=0;i<nPlates;i++){
+    var m=bpMesh(plG,plateMat);m.userData={tp:'p',ix:i};group.add(m);
+    meshMaterials.push(plateMat);
+    for(var g=0;g<10;g++){
+      var gy=-PH*0.4+(g/10)*PH*0.8;
+      var gr=bpMesh(new THREE.BoxGeometry(PW*0.7,0.02,0.005),accentMat);
+      gr.position.set(0,gy,0);gr.rotation.z=g%2===0?0.15:-0.15;m.add(gr);
+    }
+    pp.forEach(function(p){
+      var h=bpMesh(new THREE.CylinderGeometry(0.12,0.12,PT+0.01,12),darkMat);
+      h.position.set(p[0],p[1],0);h.rotation.x=Math.PI/2;m.add(h);
+    });
+  }
+
+  var rodG=new THREE.CylinderGeometry(0.06,0.06,pLen+1.5,12);
+  [2.5,-2.5].forEach(function(y){
+    group.add(bpMesh(rodG,darkMat,[0,y,pLen/2],[Math.PI/2,0,0]));
+  });
+
+  var boltG=new THREE.CylinderGeometry(0.04,0.04,1,8);
+  var nutG=new THREE.CylinderGeometry(0.09,0.09,0.12,6);
+  [-1.15,1.15].forEach(function(x){
+    [2.0,-2.0].forEach(function(y){
+      var s=bpMesh(boltG,darkMat);s.rotation.x=Math.PI/2;s.scale.z=pLen+0.6;s.position.set(x,y,pLen/2);group.add(s);
+      group.add(bpMesh(nutG,darkMat,[x,y,pLen+0.3]));
+      group.add(bpMesh(nutG,darkMat,[x,y,-0.15]));
+    });
+  });
+
+  var lb=bpMesh(new THREE.BoxGeometry(0.9,0.3,0.02),accentMat);lb.position.set(0,0.8,-FT-0.02);group.add(lb);
+  var lbb=bpMesh(new THREE.BoxGeometry(0.94,0.34,0.015),darkMat);lbb.position.set(0,0.8,-FT-0.025);group.add(lbb);
+
+  var dotG=new THREE.SphereGeometry(0.06,6,6);
+  for(var d=0;d<12;d++){
+    var hd=new THREE.Mesh(dotG,hotMat);
+    hd.userData={dl:d/12,sp:0.3+Math.random()*0.2,a:new THREE.Vector3(-0.6,1.6,-0.7),b:new THREE.Vector3(0.6,-1.6,pLen+0.7),isHot:true};
+    group.add(hd);dots.push(hd);
+    var cd=new THREE.Mesh(dotG,coldMat);
+    cd.userData={dl:d/12,sp:0.3+Math.random()*0.2,a:new THREE.Vector3(-0.6,-1.6,-0.7),b:new THREE.Vector3(0.6,1.6,pLen+0.7),isHot:false};
+    group.add(cd);dots.push(cd);
+  }
+  group.position.z=-pLen/2;
+}
+
+function animate(){
+  requestAnimationFrame(animate);
+  tick+=0.016;
+  sph.t+=autoRotSpeed;
+  camera.position.set(sph.r*Math.sin(sph.p)*Math.cos(sph.t),sph.r*Math.cos(sph.p),sph.r*Math.sin(sph.p)*Math.sin(sph.t));
+  camera.lookAt(0,0,0);
+
+  var pLen=nPlates*PG+FT*2;
+  for(var i=0;i<group.children.length;i++){
+    var c=group.children[i];
+    if(c.userData&&c.userData.tp==='p'){
+      var base=FT+c.userData.ix*PG+PG/2;
+      c.position.z+=(base+c.userData.ix*explode*0.5-c.position.z)*0.1;
+    }
+  }
+  if(group.children[1]){
+    var bz=pLen+nPlates*explode*0.5;
+    group.children[1].position.z+=(bz-group.children[1].position.z)*0.08;
+  }
+  for(var d=0;d<dots.length;d++){
+    var dot=dots[d];
+    var t=(tick*dot.userData.sp+dot.userData.dl)%1;
+    dot.position.lerpVectors(dot.userData.a,dot.userData.b,t);
+    var sc=0.5+Math.sin(t*Math.PI*4)*0.3;
+    dot.scale.set(sc,sc,sc);
+  }
+  renderer.render(scene,camera);
+}
+
+function updateModel(n){
+  nPlates=n;
+  if(group)buildModel();
+  var pm=document.getElementById('plate_model').value;
+  var mn={'APR-4':'Phoenix 2 SAPR-4','APR-7':'Phoenix 1 SAPR-7','APR-21':'Phoenix APR-21','APR-43':'Phoenix APR-43','APR-84':'Phoenix APR-84','APR-100':'Phoenix APR-100','TP-B-0.35':'Phoenix TP-B-0.35','TP-B-0.70':'Phoenix TP-B-0.70'};
+  document.getElementById('model_info').textContent=(mn[pm]||pm)+' | '+n+' пластин | '+document.getElementById('plate_material').value+' | '+document.getElementById('gasket_material').value;
+}
+
+function toggleWireframe(){
+  wireframeMode=!wireframeMode;
+  var btn=document.getElementById('btn_wireframe');
+  btn.className=wireframeMode?'tag active':'tag';
+  meshMaterials.forEach(function(m){m.wireframe=wireframeMode});
+}
+
+function toggleFlows(){
+  showFlows=!showFlows;
+  var btn=document.getElementById('btn_flows');
+  btn.className=showFlows?'tag active':'tag';
+  dots.forEach(function(d){d.visible=showFlows});
+}
+
+function resetView(){
+  sph={t:Math.PI/4,p:Math.PI/4,r:12};
+  explode=0;
+  document.getElementById('explodeSlider').value=0;
+  document.getElementById('explodeVal').textContent='0';
+}
+
+window.addEventListener('load',init3D);
+</script>
 </body>
 </html>
