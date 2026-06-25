@@ -1029,7 +1029,7 @@ function init3D(){
       if(Math.abs(explodeCurrent-explodeTarget)<0.0005)explodeCurrent=explodeTarget;
       var ec=explodeCurrent;
       var totalPlates=plateGroup?plateGroup.userData.visPlates||20:20;
-      var explodeGap=ec*0.06;
+      var explodeGap=ec*0.012;
       var totalPlateSpread=(totalPlates-1)*explodeGap;
       if(plateGroup){
         var half=(totalPlates-1)/2;
@@ -1042,20 +1042,7 @@ function init3D(){
           }
         }
       }
-      if(backFrame)backFrame.position.z=backFrame.userData.baseZ+totalPlateSpread/2+ec*0.05;
-      var newMid=ec*(totalPlateSpread/2+ec*0.025);
-      var baseLen=(totalPlates-1)*(C.plateGap+C.plateTh)+C.frameTh+0.06;
-      var newLen=baseLen+totalPlateSpread+ec*0.1;
-      var lenMul=newLen/baseLen;
-      var midShift=ec*(totalPlateSpread/2+ec*0.025);
-      guideBars.forEach(function(gb){
-        gb.scale.z=lenMul;
-        gb.position.z=gb.userData.baseMidZ+midShift;
-      });
-      tieRods.forEach(function(tr){
-        tr.scale.z=lenMul;
-        tr.position.z=tr.userData.baseMidZ+midShift;
-      });
+      if(backFrame)backFrame.position.z=backFrame.userData.baseZ+totalPlateSpread+ec*0.08;
     }
     if(currentMode==='rotate'&&heatGroup)heatGroup.rotation.y+=0.004;
     updateFlow(dt);
