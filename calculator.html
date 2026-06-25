@@ -43,6 +43,15 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
 .result-cell{text-align:center;padding:10px 6px;background:#fff;border:2px solid #2d3436;border-radius:16px 8px 14px 8px/8px 14px 8px 16px}
 .result-cell .val{font-size:1.4rem;font-weight:700;color:#d63031}
 .result-cell .lbl{font-size:.8rem;color:#636e72;font-family:'Architects Daughter',cursive}
+.field-error input,.field-error select{border-color:#d63031!important;box-shadow:0 0 0 2px rgba(214,48,49,.25)!important;background:#fff5f5!important}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
+.field-error{animation:shake .4s ease}
+#error-box{display:none;background:#fff5f5;border:2.5px solid #d63031;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:14px 18px;font-family:'Architects Daughter',cursive;color:#c0392b;font-size:.95rem;line-height:1.5;position:relative}
+#error-box::before{content:'⚠';font-size:1.3rem;margin-right:6px}
+#error-box.visible{display:block;animation:fadeUp .3s ease-out}
+#error-box ul{margin:6px 0 0 18px;padding:0;list-style:none}
+#error-box li{position:relative;padding-left:14px;margin:3px 0}
+#error-box li::before{content:'→';position:absolute;left:0;color:#d63031;font-weight:700}
 </style>
 </head>
 <body class="min-h-screen p-4 md:p-8 overflow-x-hidden">
@@ -76,8 +85,8 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
 </nav>
 
 <header class="max-w-7xl mx-auto mb-6 text-center relative z-10">
-  <h1 class="text-4xl md:text-5xl font-bold mb-2" style="font-family:'Caveat',cursive">Калькулятор теплообменников</h1>
-  <p class="text-xl font-bold" style="color:#636e72;font-family:'Architects Daughter',cursive">Расчёт мощности, подбор пластин и 3D-визуализация</p>
+  <h1 class="text-4xl md:text-5xl font-bold mb-2" style="font-family:'Caveat',cursive">Калькулятор теплообменников Феникс</h1>
+  <p class="text-xl font-bold" style="color:#636e72;font-family:'Architects Daughter',cursive">Расчёт мощности, подбор пластин APR-4/7/21/43/84/100 и 3D-визуализация</p>
 </header>
 
 <div class="max-w-7xl mx-auto relative z-10 flex flex-col lg:flex-row gap-6">
@@ -91,12 +100,12 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
         <div><label class="text-sm font-bold" style="color:#636e72">Среда</label>
           <select id="hot_medium"><option value="water">Вода</option><option value="glycol30">Гликоль 30%</option><option value="glycol50">Гликоль 50%</option><option value="oil">Масло</option><option value="steam">Пар</option></select></div>
         <div class="grid grid-cols-2 gap-2">
-          <div><label class="text-sm font-bold" style="color:#636e72">Расход, т/ч</label><input type="number" id="hot_flow" value="10" min="0" step="0.1"></div>
-          <div><label class="text-sm font-bold" style="color:#636e72">dP, м.в.ст.</label><input type="number" id="hot_dp" value="3" min="0" step="0.1"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">Расход, т/ч</label><input type="number" id="hot_flow" value="25" min="0" step="0.1"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">dP, м.в.ст.</label><input type="number" id="hot_dp" value="2.93" min="0" step="0.01"></div>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <div><label class="text-sm font-bold" style="color:#636e72">T вход, C</label><input type="number" id="hot_tin" value="90" min="0" max="200"></div>
-          <div><label class="text-sm font-bold" style="color:#636e72">T выход, C</label><input type="number" id="hot_tout" value="70" min="0" max="200"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">T вход, C</label><input type="number" id="hot_tin" value="120" min="0" max="200"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">T выход, C</label><input type="number" id="hot_tout" value="90" min="0" max="200"></div>
         </div>
       </div>
     </div>
@@ -107,12 +116,12 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
         <div><label class="text-sm font-bold" style="color:#636e72">Среда</label>
           <select id="cold_medium"><option value="water">Вода</option><option value="glycol30">Гликоль 30%</option><option value="glycol50">Гликоль 50%</option><option value="oil">Масло</option></select></div>
         <div class="grid grid-cols-2 gap-2">
-          <div><label class="text-sm font-bold" style="color:#636e72">Расход, т/ч</label><input type="number" id="cold_flow" value="8" min="0" step="0.1"></div>
-          <div><label class="text-sm font-bold" style="color:#636e72">dP, м.в.ст.</label><input type="number" id="cold_dp" value="3" min="0" step="0.1"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">Расход, т/ч</label><input type="number" id="cold_flow" value="13.78" min="0" step="0.01"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">dP, м.в.ст.</label><input type="number" id="cold_dp" value="1.13" min="0" step="0.01"></div>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <div><label class="text-sm font-bold" style="color:#636e72">T вход, C</label><input type="number" id="cold_tin" value="20" min="0" max="200"></div>
-          <div><label class="text-sm font-bold" style="color:#636e72">T выход, C</label><input type="number" id="cold_tout" value="40" min="0" max="200"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">T вход, C</label><input type="number" id="cold_tin" value="5" min="0" max="200"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">T выход, C</label><input type="number" id="cold_tout" value="60" min="0" max="200"></div>
         </div>
       </div>
     </div>
@@ -127,12 +136,23 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
             <select id="gasket_material"><option value="EPDM">EPDM</option><option value="NBR">NBR</option><option value="Viton">Viton</option></select></div>
         </div>
         <div><label class="text-sm font-bold" style="color:#636e72">Модель пластины</label>
-          <select id="plate_model"><option value="APR-21">APR-21 (0.042 м2)</option><option value="APR-43">APR-43 (0.442 м2)</option><option value="APR-84">APR-84 (0.646 м2)</option><option value="TP-B-0.35">TP-B-0.35 (0.099 м2)</option></select></div>
+          <select id="plate_model">
+            <option value="APR-4">APR-4 (0.03 м2) —小型</option>
+            <option value="APR-7" selected>APR-7 (0.23 м2) — средний</option>
+            <option value="APR-21">APR-21 (0.042 м2)</option>
+            <option value="APR-43">APR-43 (0.442 м2)</option>
+            <option value="APR-84">APR-84 (0.646 м2)</option>
+            <option value="APR-100">APR-100 (1.0 м2) — крупный</option>
+            <option value="TP-B-0.35">TP-B-0.35 (0.099 м2)</option>
+            <option value="TP-B-0.70">TP-B-0.70 (0.70 м2)</option>
+          </select></div>
         <div><label class="text-sm font-bold" style="color:#636e72">Запас поверхности, %</label><input type="number" id="surface_reserve" value="10" min="0" max="50"></div>
       </div>
     </div>
 
     <button onclick="doCalc()" class="btn-calc w-full">Рассчитать теплообменник</button>
+
+    <div id="error-box"></div>
 
     <div id="results" class="sketchy p-5 fade-up hidden" style="background:linear-gradient(135deg,#fffdf7,#fff5eb);border-color:#d63031">
       <h3 class="text-xl font-bold mb-2" style="color:#d63031;font-family:'Caveat',cursive">Результат расчёта</h3>
@@ -187,13 +207,24 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
    THERMAL CALCULATION
    ═══════════════════════════════════════════════════════ */
 var CP={water:4.18,glycol30:3.85,glycol50:3.45,oil:2.0,steam:2.05};
-var PA={'APR-21':0.042,'APR-43':0.442,'APR-84':0.646,'TP-B-0.35':0.099};
+var PA={'APR-4':0.03,'APR-7':0.23,'APR-21':0.042,'APR-43':0.442,'APR-84':0.646,'APR-100':1.0,'TP-B-0.35':0.099,'TP-B-0.70':0.70};
 var KT={'water-water':{s:3500,h:5500},'water-glycol30':{s:2800,h:4500},'water-glycol50':{s:2400,h:3800},'water-oil':{s:600,h:950},'glycol30-water':{s:2800,h:4500},'oil-water':{s:500,h:800},'steam-water':{s:4000,h:6000}};
 
+function clearErrors(){
+  document.querySelectorAll('.field-error').forEach(function(el){el.classList.remove('field-error')});
+  var eb=document.getElementById('error-box');eb.classList.remove('visible');eb.innerHTML='';
+}
+
+function markError(id){document.getElementById(id).closest('.grid,div').querySelector('input,select').parentElement.classList.add('field-error')}
+
 function doCalc(){
+  clearErrors();
+  var errors=[];
+
   var hm=document.getElementById('hot_medium').value;
   var cm=document.getElementById('cold_medium').value;
   var hf=parseFloat(document.getElementById('hot_flow').value)||0;
+  var cf=parseFloat(document.getElementById('cold_flow').value)||0;
   var t1=parseFloat(document.getElementById('hot_tin').value)||0;
   var t2=parseFloat(document.getElementById('hot_tout').value)||0;
   var t3=parseFloat(document.getElementById('cold_tin').value)||0;
@@ -201,9 +232,52 @@ function doCalc(){
   var rv=parseFloat(document.getElementById('surface_reserve').value)||10;
   var pm=document.getElementById('plate_model').value;
   var pa=PA[pm]||0.042;
-  var G=hf/3.6, cp=CP[hm]||4.18, Q=G*cp*(t1-t2);
+
+  // === Валидация ===
+  if(hf<=0){errors.push('Расход горячей среды должен быть > 0 т/ч');markError('hot_flow')}
+  if(cf<=0){errors.push('Расход холодной среды должен быть > 0 т/ч');markError('cold_flow')}
+  if(t1<=0){errors.push('Температура входа горячей стороны должна быть > 0°C');markError('hot_tin')}
+  if(t2<=0){errors.push('Температура выхода горячей стороны должна быть > 0°C');markError('hot_tout')}
+  if(t3<0){errors.push('Температура входа холодной стороны не может быть отрицательной');markError('cold_tin')}
+  if(t4<=0){errors.push('Температура выхода холодной стороны должна быть > 0°C');markError('cold_tout')}
+
+  if(t1<=t2){
+    errors.push('T вход горячей ('+t1+'°C) должен быть > T выход ('+t2+'°C) — горячая среда охлаждается');
+    markError('hot_tin');markError('hot_tout');
+  }
+  if(t4<=t3){
+    errors.push('T выход холодной ('+t4+'°C) должен быть > T вход ('+t3+'°C) — холодная среда нагревается');
+    markError('cold_tin');markError('cold_tout');
+  }
+  if(t3>=t1){
+    errors.push('T вход холодной ('+t3+'°C) не может быть ≥ T вход горячей ('+t1+'°C) — тепло не потечёт');
+    markError('cold_tin');markError('hot_tin');
+  }
+
   var d1=t1-t4, d2=t2-t3;
-  if(d1<=0||d2<=0){alert('Проверьте температуры');return}
+  if(d1<=0){
+    errors.push('T выход холодной ('+t4+'°C) ≥ T вход горячей ('+t1+'°C) — невозможно: холодная среда не может быть нагрета выше температуры нагревающей среды');
+    markError('hot_tin');markError('cold_tout');
+  }
+  if(d2<=0){
+    errors.push('T выход горячей ('+t2+'°C) ≤ T вход холодной ('+t3+'°C) — невозможно: горячая среда не может остыть ниже температуры охлаждающей среды');
+    markError('hot_tout');markError('cold_tin');
+  }
+
+  if(rv<0||rv>50){
+    errors.push('Запас поверхности должен быть от 0% до 50%');markError('surface_reserve');
+  }
+
+  if(errors.length>0){
+    var eb=document.getElementById('error-box');
+    eb.innerHTML='<strong>Расчёт невозможен — найдено ошибок: '+errors.length+'</strong><ul><li>'+errors.join('</li><li>')+'</li></ul>';
+    eb.classList.add('visible');
+    document.getElementById('results').classList.add('hidden');
+    return;
+  }
+
+  // === Расчёт ===
+  var G=hf/3.6, cp=CP[hm]||4.18, Q=G*cp*(t1-t2);
   var dT=Math.abs(d1-d2)<0.01?d1:(d1-d2)/Math.log(d1/d2);
   var k=(KT[hm+'-'+cm]||KT[cm+'-'+hm]||KT['water-water']).h;
   var F=(Q*1000)/(k*dT);
@@ -212,7 +286,17 @@ function doCalc(){
   document.getElementById('r_power').textContent=Q.toFixed(1);
   document.getElementById('r_area').textContent=Fr.toFixed(2);
   document.getElementById('r_plates').textContent=nP;
-  document.getElementById('r_model').textContent=pm;
+  var modelNames={
+    'APR-4':'Phoenix 2 SAPR-4',
+    'APR-7':'Phoenix 1 SAPR-7',
+    'APR-21':'Phoenix APR-21',
+    'APR-43':'Phoenix APR-43',
+    'APR-84':'Phoenix APR-84',
+    'APR-100':'Phoenix APR-100',
+    'TP-B-0.35':'Phoenix TP-B-0.35',
+    'TP-B-0.70':'Phoenix TP-B-0.70'
+  };
+  document.getElementById('r_model').textContent=modelNames[pm]||pm;
   document.getElementById('r_dT').textContent=dT.toFixed(1);
   document.getElementById('results').classList.remove('hidden');
   updatePlates(nP);
@@ -277,66 +361,88 @@ function init3D(){
 }
 
 function buildModel(){
-  // Clear
   while(group.children.length>0){group.remove(group.children[0])}
   dots=[];
 
-  var fw=new THREE.MeshPhongMaterial({color:0x2c3e50,shininess:30});
-  var fd=new THREE.MeshPhongMaterial({color:0x34495e,shininess:30});
-  var pl=new THREE.MeshPhongMaterial({color:0xbdc3c7,shininess:90,specular:0x555555});
-  var gk=new THREE.MeshPhongMaterial({color:0xe67e22,transparent:true,opacity:0.8});
-  var bt=new THREE.MeshPhongMaterial({color:0x7f8c8d,shininess:60});
-  var fl=new THREE.MeshPhongMaterial({color:0x95a5a6,shininess:50});
+  // Phoenix-style materials: red frames, blue supports
+  var frameRed=new THREE.MeshPhongMaterial({color:0xc0392b,shininess:40,specular:0x444444});
+  var frameDarkRed=new THREE.MeshPhongMaterial({color:0x96281b,shininess:30});
+  var plateMat=new THREE.MeshPhongMaterial({color:0xd5d8dc,shininess:80,specular:0x666666});
+  var gasketMat=new THREE.MeshPhongMaterial({color:0x2c3e50,transparent:true,opacity:0.85});
+  var boltMat=new THREE.MeshPhongMaterial({color:0x5d6d7e,shininess:60});
+  var flangeMat=new THREE.MeshPhongMaterial({color:0x6c7a89,shininess:50});
+  var blueSup=new THREE.MeshPhongMaterial({color:0x2980b9,shininess:40});
+  var brandMat=new THREE.MeshPhongMaterial({color:0xffffff,emissive:0x1a5276,emissiveIntensity:0.3});
 
   var pLen=nPlates*PG+FT*2;
 
-  // Front frame
-  var fm=new THREE.Mesh(new THREE.BoxGeometry(2.8,5.2,FT),fw);
-  fm.castShadow=true;group.add(fm);
+  // === BACK FRAME (red) ===
+  var backFrame=new THREE.Mesh(new THREE.BoxGeometry(2.8,5.2,FT),frameRed);
+  backFrame.position.z=pLen;backFrame.castShadow=true;group.add(backFrame);
 
-  // Back frame
-  var bm=new THREE.Mesh(new THREE.BoxGeometry(2.8,5.2,FT),fd);
-  bm.position.z=pLen;bm.castShadow=true;group.add(bm);
+  // === FRONT FRAME (dark red) ===
+  var frontFrame=new THREE.Mesh(new THREE.BoxGeometry(2.8,5.2,FT*1.2),frameDarkRed);
+  frontFrame.castShadow=true;group.add(frontFrame);
 
-  // Ribs
-  var rg=new THREE.BoxGeometry(0.15,5.2,FT+0.15);
-  [-1.2,1.2].forEach(function(x){
-    var r1=new THREE.Mesh(rg,fw);r1.position.x=x;group.add(r1);
-    var r2=new THREE.Mesh(rg,fd);r2.position.x=x;r2.position.z=pLen;group.add(r2);
+  // === BLUE SUPPORT FEET ===
+  var footG=new THREE.BoxGeometry(0.35,0.6,0.8);
+  var footBar=new THREE.BoxGeometry(2.2,0.12,0.8);
+  [-2.8,2.8].forEach(function(y){
+    var foot=new THREE.Mesh(footG,blueSup);
+    foot.position.set(0,y,pLen/2);foot.castShadow=true;group.add(foot);
+    var bar=new THREE.Mesh(footBar,blueSup);
+    bar.position.set(0,y,pLen/2);group.add(bar);
+  });
+  // Vertical support bars
+  var vBarG=new THREE.BoxGeometry(0.12,5.6,0.12);
+  [-1.3,1.3].forEach(function(x){
+    var vb=new THREE.Mesh(vBarG,blueSup);
+    vb.position.set(x,0,pLen/2);group.add(vb);
   });
 
-  // Flanges
-  var portG=new THREE.CylinderGeometry(0.22,0.22,0.5,16);
-  var flG=new THREE.CylinderGeometry(0.32,0.32,0.06,16);
-  var ports=[[-0.65,1.8],[0.65,1.8],[-0.65,-1.8],[0.65,-1.8]];
-  ports.forEach(function(p){
-    var pp=new THREE.Mesh(portG,fl);pp.position.set(p[0],p[1],-0.25);pp.rotation.x=Math.PI/2;group.add(pp);
-    var ff=new THREE.Mesh(flG,bt);ff.position.set(p[0],p[1],-0.55);group.add(ff);
-    var pp2=pp.clone();pp2.position.z=pLen+0.25;group.add(pp2);
-    var ff2=ff.clone();ff2.position.z=pLen+0.55;group.add(ff2);
+  // === PORT FLANGES (4 ports: П1-П4) ===
+  var portG=new THREE.CylinderGeometry(0.2,0.2,0.6,16);
+  var flG=new THREE.CylinderGeometry(0.3,0.3,0.08,16);
+  var portPositions=[[-0.6,1.6,'П1'],[0.6,1.6,'П4'],[-0.6,-1.6,'П2'],[0.6,-1.6,'П3']];
+  portPositions.forEach(function(p){
+    // Front ports
+    var pp=new THREE.Mesh(portG,flangeMat);
+    pp.position.set(p[0],p[1],-0.3);pp.rotation.x=Math.PI/2;group.add(pp);
+    var ff=new THREE.Mesh(flG,boltMat);
+    ff.position.set(p[0],p[1],-0.65);group.add(ff);
+    // Back ports
+    var pp2=pp.clone();pp2.position.z=pLen+0.3;group.add(pp2);
+    var ff2=ff.clone();ff2.position.z=pLen+0.65;group.add(ff2);
   });
 
-  // Plates
+  // === PLATES with corrugation pattern ===
   var plG=new THREE.BoxGeometry(PW,PH,PT);
   for(var i=0;i<nPlates;i++){
-    var m=new THREE.Mesh(plG,pl.clone());
+    var m=new THREE.Mesh(plG,plateMat.clone());
     m.position.z=FT+i*PG+PG/2;
     m.castShadow=true;
     m.userData={tp:'p',ix:i};
     group.add(m);
 
-    // Corrugations
-    for(var g=0;g<8;g++){
-      var gy=-PH*0.35+(g/8)*PH*0.7;
-      var gr=new THREE.Mesh(new THREE.BoxGeometry(PW*0.75,0.025,0.006),pl);
+    // Chevron corrugations (V-pattern like Phoenix)
+    for(var g=0;g<10;g++){
+      var gy=-PH*0.4+(g/10)*PH*0.8;
+      var gr=new THREE.Mesh(new THREE.BoxGeometry(PW*0.7,0.02,0.005),plateMat);
       gr.position.set(0,gy,FT+i*PG+PG/2+PT/2+0.003);
-      gr.rotation.x=g%2===0?0.12:-0.12;
+      gr.rotation.z=g%2===0?0.15:-0.15;
       group.add(gr);
     }
 
+    // Port holes in plates
+    portPositions.forEach(function(p){
+      var hole=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.12,PT+0.01,12),gasketMat);
+      hole.position.set(p[0],p[1],FT+i*PG+PG/2);
+      hole.rotation.x=Math.PI/2;group.add(hole);
+    });
+
     // Gaskets (hidden until exploded)
     if(i<nPlates-1){
-      var gkm=new THREE.Mesh(new THREE.BoxGeometry(PW+0.04,PH+0.04,0.015),gk);
+      var gkm=new THREE.Mesh(new THREE.BoxGeometry(PW+0.03,PH+0.03,0.012),gasketMat);
       gkm.position.z=FT+(i+1)*PG;
       gkm.visible=false;
       gkm.userData={tp:'g',ix:i};
@@ -344,50 +450,52 @@ function buildModel(){
     }
   }
 
-  // Guide rods
-  var rodG=new THREE.CylinderGeometry(0.07,0.07,pLen+1,12);
-  [2.7,-2.7].forEach(function(y){
-    var rod=new THREE.Mesh(rodG,bt);
+  // === GUIDE RODS ===
+  var rodG=new THREE.CylinderGeometry(0.06,0.06,pLen+1.5,12);
+  [2.5,-2.5].forEach(function(y){
+    var rod=new THREE.Mesh(rodG,boltMat);
     rod.rotation.x=Math.PI/2;rod.position.set(0,y,pLen/2);group.add(rod);
   });
 
-  // Tie bolts
-  var boltG=new THREE.CylinderGeometry(0.05,0.05,1,8);
-  var nutG=new THREE.CylinderGeometry(0.1,0.1,0.1,6);
-  [-1.25,1.25].forEach(function(x){
-    [2.1,-2.1].forEach(function(y){
-      var s=new THREE.Mesh(boltG,bt);
-      s.rotation.x=Math.PI/2;s.scale.z=pLen+0.5;s.position.set(x,y,pLen/2);group.add(s);
-      var n1=new THREE.Mesh(nutG,bt);n1.position.set(x,y,pLen+0.25);group.add(n1);
-      var n2=new THREE.Mesh(nutG,bt);n2.position.set(x,y,-0.1);group.add(n2);
+  // === TIE BOLTS with nuts ===
+  var boltG=new THREE.CylinderGeometry(0.04,0.04,1,8);
+  var nutG=new THREE.CylinderGeometry(0.09,0.09,0.12,6);
+  [-1.15,1.15].forEach(function(x){
+    [2.0,-2.0].forEach(function(y){
+      var s=new THREE.Mesh(boltG,boltMat);
+      s.rotation.x=Math.PI/2;s.scale.z=pLen+0.6;s.position.set(x,y,pLen/2);group.add(s);
+      var n1=new THREE.Mesh(nutG,boltMat);n1.position.set(x,y,pLen+0.3);group.add(n1);
+      var n2=new THREE.Mesh(nutG,boltMat);n2.position.set(x,y,-0.15);group.add(n2);
     });
   });
 
-  // Brand label
-  var lb=new THREE.Mesh(new THREE.BoxGeometry(1,0.35,0.015),new THREE.MeshPhongMaterial({color:0xe67e22}));
-  lb.position.set(0,1.2,-0.22);group.add(lb);
+  // === BRAND LABEL "ФЕНИКС" ===
+  var lblBg=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.3,0.02),new THREE.MeshPhongMaterial({color:0xffffff}));
+  lblBg.position.set(0,0.8,-FT-0.02);group.add(lblBg);
+  var lblBorder=new THREE.Mesh(new THREE.BoxGeometry(0.94,0.34,0.015),frameRed);
+  lblBorder.position.set(0,0.8,-FT-0.025);group.add(lblBorder);
 
-  // Flow particles
-  var dotG=new THREE.SphereGeometry(0.07,6,6);
+  // === FLOW PARTICLES ===
+  var dotG=new THREE.SphereGeometry(0.06,6,6);
   var hotMat=new THREE.MeshBasicMaterial({color:0xe74c3c});
   var coldMat=new THREE.MeshBasicMaterial({color:0x3498db});
   for(var d=0;d<12;d++){
     var hd=new THREE.Mesh(dotG,hotMat);
     hd.userData={tp:'hot',dl:d/12,sp:0.3+Math.random()*0.2,
-      a:new THREE.Vector3(-0.65,1.8,-0.5),
-      b:new THREE.Vector3(0.65,-1.8,pLen+0.5)};
+      a:new THREE.Vector3(-0.6,1.6,-0.7),
+      b:new THREE.Vector3(0.6,-1.6,pLen+0.7)};
     group.add(hd);dots.push(hd);
 
     var cd=new THREE.Mesh(dotG,coldMat);
     cd.userData={tp:'cold',dl:d/12,sp:0.3+Math.random()*0.2,
-      a:new THREE.Vector3(-0.65,-1.8,-0.5),
-      b:new THREE.Vector3(0.65,1.8,pLen+0.5)};
+      a:new THREE.Vector3(-0.6,-1.6,-0.7),
+      b:new THREE.Vector3(0.6,1.6,pLen+0.7)};
     group.add(cd);dots.push(cd);
   }
 
-  // Flow lights
-  var hl=new THREE.PointLight(0xe74c3c,0.6,4);hl.position.set(-0.65,1.8,pLen/2);group.add(hl);
-  var cl=new THREE.PointLight(0x3498db,0.6,4);cl.position.set(0.65,-1.8,pLen/2);group.add(cl);
+  // === FLOW LIGHTS ===
+  var hl=new THREE.PointLight(0xe74c3c,0.5,4);hl.position.set(-0.6,1.6,pLen/2);group.add(hl);
+  var cl=new THREE.PointLight(0x3498db,0.5,4);cl.position.set(0.6,-1.6,pLen/2);group.add(cl);
 
   group.position.z=-pLen/2;
 }
@@ -444,8 +552,20 @@ function animate(){
 function updatePlates(n){
   nPlates=n;
   buildModel();
+  var pm=document.getElementById('plate_model').value;
+  var modelNames={
+    'APR-4':'Phoenix 2 SAPR-4',
+    'APR-7':'Phoenix 1 SAPR-7',
+    'APR-21':'Phoenix APR-21',
+    'APR-43':'Phoenix APR-43',
+    'APR-84':'Phoenix APR-84',
+    'APR-100':'Phoenix APR-100',
+    'TP-B-0.35':'Phoenix TP-B-0.35',
+    'TP-B-0.70':'Phoenix TP-B-0.70'
+  };
+  var name=modelNames[pm]||pm;
   document.getElementById('model_info').textContent=
-    n+' пластин - '+document.getElementById('plate_material').value+' - '+document.getElementById('gasket_material').value;
+    name+' | '+n+' пластин | '+document.getElementById('plate_material').value+' | '+document.getElementById('gasket_material').value;
 }
 
 function toggleExplode(){
@@ -458,14 +578,16 @@ function toggleXRay(){
   isXRay=!isXRay;
   var b=document.getElementById('btn_xray');
   b.className=isXRay?'tag active':'tag';
-  // Change frame materials
+  // Change frame materials (front frame = index 0, back frame = index 1)
   for(var i=0;i<group.children.length;i++){
     var c=group.children[i];
     if(c.isMesh&&(i===0||i===1)){
       if(isXRay){
-        c.material=new THREE.MeshPhongMaterial({color:0x88bbee,transparent:true,opacity:0.25,shininess:80});
+        c.material=new THREE.MeshPhongMaterial({color:0xcccccc,transparent:true,opacity:0.2,shininess:80});
       }else{
-        c.material=new THREE.MeshPhongMaterial({color:i===0?0x2c3e50:0x34495e,shininess:30});
+        c.material=i===0?
+          new THREE.MeshPhongMaterial({color:0x96281b,shininess:30}):
+          new THREE.MeshPhongMaterial({color:0xc0392b,shininess:40,specular:0x444444});
       }
     }
   }
@@ -478,6 +600,17 @@ function toggleRotate(){
 window.addEventListener('load',function(){
   init3D();
   doCalc();
+  // Auto-clear errors when user edits fields
+  document.querySelectorAll('input[type=number],select').forEach(function(el){
+    el.addEventListener('input',function(){
+      this.closest('.grid,div').classList.remove('field-error');
+      var remaining=document.querySelectorAll('.field-error');
+      if(remaining.length===0){
+        var eb=document.getElementById('error-box');
+        if(eb)eb.classList.remove('visible');
+      }
+    });
+  });
 });
 </script>
 

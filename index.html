@@ -284,6 +284,111 @@ tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil
 </div>
 </main>
 
+<!-- ===== ЭСКИЗЫ ===== -->
+<section class="sketchy crosshatch p-6 mb-8 fade-up">
+  <h2 class="text-3xl font-bold mb-4 text-center">
+    <span class="pencil-underline">Первые эскизы</span> архитектуры AIPhoenix
+  </h2>
+  <p class="text-xl font-block text-center mb-6">Всё начиналось с ручных набросков — от идеи до конкретной архитектуры</p>
+
+  <!-- Эскиз 1: Архитектура системы -->
+  <div class="mb-6">
+    <div class="sketchy p-5 mb-4 fade-up" style="background:#fffefc;border:2.5px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+        <div>
+          <img src="img/architecture-sketch.jpg" alt="Эскиз архитектуры AIPhoenix" class="w-full mx-auto" style="filter:drop-shadow(3px 6px 12px rgba(0,0,0,.1));border:3px solid #2d3436;border-radius:8px;background:#fff;padding:4px">
+        </div>
+        <div class="text-left">
+          <h3 class="text-2xl font-bold mb-3">Архитектура системы</h3>
+          <p class="text-lg font-block mb-3">На первой стадии мы нарисовали от руки, как должен работать весь процесс. Вот что получилось:</p>
+          <ul class="pencil-list text-lg font-block space-y-2">
+            <li class="checked"><strong>Источники данных</strong> — 1С, CRM, CMS, телефония, метрики, мониторинг, почты, мессенджеры, ZP, бэкенды, сегменты аудит</li>
+            <li class="checked"><strong>Сотрудники</strong> — оператор, продажи, инженер, чат</li>
+            <li class="checked"><strong>Инфраструктура</strong> — VPS, база знаний, агенты, API</li>
+            <li class="checked"><strong>Данные</strong> — досье, векторная база, JSON, MD, маршрутизатор, ЭРПО</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="hero-note alt inline-block">Этот эскиз стал основой для всех архитектурных решений в проекте.</div>
+  </div>
+
+  <!-- Эскиз 2: Цикл обработки запроса -->
+  <div class="mb-6">
+    <div class="sketchy p-5 fade-up" style="background:#fffefc;border:2.5px solid #2d3436;border-radius:15px 255px 15px 225px/225px 15px 255px 15px">
+      <h3 class="text-2xl font-bold mb-4 text-center">Цикл обработки запроса</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="text-left">
+          <h4 class="text-xl font-bold mb-2 text-blueprint">Входные данные</h4>
+          <ul class="pencil-list text-lg font-block space-y-1">
+            <li>Поток данных (DATA) из CRM, 1С, звонков, писем</li>
+            <li>Триггер — событие, запускающее обработку</li>
+            <li>Маршрутизатор — определяет, какой агент берёт задачу</li>
+          </ul>
+        </div>
+        <div class="text-left">
+          <h4 class="text-xl font-bold mb-2 text-green">Выходные документы</h4>
+          <ul class="pencil-list text-lg font-block space-y-1">
+            <li>Черновик оферты</li>
+            <li>Договор</li>
+            <li>Документы оплаты</li>
+            <li>Отгрузочные документы</li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-4 pt-4 border-t-2 border-pencil border-dashed">
+        <div class="flex flex-wrap justify-center gap-3 text-lg font-block">
+          <span class="tag">Оркестратор</span>
+          <span class="tag">Агенты</span>
+          <span class="tag">Аналитика</span>
+          <span class="tag">Конвертор</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-note inline-block">Каждый шаг — от триггера до отгрузки — автоматизирован, но человек всегда имеет контроль.</div>
+  </div>
+
+  <!-- Эскиз 3: Инфраструктура -->
+  <div>
+    <div class="sketchy p-5 fade-up" style="background:#fffefc;border:2.5px solid #2d3436;border-radius:225px 15px 255px 15px/15px 225px 15px 255px">
+      <h3 class="text-2xl font-bold mb-4 text-center">Инфраструктура и процесс</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="text-left">
+          <h4 class="text-xl font-bold mb-2 text-marker">Начало</h4>
+          <ul class="pencil-list text-lg font-block space-y-1">
+            <li class="checked">Свой сервер (24/7)</li>
+            <li class="checked">Аренда сервера</li>
+            <li class="checked">Своё облако</li>
+          </ul>
+        </div>
+        <div class="text-left">
+          <h4 class="text-xl font-bold mb-2 text-blueprint">Процесс</h4>
+          <ul class="pencil-list text-lg font-block space-y-1">
+            <li>Запрос от клиента</li>
+            <li>Обработка агентами</li>
+            <li>Расчёт параметров</li>
+            <li>Формирование документов</li>
+          </ul>
+        </div>
+        <div class="text-left">
+          <h4 class="text-xl font-bold mb-2 text-green">Результат</h4>
+          <ul class="pencil-list text-lg font-block space-y-1">
+            <li class="checked">Продажа</li>
+            <li class="checked">Договор</li>
+            <li class="checked">Оплата</li>
+            <li class="checked">Отгрузка</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="hero-note alt inline-block">От черновика до реализации — всё построено на принципе: человек = капитан, ИИ = экипаж.</div>
+  </div>
+
+  <div class="mt-6 text-center">
+    <p class="text-lg font-block text-pencil-light">Эти эскизы превратились в полноценную систему, которую вы видите сегодня.</p>
+  </div>
+</section>
+
 <!-- ===== 3D-анимация ===== -->
 <section class="sketchy crosshatch p-6 mb-8 fade-up">
   <h2 class="text-3xl font-bold mb-4 text-center">
