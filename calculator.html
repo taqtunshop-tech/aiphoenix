@@ -2,107 +2,108 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Калькулятор теплообменников — AIPhoenix</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="shared.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+<script>
+tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil-light':'#636e72',marker:'#d63031',blueprint:'#0984e3'},fontFamily:{sketch:['Caveat','cursive'],block:['"Architects Daughter"','cursive']}}}}
+</script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Architects+Daughter&display=swap');
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#f9f7f3;font-family:'Caveat',cursive;color:#2d3436;
-  background-image:
-    repeating-linear-gradient(0deg,transparent,transparent 31px,rgba(45,52,54,.06) 31px,rgba(45,52,54,.06) 32px),
-    repeating-linear-gradient(90deg,transparent,transparent 31px,rgba(45,52,54,.04) 31px,rgba(45,52,54,.04) 32px);
-  background-size:32px 32px}
-
-.sketchy{border:2.5px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;background:#fffefc;box-shadow:3px 6px 0 rgba(45,52,54,.07);position:relative}
-.sketchy:hover{transform:rotate(-.5deg) scale(1.005);box-shadow:5px 10px 0 rgba(45,52,54,.1)}
-.tag{border:2px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:6px 16px;display:inline-block;background:#fffefc;font-family:'Architects Daughter',cursive;font-size:.95rem;cursor:pointer;transition:all .15s;box-shadow:1px 2px 0 rgba(45,52,54,.08);user-select:none}
-.tag:hover{background:#2d3436;color:#fff;transform:rotate(-1deg) scale(1.04)}
-.tag.active{background:#2d3436;color:#fff}
-
-.nav-link{border:2px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:8px 18px;background:#fffefc;transition:all .2s;text-decoration:none;color:#2d3436;font-family:'Architects Daughter',cursive;font-size:1.05rem;display:inline-flex;align-items:center;gap:6px;user-select:none}
-.nav-link:hover,.nav-link:active{background:#2d3436;color:#fff;transform:rotate(-2deg) scale(1.04)}
-.nav-link.active{background:#2d3436;color:#fff}
-.nav-link svg{width:18px;height:18px;flex-shrink:0}
-
 @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 .fade-up{animation:fadeUp .6s ease-out both}
-
-input[type=number],select{background:#fff;border:2px solid #2d3436;color:#2d3436;padding:8px 12px;border-radius:12px;font-family:'Architects Daughter',cursive;font-size:.95rem;width:100%;transition:all .2s;outline:none;-webkit-appearance:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+input[type=number],select{
+  background:#fff;border:2px solid #2d3436;color:#2d3436;padding:8px 12px;
+  border-radius:12px;font-family:'Architects Daughter',cursive;font-size:.95rem;
+  width:100%;transition:all .2s;outline:none;-webkit-appearance:none}
 input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 rgba(9,132,227,.15)}
-
-.btn-calc{padding:12px 32px;background:#2d3436;color:#fff;border:2.5px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;font-family:'Architects Daughter',cursive;font-size:1.1rem;cursor:pointer;transition:all .2s;box-shadow:3px 4px 0 rgba(45,52,54,.15);user-select:none}
+.btn-calc{
+  padding:12px 32px;background:#2d3436;color:#fff;border:2.5px solid #2d3436;
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+  font-family:'Architects Daughter',cursive;font-size:1.1rem;cursor:pointer;
+  transition:all .2s;box-shadow:3px 4px 0 rgba(45,52,54,.15);user-select:none}
 .btn-calc:hover{background:#636e72;transform:rotate(-1deg) scale(1.03);box-shadow:4px 6px 0 rgba(45,52,54,.2)}
 .btn-calc:active{transform:scale(.97);box-shadow:1px 2px 0 rgba(45,52,54,.15)}
-
 .result-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
 .result-cell{text-align:center;padding:10px 6px;background:#fff;border:2px solid #2d3436;border-radius:16px 8px 14px 8px/8px 14px 8px 16px}
 .result-cell .val{font-size:1.4rem;font-weight:700;color:#d63031}
 .result-cell .lbl{font-size:.8rem;color:#636e72;font-family:'Architects Daughter',cursive}
-
 .field-error input,.field-error select{border-color:#d63031!important;box-shadow:0 0 0 2px rgba(214,48,49,.25)!important;background:#fff5f5!important}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
 .field-error{animation:shake .4s ease}
-
 #error-box{display:none;background:#fff5f5;border:2.5px solid #d63031;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:14px 18px;font-family:'Architects Daughter',cursive;color:#c0392b;font-size:.95rem;line-height:1.5}
 #error-box::before{content:'\26A0';font-size:1.3rem;margin-right:6px}
 #error-box.visible{display:block;animation:fadeUp .3s ease-out}
 #error-box ul{margin:6px 0 0 18px;padding:0;list-style:none}
 #error-box li{position:relative;padding-left:14px;margin:3px 0}
 #error-box li::before{content:'\2192';position:absolute;left:0;color:#d63031;font-weight:700}
-
 .slider-wrap{display:flex;align-items:center;gap:10px;width:100%}
 .slider-wrap input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;background:linear-gradient(90deg,#d63031,#0984e3);border-radius:3px;outline:none;cursor:pointer}
 .slider-wrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#2d3436;border:3px solid #fff;box-shadow:0 0 0 2px #2d3436;cursor:grab}
 .slider-val{font-family:'Architects Daughter',cursive;font-size:.85rem;color:#636e72;min-width:36px;text-align:right}
-
 #canvas3d{width:100%;height:100%;display:block;border-radius:12px;cursor:grab;touch-action:none}
 #canvas3d:active{cursor:grabbing}
-
+.tag{border:2px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:6px 16px;display:inline-block;background:#fffefc;font-family:'Architects Daughter',cursive;font-size:.95rem;cursor:pointer;transition:all .15s;box-shadow:1px 2px 0 rgba(45,52,54,.08);user-select:none}
+.tag:hover{background:#2d3436;color:#fff;transform:rotate(-1deg) scale(1.04)}
+.tag.active{background:#2d3436;color:#fff}
 @media(max-width:768px){
-  body{padding:8px}
-  .nav-link{padding:6px 10px;font-size:.82rem;gap:3px}
-  .nav-link svg{width:14px;height:14px}
-  h1{font-size:1.6rem!important;line-height:1.2}
-  .section-card{padding:12px!important}
-  .section-card h3{font-size:1.15rem!important;margin-bottom:8px!important}
-  .section-card label{font-size:.75rem!important}
-  .section-card input,.section-card select{padding:10px 12px;font-size:1rem;min-height:44px}
+  .calc-layout{flex-direction:column!important}
+  .calc-form{width:100%!important;flex-shrink:0!important}
+  .calc-form input,.calc-form select{padding:10px 12px;font-size:1rem;min-height:44px}
   .btn-calc{padding:14px 24px;font-size:1.15rem;width:100%;min-height:50px}
-  .result-row{grid-template-columns:repeat(3,1fr);gap:6px}
+  .result-row{gap:6px}
   .result-cell{padding:8px 4px}
   .result-cell .val{font-size:1.1rem}
   .result-cell .lbl{font-size:.7rem}
   .canvas-wrap{height:300px!important;min-height:280px!important}
-  .form-3d-layout{flex-direction:column!important}
-  .form-panel{width:100%!important;flex-shrink:0!important}
+  #bp-controls{min-width:auto;width:90%}
 }
 </style>
 </head>
-<body class="min-h-screen p-2 md:p-8 overflow-x-hidden">
+<body class="min-h-screen p-4 md:p-8 overflow-x-hidden">
 
-<nav class="max-w-7xl mx-auto mb-4 md:mb-6 flex flex-wrap justify-center gap-1.5 md:gap-3 relative z-10">
-  <a href="index.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/></svg><span class="nav-text">Главная</span></a>
-  <a href="catalog.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span class="nav-text">Каталог</span></a>
-  <a href="products.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8h20"/></svg><span class="nav-text">Товары</span></a>
-  <a href="calculator.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16"/><path d="M9 4v16"/></svg><span class="nav-text">Калькулятор</span></a>
-  <a href="hardware.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg><span class="nav-text">Железо</span></a>
-  <a href="seo.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 5-9"/></svg><span class="nav-text">SEO</span></a>
+<!-- Навигация (как на главной) -->
+<nav class="max-w-6xl mx-auto mb-6 flex flex-wrap justify-center gap-3 relative z-10">
+  <a href="index.html" class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/></svg>
+    Главная
+  </a>
+  <a href="catalog.html" class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    Каталог
+  </a>
+  <a href="products.html" class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8h20"/></svg>
+    Товары
+  </a>
+  <a href="calculator.html" class="nav-link active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16"/><path d="M9 4v16"/></svg>
+    Калькулятор
+  </a>
+  <a href="hardware.html" class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+    Железо
+  </a>
+  <a href="seo.html" class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 5-9"/></svg>
+    SEO
+  </a>
 </nav>
 
-<header class="max-w-7xl mx-auto mb-4 md:mb-6 text-center relative z-10">
-  <h1 class="page-title text-3xl md:text-5xl font-bold mb-1 md:mb-2" style="font-family:'Caveat',cursive">Калькулятор теплообменников Феникс</h1>
-  <p class="page-subtitle text-base md:text-xl font-bold" style="color:#636e72;font-family:'Architects Daughter',cursive">Расчёт мощности, подбор пластин APR-4/7/21/43/84/100 и 3D-визуализация</p>
+<header class="max-w-6xl mx-auto mb-6 text-center relative z-10">
+  <h1 class="text-4xl md:text-6xl font-bold mb-2">Калькулятор теплообменников</h1>
+  <p class="text-xl md:text-2xl font-block" style="color:#636e72">Расчёт мощности, подбор пластин и 3D-визуализация в реальном времени</p>
 </header>
 
-<div class="max-w-7xl mx-auto relative z-10 flex form-3d-layout gap-4 md:gap-6">
+<main class="max-w-6xl mx-auto relative z-10 flex calc-layout gap-6">
 
-  <!-- Форма -->
-  <div class="form-panel lg:w-[370px] flex-shrink-0 space-y-3 md:space-y-4">
+  <!-- Левая колонка — формы -->
+  <div class="calc-form lg:w-[380px] flex-shrink-0 space-y-4">
 
-    <div class="section-card sketchy p-3 md:p-5 fade-up">
-      <h3 class="text-xl font-bold mb-3" style="color:#d63031;font-family:'Caveat',cursive">Горячая сторона</h3>
+    <!-- Горячая сторона -->
+    <div class="sketchy crosshatch p-5 fade-up">
+      <h3 class="text-2xl font-bold mb-3" style="color:#d63031">🔥 Горячая сторона</h3>
       <div class="space-y-3">
         <div><label class="text-sm font-bold" style="color:#636e72">Среда</label>
           <select id="hot_medium">
@@ -117,14 +118,15 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
           <div><label class="text-sm font-bold" style="color:#636e72">dP, м.в.ст.</label><input type="number" id="hot_dp" value="2.93" min="0" step="0.01" inputmode="decimal"></div>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <div><label class="text-sm font-bold" style="color:#636e72">T вход, C</label><input type="number" id="hot_tin" value="120" min="0" max="200" inputmode="numeric"></div>
-          <div><label class="text-sm font-bold" style="color:#636e72">T выход, C</label><input type="number" id="hot_tout" value="90" min="0" max="200" inputmode="numeric"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">T вход, °C</label><input type="number" id="hot_tin" value="120" min="0" max="200" inputmode="numeric"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">T выход, °C</label><input type="number" id="hot_tout" value="90" min="0" max="200" inputmode="numeric"></div>
         </div>
       </div>
     </div>
 
-    <div class="section-card sketchy p-3 md:p-5 fade-up">
-      <h3 class="text-xl font-bold mb-3" style="color:#0984e3;font-family:'Caveat',cursive">Холодная сторона</h3>
+    <!-- Холодная сторона -->
+    <div class="sketchy crosshatch p-5 fade-up">
+      <h3 class="text-2xl font-bold mb-3" style="color:#0984e3">❄️ Холодная сторона</h3>
       <div class="space-y-3">
         <div><label class="text-sm font-bold" style="color:#636e72">Среда</label>
           <select id="cold_medium">
@@ -138,14 +140,15 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
           <div><label class="text-sm font-bold" style="color:#636e72">dP, м.в.ст.</label><input type="number" id="cold_dp" value="1.13" min="0" step="0.01" inputmode="decimal"></div>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <div><label class="text-sm font-bold" style="color:#636e72">T вход, C</label><input type="number" id="cold_tin" value="5" min="0" max="200" inputmode="numeric"></div>
-          <div><label class="text-sm font-bold" style="color:#636e72">T выход, C</label><input type="number" id="cold_tout" value="60" min="0" max="200" inputmode="numeric"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">T вход, °C</label><input type="number" id="cold_tin" value="5" min="0" max="200" inputmode="numeric"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">T выход, °C</label><input type="number" id="cold_tout" value="60" min="0" max="200" inputmode="numeric"></div>
         </div>
       </div>
     </div>
 
-    <div class="section-card sketchy p-3 md:p-5 fade-up">
-      <h3 class="text-xl font-bold mb-3" style="font-family:'Caveat',cursive">Параметры аппарата</h3>
+    <!-- Параметры аппарата -->
+    <div class="sketchy crosshatch p-5 fade-up">
+      <h3 class="text-2xl font-bold mb-3">⚙️ Параметры аппарата</h3>
       <div class="space-y-3">
         <div class="grid grid-cols-2 gap-2">
           <div><label class="text-sm font-bold" style="color:#636e72">Материал</label>
@@ -163,16 +166,17 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
         </div>
         <div><label class="text-sm font-bold" style="color:#636e72">Модель пластины</label>
           <select id="plate_model">
-            <option value="APR-4">APR-4 (0.03 м2)</option>
-            <option value="APR-7" selected>APR-7 (0.23 м2)</option>
-            <option value="APR-21">APR-21 (0.042 м2)</option>
-            <option value="APR-43">APR-43 (0.442 м2)</option>
-            <option value="APR-84">APR-84 (0.646 м2)</option>
-            <option value="APR-100">APR-100 (1.0 м2)</option>
-            <option value="TP-B-0.35">TP-B-0.35 (0.099 м2)</option>
-            <option value="TP-B-0.70">TP-B-0.70 (0.70 м2)</option>
+            <option value="APR-4">APR-4 (0.03 м²)</option>
+            <option value="APR-7" selected>APR-7 (0.23 м²)</option>
+            <option value="APR-21">APR-21 (0.042 м²)</option>
+            <option value="APR-43">APR-43 (0.442 м²)</option>
+            <option value="APR-84">APR-84 (0.646 м²)</option>
+            <option value="APR-100">APR-100 (1.0 м²)</option>
+            <option value="TP-B-0.35">TP-B-0.35 (0.099 м²)</option>
+            <option value="TP-B-0.70">TP-B-0.70 (0.70 м²)</option>
           </select></div>
-        <div><label class="text-sm font-bold" style="color:#636e72">Запас поверхности, %</label><input type="number" id="surface_reserve" value="10" min="0" max="50" inputmode="numeric"></div>
+        <div><label class="text-sm font-bold" style="color:#636e72">Запас поверхности, %</label>
+          <input type="number" id="surface_reserve" value="10" min="0" max="50" inputmode="numeric"></div>
       </div>
     </div>
 
@@ -180,27 +184,28 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
 
     <div id="error-box"></div>
 
-    <div id="results" class="section-card sketchy p-3 md:p-5 fade-up hidden" style="background:linear-gradient(135deg,#fffdf7,#fff5eb);border-color:#d63031">
-      <h3 class="text-xl font-bold mb-2" style="color:#d63031;font-family:'Caveat',cursive">Результат расчёта</h3>
+    <!-- Результаты -->
+    <div id="results" class="sketchy p-5 fade-up hidden" style="background:linear-gradient(135deg,#fffdf7,#fff5eb);border-color:#d63031">
+      <h3 class="text-2xl font-bold mb-2" style="color:#d63031">📊 Результат расчёта</h3>
       <div class="result-row">
         <div class="result-cell"><div class="val" id="r_power">-</div><div class="lbl">Мощность, кВт</div></div>
-        <div class="result-cell"><div class="val" id="r_area">-</div><div class="lbl">Площадь, м2</div></div>
+        <div class="result-cell"><div class="val" id="r_area">-</div><div class="lbl">Площадь, м²</div></div>
         <div class="result-cell"><div class="val" id="r_plates">-</div><div class="lbl">Пластин</div></div>
       </div>
       <div class="result-row" style="grid-template-columns:1fr 1fr;margin-top:8px">
         <div class="result-cell"><div class="val" style="font-size:1rem" id="r_model">-</div><div class="lbl">Модель</div></div>
-        <div class="result-cell"><div class="val" style="font-size:1rem" id="r_dT">-</div><div class="lbl">dT лн, C</div></div>
+        <div class="result-cell"><div class="val" style="font-size:1rem" id="r_dT">-</div><div class="lbl">dT лн, °C</div></div>
       </div>
     </div>
   </div>
 
-  <!-- 3D Viewer -->
-  <div class="flex-1">
-    <div class="section-card sketchy p-2 md:p-3 fade-up canvas-wrap" style="min-height:500px;position:relative">
+  <!-- Правая колонка — 3D -->
+  <div class="flex-1 min-w-0">
+    <div class="sketchy p-3 canvas-wrap fade-up" style="min-height:500px;position:relative">
       <div id="viewer-container" style="width:100%;min-height:500px;position:relative;border-radius:12px;overflow:hidden;background:#f5f5f5">
         <div id="viewer-loading" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font-family:'Architects Daughter',cursive;color:#636e72;z-index:10">
           <div style="width:40px;height:40px;border:4px solid #e0e0e0;border-top:4px solid #d63031;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 10px"></div>
-          Загрузка 3D-модели...
+          Загрузка 3D...
         </div>
       </div>
 
@@ -212,32 +217,35 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
         </div>
         <div style="display:flex;gap:6px;margin-top:8px;justify-content:center;flex-wrap:wrap">
           <span class="tag" id="btn_wireframe" onclick="toggleWireframe()" style="font-size:.8rem;padding:4px 12px">Wireframe</span>
-          <span class="tag" id="btn_flows" onclick="toggleFlows()" style="font-size:.8rem;padding:4px 12px">Потоки</span>
+          <span class="tag active" id="btn_flows" onclick="toggleFlows()" style="font-size:.8rem;padding:4px 12px">Потоки</span>
           <span class="tag" id="btn_reset" onclick="resetView()" style="font-size:.8rem;padding:4px 12px">Сброс</span>
         </div>
       </div>
 
-      <div class="text-center mt-1 md:mt-2">
+      <div class="text-center mt-2">
         <span id="model_info" style="font-family:'Architects Daughter',cursive;color:#636e72;font-size:.85rem">Phoenix 1 SAPR-7 | 31 пластина | AISI 316 | EPDM</span>
-        <div class="flex justify-center gap-3 md:gap-4 mt-1" style="font-size:.7rem;color:#636e72;font-family:'Architects Daughter',cursive">
+        <div class="flex justify-center gap-4 mt-1" style="font-size:.7rem;color:#636e72;font-family:'Architects Daughter',cursive">
           <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#e74c3c;vertical-align:middle"></span> Горячий</span>
           <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3498db;vertical-align:middle"></span> Холодный</span>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<footer class="max-w-7xl mx-auto mt-2 md:mt-4 mb-4 text-center">
-  <p style="font-size:.8rem;color:#636e72;font-family:'Architects Daughter',cursive">AIPhoenix - Калькулятор теплообменников - Завод Феникс, Ростов-на-Дону</p>
+</main>
+
+<footer class="max-w-6xl mx-auto mt-6 mb-4 text-center">
+  <p class="font-block" style="font-size:.8rem;color:#636e72">AIPhoenix — Калькулятор теплообменников — Завод Феникс, Ростов-на-Дону</p>
 </footer>
 
-<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-
+<!-- Three.js — загружается в конце, не блокирует рендер -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js" async onload="init3D()"></script>
 <script>
-/* ═══════════════════════════════════════════════════════
-   THERMAL CALCULATION
-   ═══════════════════════════════════════════════════════ */
+if(typeof THREE!=='undefined') init3D();
+
+/* ═══════════════════════════════════════════
+   ТЕПЛОВОЙ РАСЧЁТ
+   ═══════════════════════════════════════════ */
 var CP={water:4.18,glycol30:3.85,glycol50:3.45,oil:2.0,steam:2.05};
 var PA={'APR-4':0.03,'APR-7':0.23,'APR-21':0.042,'APR-43':0.442,'APR-84':0.646,'APR-100':1.0,'TP-B-0.35':0.099,'TP-B-0.70':0.70};
 var KT={'water-water':{s:3500,h:5500},'water-glycol30':{s:2800,h:4500},'water-glycol50':{s:2400,h:3800},'water-oil':{s:600,h:950},'glycol30-water':{s:2800,h:4500},'oil-water':{s:500,h:800},'steam-water':{s:4000,h:6000}};
@@ -305,9 +313,9 @@ function doCalc(){
   updateModel(nP);
 }
 
-/* ═══════════════════════════════════════════════════════
-   3D VISUALIZATION (Three.js)
-   ═══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   3D МОДЕЛЬ (Three.js)
+   ═══════════════════════════════════════════ */
 var scene,camera,renderer,group;
 var nPlates=31,explode=0;
 var sph={t:Math.PI/4,p:Math.PI/4,r:12};
@@ -317,14 +325,18 @@ var dots=[];
 var autoRotSpeed=0.004;
 var wireframeMode=false,showFlows=true;
 var meshMaterials=[];
+var inited3d=false;
 
 function init3D(){
-  document.getElementById('viewer-loading').style.display='none';
+  if(inited3d||typeof THREE==='undefined')return;
+  inited3d=true;
+  var el=document.getElementById('viewer-loading');
+  if(el)el.style.display='none';
 
   var container=document.getElementById('viewer-container');
-  var w=container.clientWidth;
+  if(!container)return;
+  var w=container.clientWidth||300;
   var h=container.clientHeight||500;
-  if(w<10)w=300;if(h<10)h=300;
 
   var c=document.createElement('canvas');
   c.id='canvas3d';
@@ -334,7 +346,6 @@ function init3D(){
 
   scene=new THREE.Scene();
   scene.background=new THREE.Color(0xffffff);
-
   camera=new THREE.PerspectiveCamera(30,w/h,0.1,100);
   camera.position.set(8,5,8);
   camera.lookAt(0,0,0);
@@ -349,7 +360,6 @@ function init3D(){
 
   group=new THREE.Group();
   scene.add(group);
-
   buildModel();
 
   document.getElementById('explodeSlider').addEventListener('input',function(){
@@ -367,7 +377,6 @@ function init3D(){
   c.addEventListener('mouseup',function(){dragging=false});
   c.addEventListener('mouseleave',function(){dragging=false});
   c.addEventListener('wheel',function(e){sph.r=Math.max(4,Math.min(25,sph.r+e.deltaY*0.01));e.preventDefault()},{passive:false});
-
   c.addEventListener('touchstart',function(e){
     if(e.touches.length===1){dragging=true;mx=e.touches[0].clientX;my=e.touches[0].clientY}
     else if(e.touches.length===2){dragging=false;var dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;pinchDist=Math.sqrt(dx*dx+dy*dy)}
@@ -376,10 +385,10 @@ function init3D(){
     if(e.touches.length===1&&dragging){sph.t-=(e.touches[0].clientX-mx)*0.008;sph.p=Math.max(0.2,Math.min(2.8,sph.p-(e.touches[0].clientY-my)*0.008));mx=e.touches[0].clientX;my=e.touches[0].clientY;e.preventDefault()}
     else if(e.touches.length===2){var dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY,dist=Math.sqrt(dx*dx+dy*dy);if(pinchDist>0)sph.r=Math.max(4,Math.min(25,sph.r+(pinchDist-dist)*0.03));pinchDist=dist;e.preventDefault()}
   },{passive:false});
-  c.addEventListener('touchend',function(e){if(e.touches.length===0)dragging=false;pinchDist=0});
+  c.addEventListener('touchend',function(){dragging=false;pinchDist=0});
 
   window.addEventListener('resize',function(){
-    var w2=container.clientWidth,h2=container.clientHeight||500;
+    var w2=container.clientWidth||300,h2=container.clientHeight||500;
     camera.aspect=w2/h2;camera.updateProjectionMatrix();renderer.setSize(w2,h2);
   });
 
@@ -414,9 +423,11 @@ function buildModel(){
 
   meshMaterials.push(frameMat,plateMat,accentMat,darkMat);
 
+  // Рамы
   group.add(bpMesh(new THREE.BoxGeometry(2.8,5.2,FT),frameMat,null,null).translateZ(pLen));
   group.add(bpMesh(new THREE.BoxGeometry(2.8,5.2,FT*1.2),plateMat));
 
+  // Ножки
   var footG=new THREE.BoxGeometry(0.35,0.6,0.8);
   var footBarG=new THREE.BoxGeometry(2.2,0.12,0.8);
   var vBarG=new THREE.BoxGeometry(0.12,5.6,0.12);
@@ -428,6 +439,7 @@ function buildModel(){
     group.add(bpMesh(vBarG,darkMat,[x,0,pLen/2]));
   });
 
+  // Порты П1-П4
   var portG=new THREE.CylinderGeometry(0.2,0.2,0.6,16);
   var flG=new THREE.CylinderGeometry(0.3,0.3,0.08,16);
   var pp=[[-0.6,1.6],[0.6,1.6],[-0.6,-1.6],[0.6,-1.6]];
@@ -438,6 +450,7 @@ function buildModel(){
     group.add(bpMesh(flG,darkMat,[p[0],p[1],pLen+0.65]));
   });
 
+  // Пластины
   var plG=new THREE.BoxGeometry(PW,PH,PT);
   for(var i=0;i<nPlates;i++){
     var m=bpMesh(plG,plateMat);m.userData={tp:'p',ix:i};group.add(m);
@@ -453,11 +466,13 @@ function buildModel(){
     });
   }
 
+  // Шпильки
   var rodG=new THREE.CylinderGeometry(0.06,0.06,pLen+1.5,12);
   [2.5,-2.5].forEach(function(y){
     group.add(bpMesh(rodG,darkMat,[0,y,pLen/2],[Math.PI/2,0,0]));
   });
 
+  // Болты + гайки
   var boltG=new THREE.CylinderGeometry(0.04,0.04,1,8);
   var nutG=new THREE.CylinderGeometry(0.09,0.09,0.12,6);
   [-1.15,1.15].forEach(function(x){
@@ -468,16 +483,18 @@ function buildModel(){
     });
   });
 
-  var lb=bpMesh(new THREE.BoxGeometry(0.9,0.3,0.02),accentMat);lb.position.set(0,0.8,-FT-0.02);group.add(lb);
-  var lbb=bpMesh(new THREE.BoxGeometry(0.94,0.34,0.015),darkMat);lbb.position.set(0,0.8,-FT-0.025);group.add(lbb);
+  // Бирка
+  group.add(bpMesh(new THREE.BoxGeometry(0.9,0.3,0.02),accentMat,[0,0.8,-FT-0.02]));
+  group.add(bpMesh(new THREE.BoxGeometry(0.94,0.34,0.015),darkMat,[0,0.8,-FT-0.025]));
 
+  // Потоки
   var dotG=new THREE.SphereGeometry(0.06,6,6);
   for(var d=0;d<12;d++){
     var hd=new THREE.Mesh(dotG,hotMat);
-    hd.userData={dl:d/12,sp:0.3+Math.random()*0.2,a:new THREE.Vector3(-0.6,1.6,-0.7),b:new THREE.Vector3(0.6,-1.6,pLen+0.7),isHot:true};
+    hd.userData={dl:d/12,sp:0.3+Math.random()*0.2,a:new THREE.Vector3(-0.6,1.6,-0.7),b:new THREE.Vector3(0.6,-1.6,pLen+0.7)};
     group.add(hd);dots.push(hd);
     var cd=new THREE.Mesh(dotG,coldMat);
-    cd.userData={dl:d/12,sp:0.3+Math.random()*0.2,a:new THREE.Vector3(-0.6,-1.6,-0.7),b:new THREE.Vector3(0.6,1.6,pLen+0.7),isHot:false};
+    cd.userData={dl:d/12,sp:0.3+Math.random()*0.2,a:new THREE.Vector3(-0.6,-1.6,-0.7),b:new THREE.Vector3(0.6,1.6,pLen+0.7)};
     group.add(cd);dots.push(cd);
   }
   group.position.z=-pLen/2;
@@ -522,26 +539,19 @@ function updateModel(n){
 
 function toggleWireframe(){
   wireframeMode=!wireframeMode;
-  var btn=document.getElementById('btn_wireframe');
-  btn.className=wireframeMode?'tag active':'tag';
+  document.getElementById('btn_wireframe').className=wireframeMode?'tag active':'tag';
   meshMaterials.forEach(function(m){m.wireframe=wireframeMode});
 }
-
 function toggleFlows(){
   showFlows=!showFlows;
-  var btn=document.getElementById('btn_flows');
-  btn.className=showFlows?'tag active':'tag';
+  document.getElementById('btn_flows').className=showFlows?'tag active':'tag';
   dots.forEach(function(d){d.visible=showFlows});
 }
-
 function resetView(){
-  sph={t:Math.PI/4,p:Math.PI/4,r:12};
-  explode=0;
+  sph={t:Math.PI/4,p:Math.PI/4,r:12};explode=0;
   document.getElementById('explodeSlider').value=0;
   document.getElementById('explodeVal').textContent='0';
 }
-
-window.addEventListener('load',init3D);
 </script>
 </body>
 </html>
