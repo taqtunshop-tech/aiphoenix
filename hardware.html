@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIPhoenix - Конфигуратор ИИ-Сервера (€20 000)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="shared.css">
+<script>tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil-light':'#636e72',marker:'#d63031',blueprint:'#0984e3',green:'#00b894'},fontFamily:{sketch:['Caveat','cursive'],block:['"Architects Daughter"','cursive']}}}}</script>
+<style>
+.total-bar{position:sticky;bottom:0;z-index:50;border-top:3px solid #2d3436;background:rgba(251,251,250,.95);backdrop-filter:blur(8px)}
+select{font-family:'Caveat',cursive;font-size:1.15rem;border:2px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:6px 12px;background:#fff;cursor:pointer}
+</style>
+</head>
+<body class="text-pencil min-h-screen p-4 md:p-8 overflow-x-hidden pb-28">
+<div class="grid-bg"></div>
+
+<header class="max-w-6xl mx-auto mb-6 text-center relative z-10">
+  <h1 class="text-5xl md:text-6xl font-bold">🖥️ Конфигуратор ИИ-Сервера</h1>
+  <p class="text-2xl text-pencil-light font-block mt-2">Целевой бюджет: <span class="text-marker font-bold">~€20 000</span> · Локальный инференс моделей до 1.6 трлн параметров</p>
+  <p class="text-xl font-block mt-1 text-pencil-light">Цены ориентировочные, указан диапазон «от — до» для каждого компонента</p>
+  <div class="mt-3 flex flex-wrap justify-center gap-2">
+    <span class="tag text-sm">KTransformers</span><span class="tag text-sm">SGLang</span><span class="tag text-sm">vLLM</span><span class="tag text-sm">llama.cpp</span>
+  </div>
+</header>
+
+<nav class="max-w-6xl mx-auto mb-8 flex flex-wrap justify-center gap-3 relative z-10">
+  <a href="index.html" class="nav-link">🏠 Главная</a>
+  <a href="agents.html" class="nav-link">🤖 Рой Агентов</a>
+  <a href="rag.html" class="nav-link">🌳 RAG / Векторизация</a>
+  <a href="pipeline.html" class="nav-link">🔄 Цикл Сделки</a>
+  <a href="integrations.html" class="nav-link">🔌 Интеграции</a>
+  <a href="hardware.html" class="nav-link active">🖥️ Железо (€20K)</a>
+</nav>
+
+<section class="max-w-6xl mx-auto mb-8 relative z-10 fade-up">
+  <div class="sketchy p-6">
+    <h2 class="text-3xl font-bold mb-3">🏷️ Ключевые бренды платформы</h2>
+    <p class="text-xl font-block mb-4">Подбор компонентов для локальной ИИ-инфраструктуры завода-производителя теплообменников: GPU, CPU, платы, память и накопители в едином стиле презентации.</p>
+    <div class="brand-row">
+      <div class="brand-chip"><img src="img/brands-nvidia-sketch.svg" alt="NVIDIA"></div>
+      <div class="brand-chip"><img src="img/brands-amd-sketch.svg" alt="AMD"></div>
+      <div class="brand-chip"><img src="img/brands-asus-sketch.svg" alt="ASUS"></div>
+      <div class="brand-chip"><img src="img/brands-samsung-sketch.svg" alt="Samsung"></div>
+    </div>
+    <div class="mt-4 flex flex-wrap gap-2 text-lg font-block">
+      <span class="tag">NVIDIA</span><span class="tag">AMD</span><span class="tag">ASUS</span><span class="tag">ASRock</span>
+      <span class="tag">Samsung</span><span class="tag">WD</span><span class="tag">Seasonic</span><span class="tag">Corsair</span><span class="tag">be quiet!</span><span class="tag">Fractal</span><span class="tag">Noctua</span><span class="tag">Arctic</span>
+    </div>
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto mb-8 relative z-10 fade-up">
+  <div class="sketchy p-6" style="background:#fffdf7">
+    <h2 class="text-3xl font-bold mb-3">📊 Как работает расчёт</h2>
+    <p class="text-xl font-block mb-2">Нажимайте на карточки — внизу отображается <strong>примерный диапазон бюджета «от — до»</strong> для выбранной конфигурации.</p>
+    <div class="flex flex-wrap gap-3">
+      <span class="stat-pill">Каждая карточка — ориентир</span>
+      <span class="stat-pill">Цена = «от мин. до макс.»</span>
+      <span class="stat-pill">Итого = сумма по всем категориям</span>
+      <span class="stat-pill">Целевой бюджет ~€20 000</span>
+    </div>
+  </div>
+</section>
+
+<main class="max-w-6xl mx-auto relative z-10 space-y-8" id="app">
+
+<!-- GPU -->
+<section class="fade-up">
+<h2 class="text-4xl font-bold mb-4">🎮 Видеокарта (GPU) — Сердце ИИ</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="sketchy p-4 cursor-pointer" data-card="gpu-4090" data-price="2200" data-name="RTX 4090 24GB" data-min="1800" data-max="2500" data-cat="gpu" onclick="selectCard(this,'gpu')">
+    <h3 class="text-2xl font-bold mt-2">NVIDIA RTX 4090</h3>
+    <p class="font-block text-lg">24 GB GDDR6X · Ada Lovelace</p>
+    <span class="badge bg-yellow-500/20 text-yellow-700">Бюджетный</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€1 800 — 2 500</p>
+    <p class="text-sm text-pencil-light">Хороший вариант для моделей 13B-32B. Быстрый инференс, но без ECC.</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="3800" data-name="RTX 5090 32GB" data-min="3200" data-max="4500" data-cat="gpu" onclick="selectCard(this,'gpu')">
+    <h3 class="text-2xl font-bold mt-2">NVIDIA RTX 5090</h3>
+    <p class="font-block text-lg">32 GB GDDR7 · Blackwell</p>
+    <span class="badge bg-blueprint/20 text-blueprint">Макс. скорость</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€3 200 — 4 500</p>
+    <p class="text-sm text-pencil-light">FP4, огромная пропускная способность. Модели 13B-70B на максимуме.</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-card="gpu-6000ada" data-price="7500" data-name="RTX 6000 Ada 48GB" data-min="6500" data-max="8500" data-cat="gpu" onclick="selectCard(this,'gpu')">
+    <h3 class="text-2xl font-bold mt-2">NVIDIA RTX 6000 Ada</h3>
+    <p class="font-block text-lg">48 GB GDDR6 ECC · 960 GB/s</p>
+    <span class="badge bg-green/20 text-green">Рекомендуем</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€6 500 — 8 500</p>
+    <p class="text-sm text-pencil-light">Проф. карта, 24/7 стабильность, ECC. Запуск моделей 70B+ в полном качестве.</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="12000" data-name="RTX PRO 6000 96GB" data-min="10000" data-max="14000" data-cat="gpu" onclick="selectCard(this,'gpu')">
+    <h3 class="text-2xl font-bold mt-2">RTX PRO 6000 Blackwell</h3>
+    <p class="font-block text-lg">96 GB GDDR7 ECC · Blackwell</p>
+    <span class="badge bg-marker/20 text-marker">Флагман</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€10 000 — 14 000</p>
+    <p class="text-sm text-pencil-light">96 ГБ видеопамяти! Запуск 200B+ моделей без сжатия. Превышает типичный бюджет.</p>
+  </div>
+</div>
+</section>
+
+<!-- CPU -->
+<section class="fade-up">
+<h2 class="text-4xl font-bold mb-4">⚙️ Процессор (CPU)</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="sketchy p-4 cursor-pointer" data-price="550" data-name="AMD Ryzen 9 9950X 16C" data-min="500" data-max="600" data-cat="cpu" onclick="selectCard(this,'cpu')">
+    <h3 class="text-2xl font-bold mt-2">AMD Ryzen 9 9950X</h3>
+    <p class="font-block text-lg">16 ядер · AM5 · Бюджет</p>
+    <span class="badge bg-yellow-500/20 text-yellow-700">Бюджетный</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€500 — 600</p>
+    <p class="text-sm text-pencil-light">Лучший consumer-процессор. Для базовых задач и небольших моделей.</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-card="cpu-threadripper" data-price="3700" data-name="Threadripper PRO 7975WX 32C" data-min="3200" data-max="4200" data-cat="cpu" onclick="selectCard(this,'cpu')">
+    <h3 class="text-2xl font-bold mt-2">AMD TR PRO 7975WX</h3>
+    <p class="font-block text-lg">32 ядра · 128 линий PCIe 5.0</p>
+    <span class="badge bg-green/20 text-green">Оптимальный</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€3 200 — 4 200</p>
+    <p class="text-sm text-pencil-light">Отличный баланс цена/производительность для KTransformers и LLM-инференса.</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="7500" data-name="Threadripper PRO 7985WX 64C" data-min="6500" data-max="8500" data-cat="cpu" onclick="selectCard(this,'cpu')">
+    <h3 class="text-2xl font-bold mt-2">AMD TR PRO 7985WX</h3>
+    <p class="font-block text-lg">64 ядра · 128 линий PCIe 5.0</p>
+    <span class="badge bg-blueprint/20 text-blueprint">Максимум</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€6 500 — 8 500</p>
+    <p class="text-sm text-pencil-light">Максимум ядер для тяжелых параллельных вычислений и больших контекстов.</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="11000" data-name="Threadripper PRO 7995WX 96C" data-min="9500" data-max="12500" data-cat="cpu" onclick="selectCard(this,'cpu')">
+    <h3 class="text-2xl font-bold mt-2">AMD TR PRO 7995WX</h3>
+    <p class="font-block text-lg">96 ядер · 128 линий PCIe 5.0</p>
+    <span class="badge bg-marker/20 text-marker">Флагман</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€9 500 — 12 500</p>
+    <p class="text-sm text-pencil-light">Топовый процессор. Для экстремальных нагрузок и сотен параллельных задач.</p>
+  </div>
+</div>
+</section>
+
+<!-- Motherboard -->
+<section class="fade-up">
+<h2 class="text-4xl font-bold mb-4">🔌 Материнская плата</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="sketchy p-4 cursor-pointer" data-price="350" data-name="ASUS TUF GAMING X870E (AM5)" data-min="300" data-max="400" data-cat="mb" onclick="selectCard(this,'mb')">
+    <h3 class="text-2xl font-bold mt-2">ASUS TUF X870E (AM5)</h3>
+    <p class="font-block text-lg">Под Ryzen 9000 · Бюджет</p>
+    <span class="badge bg-yellow-500/20 text-yellow-700">Бюджетный</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€300 — 400</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="700" data-name="ASRock WRX90 WS EVO" data-min="600" data-max="800" data-cat="mb" onclick="selectCard(this,'mb')">
+    <h3 class="text-2xl font-bold mt-2">ASRock WRX90 WS EVO</h3>
+    <p class="font-block text-lg">WRX90 · Альтернатива для Threadripper</p>
+    <p class="text-marker text-2xl font-bold mt-1">~€600 — 800</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="1200" data-name="ASUS WRX90E-SAGE SE" data-min="1000" data-max="1400" data-cat="mb" onclick="selectCard(this,'mb')">
+    <h3 class="text-2xl font-bold mt-2">ASUS Pro WS WRX90E-SAGE SE</h3>
+    <p class="font-block text-lg">7x PCIe 5.0 x16 · 2TB DDR5 · IPMI</p>
+    <span class="badge bg-green/20 text-green">Под Threadripper</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€1 000 — 1 400</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="1800" data-name="ASUS WRX90E-SAGE WiFi" data-min="1500" data-max="2100" data-cat="mb" onclick="selectCard(this,'mb')">
+    <h3 class="text-2xl font-bold mt-2">ASUS WRX90E-SAGE WiFi</h3>
+    <p class="font-block text-lg">WRX90 · Wi-Fi 7 · Флагман</p>
+    <span class="badge bg-marker/20 text-marker">Флагман</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€1 500 — 2 100</p>
+  </div>
+</div>
+</section>
+
+<!-- RAM -->
+<section class="fade-up">
+<h2 class="text-4xl font-bold mb-4">💾 Оперативная память (RAM)</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="sketchy p-4 cursor-pointer" data-price="400" data-name="128GB DDR5 (AM5)" data-min="350" data-max="500" data-cat="ram" onclick="selectCard(this,'ram')">
+    <h3 class="text-2xl font-bold mt-2">128 GB DDR5 (AM5)</h3>
+    <p class="font-block text-lg">4x32GB · G.Skill/Kingston · 6000MT/s</p>
+    <span class="badge bg-yellow-500/20 text-yellow-700">Бюджетный</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€350 — 500</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-card="ram-256" data-price="3500" data-name="256GB DDR5 ECC RDIMM" data-min="3000" data-max="4000" data-cat="ram" onclick="selectCard(this,'ram')">
+    <h3 class="text-2xl font-bold mt-2">256 GB DDR5 ECC RDIMM</h3>
+    <p class="font-block text-lg">8x32GB · Samsung/SK Hynix · 5600MT/s</p>
+    <span class="badge bg-green/20 text-green">Оптимально для KTransformers</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€3 000 — 4 000</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="8000" data-name="512GB DDR5 ECC RDIMM" data-min="7000" data-max="9500" data-cat="ram" onclick="selectCard(this,'ram')">
+    <h3 class="text-2xl font-bold mt-2">512 GB DDR5 ECC RDIMM</h3>
+    <p class="font-block text-lg">8x64GB · Samsung · 5600MT/s</p>
+    <span class="badge bg-blueprint/20 text-blueprint">Для моделей 1 трлн+</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€7 000 — 9 500</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="12000" data-name="1TB DDR5 ECC RDIMM" data-min="10000" data-max="14000" data-cat="ram" onclick="selectCard(this,'ram')">
+    <h3 class="text-2xl font-bold mt-2">1 TB DDR5 ECC RDIMM</h3>
+    <p class="font-block text-lg">8x128GB · Samsung · 5600MT/s</p>
+    <span class="badge bg-marker/20 text-marker">Флагман</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€10 000 — 14 000</p>
+    <p class="text-sm text-pencil-light">Максимальный объем для гигантских моделей и контекстов.</p>
+  </div>
+</div>
+</section>
+
+<!-- Storage -->
+<section class="fade-up">
+<h2 class="text-4xl font-bold mb-4">💿 Накопители (SSD)</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="sketchy p-4 cursor-pointer" data-price="400" data-name="WD Black SN850X 4TB" data-min="350" data-max="450" data-cat="ssd" onclick="selectCard(this,'ssd')">
+    <h3 class="text-2xl font-bold mt-2">WD Black SN850X 4TB</h3>
+    <p class="font-block text-lg">Gen4 NVMe · 7 300 MB/s</p>
+    <span class="badge bg-green/20 text-green">Лучшая цена</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€350 — 450</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="600" data-name="Samsung 990 Pro 4TB" data-min="500" data-max="700" data-cat="ssd" onclick="selectCard(this,'ssd')">
+    <h3 class="text-2xl font-bold mt-2">Samsung 990 Pro 4TB</h3>
+    <p class="font-block text-lg">Gen4 NVMe · 7 450 MB/s</p>
+    <p class="text-marker text-2xl font-bold mt-1">~€500 — 700</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="900" data-name="Samsung 9100 Pro 4TB Gen5" data-min="800" data-max="1100" data-cat="ssd" onclick="selectCard(this,'ssd')">
+    <h3 class="text-2xl font-bold mt-2">Samsung 9100 Pro 4TB</h3>
+    <p class="font-block text-lg">Gen5 NVMe · 14 800 MB/s</p>
+    <span class="badge bg-blueprint/20 text-blueprint">Максимум</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€800 — 1 100</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="1800" data-name="Samsung 9100 Pro 8TB Gen5" data-min="1500" data-max="2200" data-cat="ssd" onclick="selectCard(this,'ssd')">
+    <h3 class="text-2xl font-bold mt-2">Samsung 9100 Pro 8TB</h3>
+    <p class="font-block text-lg">Gen5 NVMe · 14 800 MB/s</p>
+    <span class="badge bg-marker/20 text-marker">Флагман</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€1 500 — 2 200</p>
+    <p class="text-sm text-pencil-light">8 ТБ для моделей и баз знаний. Лучшая скорость + максимальный объем.</p>
+  </div>
+</div>
+</section>
+
+<!-- PSU -->
+<section class="fade-up">
+<h2 class="text-4xl font-bold mb-4">⚡ Блок питания (PSU)</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="sketchy p-4 cursor-pointer" data-price="250" data-name="Corsair RM1000x 1000W" data-min="200" data-max="300" data-cat="psu" onclick="selectCard(this,'psu')">
+    <h3 class="text-2xl font-bold mt-2">Corsair RM1000x</h3>
+    <p class="font-block text-lg">1000W · Gold · Тихий</p>
+    <span class="badge bg-yellow-500/20 text-yellow-700">Бюджетный</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€200 — 300</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="380" data-name="Corsair AX1600i" data-min="320" data-max="450" data-cat="psu" onclick="selectCard(this,'psu')">
+    <h3 class="text-2xl font-bold mt-2">Corsair AX1600i</h3>
+    <p class="font-block text-lg">1600W · Titanium · Классика</p>
+    <p class="text-marker text-2xl font-bold mt-1">~€320 — 450</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="450" data-name="be quiet! Dark Power Pro 13" data-min="400" data-max="500" data-cat="psu" onclick="selectCard(this,'psu')">
+    <h3 class="text-2xl font-bold mt-2">be quiet! Dark Power Pro 13</h3>
+    <p class="font-block text-lg">1600W · Titanium · Тихий</p>
+    <p class="text-marker text-2xl font-bold mt-1">~€400 — 500</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="480" data-name="Seasonic Prime TX-1600" data-min="420" data-max="550" data-cat="psu" onclick="selectCard(this,'psu')">
+    <h3 class="text-2xl font-bold mt-2">Seasonic Prime TX-1600</h3>
+    <p class="font-block text-lg">1600W · Titanium · ATX 3.1</p>
+    <span class="badge bg-green/20 text-green">Золотой стандарт</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€420 — 550</p>
+  </div>
+</div>
+</section>
+
+<!-- Case -->
+<section class="fade-up">
+<h2 class="text-4xl font-bold mb-4">📦 Корпус</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="sketchy p-4 cursor-pointer" data-price="150" data-name="Fractal Design Define 7 XL" data-min="130" data-max="200" data-cat="case" onclick="selectCard(this,'case')">
+    <h3 class="text-2xl font-bold mt-2">Fractal Design Define 7 XL</h3>
+    <p class="font-block text-lg">Full Tower · Тихий · Вместительный</p>
+    <span class="badge bg-green/20 text-green">Оптимальный</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€130 — 200</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="280" data-name="be quiet! Dark Base Pro 901" data-min="250" data-max="350" data-cat="case" onclick="selectCard(this,'case')">
+    <h3 class="text-2xl font-bold mt-2">be quiet! Dark Base Pro 901</h3>
+    <p class="font-block text-lg">Full Tower · Инверсная установка · Шумоизоляция</p>
+    <span class="badge bg-marker/20 text-marker">Премиум</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€250 — 350</p>
+  </div>
+</div>
+</section>
+
+<!-- Cooler -->
+<section class="fade-up">
+<h2 class="text-4xl font-bold mb-4">❄️ Кулер / Система охлаждения</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="sketchy p-4 cursor-pointer" data-price="120" data-name="Noctua NH-D15 G2" data-min="100" data-max="150" data-cat="cooler" onclick="selectCard(this,'cooler')">
+    <h3 class="text-2xl font-bold mt-2">Noctua NH-D15 G2</h3>
+    <p class="font-block text-lg">Воздушный · Тихий · Проверенный</p>
+    <span class="badge bg-green/20 text-green">Оптимальный</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€100 — 150</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="200" data-name="Arctic Liquid Freezer II 420" data-min="160" data-max="250" data-cat="cooler" onclick="selectCard(this,'cooler')">
+    <h3 class="text-2xl font-bold mt-2">Arctic Liquid Freezer II 420</h3>
+    <p class="font-block text-lg">420mm AIO · Максимальное охлаждение</p>
+    <span class="badge bg-blueprint/20 text-blueprint">Максимум</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€160 — 250</p>
+  </div>
+</div>
+</section>
+
+<!-- Networking -->
+<section class="fade-up">
+<h2 class="text-4xl font-bold mb-4">🌐 Сеть / Коммутация</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="sketchy p-4 cursor-pointer" data-price="80" data-name="Intel X710-T4L 10GbE" data-min="60" data-max="120" data-cat="net" onclick="selectCard(this,'net')">
+    <h3 class="text-2xl font-bold mt-2">Intel X710-T4L</h3>
+    <p class="font-block text-lg">10GbE · 4 порта · PCIe x8</p>
+    <span class="badge bg-green/20 text-green">Для сервера</span>
+    <p class="text-marker text-2xl font-bold mt-1">~€60 — 120</p>
+  </div>
+  <div class="sketchy p-4 cursor-pointer" data-price="30" data-name="TP-Link TL-SG108-M2" data-min="25" data-max="40" data-cat="net" onclick="selectCard(this,'net')">
+    <h3 class="text-2xl font-bold mt-2">TP-Link TL-SG108-M2</h3>
+    <p class="font-block text-lg">2.5GbE · 8 портов · Пассивный</p>
+    <span class="text-marker text-2xl font-bold mt-1">~€25 — 40</p>
+  </div>
+</div>
+</section>
+
+<!-- Sticky total bar -->
+<div class="total-bar p-4 text-center" id="totalBar">
+  <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
+    <div class="text-left">
+      <div class="text-xl font-block text-pencil-light">Выбрано:</div>
+      <div id="selectedList" class="text-lg font-block">Нажмите на карточки для выбора комплектующих</div>
+    </div>
+    <div class="text-right">
+      <div class="text-xl font-block text-pencil-light">Итого:</div>
+      <div id="totalPrice" class="text-4xl font-bold text-marker float">€0</div>
+      <div id="budgetStatus" class="text-lg font-block"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const selected = {};
+const budget = 20000;
+
+function selectCard(el, cat) {
+  document.querySelectorAll(`[data-cat="${cat}"]`).forEach(c => {
+    c.style.borderColor = '#2d3436';
+    c.style.borderWidth = '2px';
+    c.style.background = '#fff';
+  });
+  el.style.borderColor = '#00b894';
+  el.style.borderWidth = '3px';
+  el.style.background = '#f0fff4';
+  selected[cat] = {
+    name: el.dataset.name,
+    price: parseInt(el.dataset.price),
+    min: parseInt(el.dataset.min || el.dataset.price),
+    max: parseInt(el.dataset.max || el.dataset.price)
+  };
+  updateTotal();
+}
+
+function updateTotal() {
+  let total = 0, totalMin = 0, totalMax = 0, count = 0;
+  let parts = [];
+  for (const cat in selected) {
+    total += selected[cat].price;
+    totalMin += selected[cat].min;
+    totalMax += selected[cat].max;
+    parts.push(selected[cat].name);
+    count++;
+  }
+  document.getElementById('selectedList').textContent = parts.join(' · ') || 'Нажмите на карточки для выбора комплектующих';
+  if (count > 0) {
+    document.getElementById('totalPrice').textContent = '~\u20AC' + totalMin.toLocaleString() + ' — ' + totalMax.toLocaleString();
+  } else {
+    document.getElementById('totalPrice').textContent = '0';
+  }
+  const status = document.getElementById('budgetStatus');
+  if (totalMax > budget) {
+    status.textContent = 'Максимум превышает бюджет €' + budget.toLocaleString() + ' на ~€' + (totalMax - budget).toLocaleString();
+    status.className = 'text-lg font-block text-marker';
+  } else if (count > 0) {
+    status.textContent = 'Остаток: €' + (budget - totalMax).toLocaleString() + ' — €' + (budget - totalMin).toLocaleString();
+    status.className = 'text-lg font-block text-green';
+  } else {
+    status.textContent = '';
+    status.className = 'text-lg font-block';
+  }
+}
+</script>
+
+<!-- Футер -->
+<footer class="max-w-6xl mx-auto mt-12 text-center relative z-10 pb-8">
+  <!-- Курс валют + график -->
+  <div class="currency-bar mb-6 fade-up" id="currencyBar">
+    <span class="rate"><span class="rate-label">EUR/RUB:</span> <span class="rate-value" id="eurRub">—</span></span>
+    <span class="rate"><span class="rate-label">USD/RUB:</span> <span class="rate-value" id="usdRub">—</span></span>
+    <span class="rate"><span class="rate-label">Обновлено:</span> <span class="rate-value" id="rateTime">—</span></span>
+    <span class="currency-chart-wrap">
+      <canvas id="rateChart" width="520" height="160"></canvas>
+    </span>
+  </div>
+
+  <!-- Данные посетителя -->
+  <div class="sketchy p-5 mb-6 fade-up text-left">
+    <h2 class="text-2xl font-bold mb-3 text-center">Данные посетителя</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="visitorInfo">
+      <div class="visitor-slot" id="vIp"><span class="v-label">IP</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vCountry"><span class="v-label">Страна</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vCity"><span class="v-label">Город</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vRegion"><span class="v-label">Регион</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vBrowser"><span class="v-label">Браузер</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vOS"><span class="v-label">ОС</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vScreen"><span class="v-label">Экран</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vLang"><span class="v-label">Язык</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vCores"><span class="v-label">Ядра CPU</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vMemory"><span class="v-label">RAM</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vTouch"><span class="v-label">Тачскрин</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vTimezone"><span class="v-label">Часовой пояс</span><span class="v-val">—</span></div>
+    </div>
+  </div>
+
+  <div class="footer-sketch">
+    <p class="text-xl font-block">AIPhoenix · Завод теплообменников «Феникс» · 2026</p>
+    <p class="text-lg text-pencil-light">Человек = Капитан · ИИ = Экипаж</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var canvas=document.getElementById('rateChart');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var dpr=window.devicePixelRatio||1;
+  var W=520,H=160;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  canvas.style.width=W+'px';canvas.style.height=H+'px';
+  ctx.scale(dpr,dpr);
+
+  function drawChart(eurData,usdData,labels){
+    var padL=48,padR=12,padT=10,padB=22;
+    var gW=W-padL-padR,gH=H-padT-padB;
+    ctx.clearRect(0,0,W,H);
+    var all=eurData.concat(usdData);
+    var mn=Math.min.apply(null,all),mx=Math.max.apply(null,all);
+    var rng=mx-mn||1;
+    var n=eurData.length;
+
+    ctx.textAlign='right';ctx.textBaseline='middle';
+    for(var g=0;g<=5;g++){
+      var gy=padT+g*(gH/5);
+      ctx.beginPath();ctx.moveTo(padL,gy);ctx.lineTo(W-padR,gy);
+      ctx.strokeStyle=g===0?'#ccc':'#e8e8e8';ctx.lineWidth=g===0?1:.5;
+      ctx.setLineDash(g===0?[]:[4,3]);ctx.stroke();ctx.setLineDash([]);
+      ctx.font='10px Arial';ctx.fillStyle='#999';
+      ctx.fillText((mx-g*(rng/5)).toFixed(1),padL-5,gy);
+    }
+
+    ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.font='10px Arial';ctx.fillStyle='#666';
+    for(var xi=0;xi<n;xi++){
+      var xx=padL+xi*(gW/(n-1));
+      ctx.fillText(labels[xi],xx,H-padB+8);
+      ctx.beginPath();ctx.moveTo(xx,padT);ctx.lineTo(xx,H-padB);
+      ctx.strokeStyle='#eee';ctx.lineWidth=.5;ctx.setLineDash([3,3]);ctx.stroke();ctx.setLineDash([]);
+    }
+
+    function drawLine(data,lineColor){
+      var pts=[];
+      for(var i=0;i<data.length;i++){
+        pts.push({x:padL+i*(gW/(n-1)),y:padT+(1-(data[i]-mn)/rng)*gH,v:data[i]});
+      }
+      ctx.beginPath();ctx.moveTo(pts[0].x,H-padB);
+      for(var f=0;f<pts.length;f++) ctx.lineTo(pts[f].x,pts[f].y);
+      ctx.lineTo(pts[pts.length-1].x,H-padB);ctx.closePath();
+      ctx.fillStyle=lineColor==='#d63031'?'rgba(214,48,49,.05)':'rgba(9,132,227,.05)';
+      ctx.fill();
+
+      for(var s=1;s<pts.length;s++){
+        var diff=pts[s].v-pts[s-1].v;
+        ctx.beginPath();ctx.moveTo(pts[s-1].x,pts[s-1].y);ctx.lineTo(pts[s].x,pts[s].y);
+        ctx.strokeStyle=diff>0.001?'#00b894':diff<-0.001?'#d63031':'#aaa';
+        ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();
+      }
+      for(var j=0;j<pts.length;j++){
+        var dd=j>0?pts[j].v-pts[j-1].v:0;
+        var col=dd>0.001?'#00b894':dd<-0.001?'#d63031':lineColor;
+        ctx.beginPath();ctx.arc(pts[j].x,pts[j].y,5.5,0,Math.PI*2);
+        ctx.fillStyle='#fff';ctx.fill();
+        ctx.strokeStyle=col;ctx.lineWidth=2;ctx.stroke();
+        ctx.beginPath();ctx.arc(pts[j].x,pts[j].y,2,0,Math.PI*2);
+        ctx.fillStyle=col;ctx.fill();
+        var labelY=pts[j].y-12;
+        if(pts[j].y<padT+20) labelY=pts[j].y+16;
+        ctx.font='bold 10px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillStyle=col;
+        ctx.fillText(pts[j].v.toFixed(2),pts[j].x,labelY);
+      }
+    }
+
+    drawLine(usdData,'#0984e3');
+    drawLine(eurData,'#d63031');
+
+    ctx.textBaseline='top';ctx.textAlign='left';
+    ctx.font='bold 11px Arial';
+    var ly=H-padB+14;
+    ctx.fillStyle='#d63031';ctx.fillText('● EUR/RUB',padL+4,ly);
+    ctx.fillStyle='#0984e3';ctx.fillText('● USD/RUB',padL+110,ly);
+    ctx.fillStyle='#00b894';ctx.fillText('▲ рост',padL+220,ly);
+    ctx.fillStyle='#d63031';ctx.fillText('▼ падение',padL+286,ly);
+  }
+
+  var dates=[],labels=[];
+  var now=new Date();
+  var months=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  for(var i=6;i>=0;i--){
+    var dd=new Date(now);dd.setDate(dd.getDate()-i);
+    dates.push(dd.getFullYear()+'/'+String(dd.getMonth()+1).padStart(2,'0')+'/'+String(dd.getDate()).padStart(2,'0'));
+    labels.push(dd.getDate()+' '+months[dd.getMonth()]);
+  }
+  var urls=dates.map(function(dt,idx){
+    if(idx===dates.length-1) return 'https://www.cbr-xml-daily.ru/daily_json.js';
+    return 'https://www.cbr-xml-daily.ru/archive/'+dt+'/daily_json.js';
+  });
+
+  var eurVals=[],usdVals=[];
+  var loaded=0;
+  urls.forEach(function(url,idx){
+    fetch(url).then(function(r){if(!r.ok) throw new Error(r.status);return r.json()}).then(function(d){
+      eurVals[idx]=d.Valute&&d.Valute.EUR?d.Valute.EUR.Value:null;
+      usdVals[idx]=d.Valute&&d.Valute.USD?d.Valute.USD.Value:null;
+      loaded++;if(loaded===urls.length) render();
+    }).catch(function(){
+      eurVals[idx]=null;usdVals[idx]=null;
+      loaded++;if(loaded===urls.length) render();
+    });
+  });
+
+  function render(){
+    var ev=[],uv=[],lb=[];
+    for(var k=0;k<eurVals.length;k++){
+      if(eurVals[k]!==null&&usdVals[k]!==null){ev.push(eurVals[k]);uv.push(usdVals[k]);lb.push(labels[k]);}
+    }
+    if(ev.length>1) drawChart(ev,uv,lb);
+  }
+
+  fetch('https://www.cbr-xml-daily.ru/daily_json.js')
+    .then(function(r){return r.json()})
+    .then(function(d){
+      document.getElementById('eurRub').textContent=d.Valute.EUR.Value.toFixed(2)+' ₽';
+      document.getElementById('usdRub').textContent=d.Valute.USD.Value.toFixed(2)+' ₽';
+      document.getElementById('rateTime').textContent=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+    })
+    .catch(function(){
+      document.getElementById('eurRub').textContent='н/д';
+      document.getElementById('usdRub').textContent='н/д';
+    });
+})();
+</script>
+<script>
+(function(){
+  function setSlot(id,val){var el=document.getElementById(id);if(el) el.querySelector('.v-val').textContent=val||'—';}
+  var ua=navigator.userAgent;
+  var br='—';
+  if(ua.indexOf('Edg/')>-1) br='Edge '+ua.split('Edg/')[1].split(' ')[0];
+  else if(ua.indexOf('OPR/')>-1) br='Opera '+ua.split('OPR/')[1].split(' ')[0];
+  else if(ua.indexOf('Chrome/')>-1) br='Chrome '+ua.split('Chrome/')[1].split(' ')[0];
+  else if(ua.indexOf('Firefox/')>-1) br='Firefox '+ua.split('Firefox/')[1].split(' ')[0];
+  else if(ua.indexOf('Safari/')>-1) br='Safari';
+  setSlot('vBrowser',br);
+  var os='—';
+  if(ua.indexOf('Windows NT 10')>-1) os='Windows 10/11';
+  else if(ua.indexOf('Windows NT 6.3')>-1) os='Windows 8.1';
+  else if(ua.indexOf('Windows NT 6.1')>-1) os='Windows 7';
+  else if(ua.indexOf('Mac OS X')>-1) os='macOS '+ua.split('Mac OS X ')[1].split(' ')[0].replace(/_/g,'.');
+  else if(ua.indexOf('Linux')>-1) os='Linux';
+  else if(ua.indexOf('Android')>-1) os='Android '+ua.split('Android ')[1].split(';')[0];
+  else if(ua.indexOf('iPhone')>-1||ua.indexOf('iPad')>-1) os='iOS';
+  setSlot('vOS',os);
+  setSlot('vScreen',screen.width+'×'+screen.height+(window.devicePixelRatio>1?' @'+window.devicePixelRatio+'x':''));
+  setSlot('vLang',navigator.language||navigator.userLanguage||'—');
+  setSlot('vCores',navigator.hardwareConcurrency||'—');
+  setSlot('vMemory',navigator.deviceMemory?navigator.deviceMemory+' ГБ':'—');
+  setSlot('vTouch','ontouchstart' in window||navigator.maxTouchPoints>0?'Да ('+navigator.maxTouchPoints+')':'Нет');
+  try{
+    var tz=Intl.DateTimeFormat().resolvedOptions().timeZone;
+    var off=new Date().getTimezoneOffset();
+    var h=Math.floor(Math.abs(off)/60);var m=Math.abs(off)%60;
+    setSlot('vTimezone',tz+' (UTC'+(off<=0?'+':'-')+h+':'+(m<10?'0':'')+m+')');
+  }catch(e){setSlot('vTimezone','—');}
+  fetch('https://ipapi.co/json/')
+    .then(function(r){return r.json()})
+    .then(function(d){
+      setSlot('vIp',d.ip||'—');
+      setSlot('vCountry',d.country_name?(d.country_name+' ('+d.country_code+')'):'—');
+      setSlot('vCity',d.city||'—');
+      setSlot('vRegion',d.region||'—');
+    })
+    .catch(function(){
+      fetch('https://ipwho.is/')
+        .then(function(r){return r.json()})
+        .then(function(d){
+          setSlot('vIp',d.ip||'—');
+          setSlot('vCountry',d.country?(d.country+' ('+d.country_code+')'):'—');
+          setSlot('vCity',d.city||'—');
+          setSlot('vRegion',d.region||'—');
+        })
+        .catch(function(){});
+    });
+})();
+</script>
+<script>
+(function(){
+  var targets=document.querySelectorAll('.reveal,.draw-on,.trace-border');
+  if(!targets.length) return;
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}
+    });
+  },{threshold:.15,rootMargin:'0px 0px -40px 0px'});
+  targets.forEach(function(t){io.observe(t);});
+
+  var cards=document.querySelectorAll('.sketchy');
+  var cio=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.style.opacity='1';
+        e.target.style.transform='translateY(0) rotate(0)';
+        cio.unobserve(e.target);
+      }
+    });
+  },{threshold:.1});
+  cards.forEach(function(c,i){
+    c.style.opacity='0';
+    c.style.transform='translateY(30px) rotate('+(Math.random()*2-1)+'deg)';
+    c.style.transition='opacity .6s cubic-bezier(.4,0,.2,1) '+(i*.06)+'s, transform .6s cubic-bezier(.4,0,.2,1) '+(i*.06)+'s';
+    cio.observe(c);
+  });
+})();
+</script>
+
+<!-- Модальное окно карточки -->
+<div class="modal-overlay" id="cardModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2 id="modalTitle">Заголовок</h2>
+      <button class="modal-close" id="modalClose">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-caption" id="modalCaption"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var anims=['anim-flip','anim-slide','anim-zoom','anim-rotate','anim-fold'];
+  var overlay=document.getElementById('cardModal');
+  var title=document.getElementById('modalTitle');
+  var body=document.getElementById('modalBody');
+  var caption=document.getElementById('modalCaption');
+  var closeBtn=document.getElementById('modalClose');
+
+  function openModal(data){
+    var anim=anims[Math.floor(Math.random()*anims.length)];
+    overlay.className='modal-overlay open '+anim;
+    title.textContent=data.title||'';
+    body.innerHTML=data.body||'';
+    caption.textContent=data.caption||'';
+    document.body.style.overflow='hidden';
+  }
+  function closeModal(){
+    overlay.classList.remove('open');
+    document.body.style.overflow='';
+  }
+  closeBtn.addEventListener('click',closeModal);
+  overlay.addEventListener('click',function(e){if(e.target===overlay) closeModal();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape') closeModal();});
+  window.openCardModal=openModal;
+
+  // Кликабельные карточки оборудования
+  document.querySelectorAll('[data-card]').forEach(function(el){
+    el.style.cursor='pointer';
+    el.addEventListener('click',function(e){
+      if(e.target.closest('.hw-select')) return;
+      var d=hwCards[el.dataset.card];
+      if(d) openModal(d);
+    });
+  });
+
+  var hwCards={
+    'gpu-4090':{
+      title:'NVIDIA GeForce RTX 4090',
+      body:'<h3>Для чего нужна</h3>'+
+        '<p>Видеокарта — это «сердце» ИИ. Чем она мощнее, тем быстрее нейросеть обдумывает ответ.</p>'+
+        '<h3>RTX 4090 — бюджетный вариант</h3>'+
+        '<ul><li><strong>24 ГБ памяти</strong> — хватает для моделей до 32B параметров</li>'+
+        '<li><strong>Быстрый инференс</strong> — генерация текста 30-60 токенов/сек</li>'+
+        '<li><strong>Нет ECC</strong> — может давать ошибки при длинных вычислениях</li>'+
+        '<li><strong>Цена ~€1 800-2 500</strong> — самый доступный вариант</li></ul>'+
+        '<div class="highlight">Для пилотного проекта — отличный выбор. Для промышленной эксплуатации лучше RTX 6000 Ada.</div>'+
+        '<h3>Простым языком</h3>'+
+        '<p>Представьте: RTX 4090 как хороший спорткар — ездит быстро, но не рассчитан на работу 24/7 на заводе.</p>',
+      caption:'Видеокарта — это мозговой центр, который считает нейросеть'
+    },
+    'gpu-6000ada':{
+      title:'NVIDIA RTX 6000 Ada',
+      body:'<h3>Для чего нужна</h3>'+
+        '<p>Профессиональная карта для серверов, которая работает стабильно 24/7.</p>'+
+        '<h3>RTX 6000 Ada — рекомендуемый выбор</h3>'+
+        '<ul><li><strong>48 ГБ ECC памяти</strong> — память с контролем ошибок, не «фантазирует»</li>'+
+        '<li><strong>960 ГБ/с пропускная способность</strong> — огромный поток данных</li>'+
+        '<li><strong>Стабильность</strong> — рассчитана на круглосуточную работу</li>'+
+        '<li><strong>Запуск моделей 70B+</strong> — в полном качестве, без деградации</li>'+
+        '<li><strong>Цена ~€6 500-8 500</strong></li></ul>'+
+        '<div class="tip">Именно эту карту рекомендуют для AIPhoenix. Она покрывает 95% задач завода теплообменников.</div>'+
+        '<h3>Простым языком</h3>'+
+        '<p>Это как надёжный грузовик — может работать весь день, каждый день, и не ломаться.</p>',
+      caption:'Профессиональная карта для промышленного ИИ'
+    },
+    'cpu-threadripper':{
+      title:'AMD Threadripper PRO 7975WX',
+      body:'<h3>Для чего нужен</h3>'+
+        '<p>Процессор — это «нервная система» сервера. Он управляет всеми вычислениями и распределяет задачи.</p>'+
+        '<h3>Threadripper PRO — оптимальный выбор</h3>'+
+        '<ul><li><strong>32 ядра</strong> — может одновременно обрабатывать десятки задач</li>'+
+        '<li><strong>128 линий PCIe 5.0</strong> — подключаем 4 видеокарты на полной скорости</li>'+
+        '<li><strong>ECC память</strong> — поддержка серверной памяти с контролем ошибок</li>'+
+        '<li><strong>Цена ~€3 200-4 300</strong></li></ul>'+
+        '<div class="highlight">Для завода «Феникс» — идеальный баланс цены и мощности. 32 ядра хватит для обработки всех запросов одновременно.</div>'+
+        '<h3>Простым языком</h3>'+
+        '<p>Это как 32 менеджера, которые работают одновременно и никогда не устают.</p>',
+      caption:'Процессор — это центральный координатор всех вычислений'
+    },
+    'ram-256':{
+      title:'DDR5 ECC 256 ГБ',
+      body:'<h3>Для чего нужна</h3>'+
+        '<p>Оперативная память — это «рабочий стол» компьютера. Чем больше памяти, тем больше задач можно решать одновременно.</p>'+
+        '<h3>256 ГБ — что это значит</h3>'+
+        '<ul><li><strong>256 ГБ</strong> — хватает для одновременной работы 3-4 крупных моделей</li>'+
+        '<li><strong>ECC</strong> — память с исправлением ошибок, не «теряет» данные</li>'+
+        '<li><strong>DDR5</strong> — новый стандарт, быстрее DDR4 в 2 раза</li>'+
+        '<li><strong>Цена ~€800-1 200</strong></li></ul>'+
+        '<div class="tip">Без ECC памяти нейросеть может «галлюцинировать» из-за аппаратных ошибок. Для завода это недопустимо.</div>'+
+        '<h3>Простым языком</h3>'+
+        '<p>Представьте рабочий стол размером 256 страниц — на нём помещаются все документы, которые нужны прямо сейчас.</p>',
+      caption:'Оперативная память — рабочее пространство для моделей'
+    }
+  };
+})();
+</script>
+</body>
+</html>

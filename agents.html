@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIPhoenix — Рой Агентов</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="shared.css">
+<script>tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil-light':'#636e72',marker:'#d63031',blueprint:'#0984e3',green:'#00b894'},fontFamily:{sketch:['Caveat','cursive'],block:['"Architects Daughter"','cursive']}}}}</script>
+<style>
+.agent-card{position:relative;overflow:hidden}
+.agent-card::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);transition:left .5s}
+.agent-card:hover::before{left:100%}
+</style>
+</head>
+<body class="min-h-screen p-4 md:p-8 overflow-x-hidden">
+<div class="grid-bg"></div>
+
+<header class="max-w-6xl mx-auto mb-6 text-center relative z-10">
+  <h1 class="text-5xl md:text-6xl font-bold">🤖 Рой Агентов AIPhoenix</h1>
+  <p class="text-2xl text-pencil-light font-block mt-2">Мультиагентная архитектура для завода-производителя пластинчатых теплообменников</p>
+</header>
+
+<nav class="max-w-6xl mx-auto mb-8 flex flex-wrap justify-center gap-3 relative z-10">
+  <a href="index.html" class="nav-link">🏠 Главная</a>
+  <a href="agents.html" class="nav-link active">🤖 Рой Агентов</a>
+  <a href="rag.html" class="nav-link">🌳 RAG</a>
+  <a href="pipeline.html" class="nav-link">🔄 Цикл Сделки</a>
+  <a href="integrations.html" class="nav-link">🔌 Интеграции</a>
+  <a href="hardware.html" class="nav-link">🖥️ Железо</a>
+</nav>
+
+<main class="max-w-6xl mx-auto relative z-10 space-y-8">
+
+<!-- Схема роя -->
+<div class="text-center mb-8 fade-up">
+  <div class="sketchy inline-block p-6" style="border-radius:40% 60% 70% 30%/40% 50% 60% 50%">
+    <h2 class="text-3xl font-bold">Архитектура: Agent Swarm</h2>
+    <p class="text-xl font-block">Вместо одной громоздкой нейросети — рой из 3+ специализированных агентов</p>
+    <p class="text-lg">Каждый агент — эксперт в своей области. Оркестратор координирует до <span class="text-marker font-bold">300 субагентов</span></p>
+  </div>
+</div>
+
+<!-- Агент 1: Оператор -->
+<section class="fade-up">
+<div class="sketchy agent-card p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div class="md:col-span-1 text-center">
+    <div class="text-7xl mb-2">👁️</div>
+    <h3 class="text-3xl font-bold">Агент-Оператор</h3>
+    <p class="font-block text-xl text-blueprint">(Парсер / Зрение)</p>
+    <div class="mt-3 space-y-1">
+      <span class="tag text-sm">Qwen3 VL 235B</span>
+      <span class="tag text-sm">Qwen3 VL 32B</span>
+      <span class="tag text-sm">MiniMax abab</span>
+    </div>
+  </div>
+  <div class="md:col-span-2">
+    <h4 class="text-2xl font-bold mb-2">Что делает:</h4>
+    <ul class="text-xl space-y-2 font-block">
+      <li>📨 Принимает входящие письма с вложениями (PDF, сканы, фото)</li>
+      <li>👀 «Видит» слепые сканы опросных листов клиента — распознает рукописный текст, таблицы, чертежи</li>
+      <li>🔍 OCR на 32 языках — извлекает ключевые данные: тип среды (вода, пар, масло), мощность, температуры</li>
+      <li>📋 Классифицирует заявки (Triage) и передает данные Оркестратору</li>
+    </ul>
+    <div class="mt-4 sketchy p-3 inline-block" style="background:#f0fff4">
+      <p class="text-lg font-block">💡 <strong>Пример:</strong> Клиент присылает мятый скан опросного листа с рукописными пометками → Оператор распознает: среда = пар 150°C, мощность 2.5 Гкал/ч, давление 1.6 МПа</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- Стрелка -->
+<div class="text-center step-arrow">⬇️</div>
+
+<!-- Агент 2: Оркестратор -->
+<section class="fade-up">
+<div class="sketchy agent-card p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div class="md:col-span-1 text-center">
+    <div class="text-7xl mb-2">🧠</div>
+    <h3 class="text-3xl font-bold">Агент-Оркестратор</h3>
+    <p class="font-block text-xl text-blueprint">(Инженер-проектировщик)</p>
+    <div class="mt-3 space-y-1">
+      <span class="tag text-sm">Kimi K2.6 (1T)</span>
+      <span class="tag text-sm">GLM-5.2 (744B)</span>
+      <span class="tag text-sm">DeepSeek V4</span>
+    </div>
+  </div>
+  <div class="md:col-span-2">
+    <h4 class="text-2xl font-bold mb-2">Что делает:</h4>
+    <ul class="text-xl space-y-2 font-block">
+      <li>⚙️ Получает структурированные данные от Оператора</li>
+      <li>📐 Обращается к RAG-базе (ГОСТы, СНиПы, каталоги) и программе Phoenix-select</li>
+      <li>🔧 Выполняет сотни последовательных tool calls — расчет теплового баланса, подбор пластин (TK/TL), оптимизация CAPEX</li>
+      <li>💰 Сравнивает материалы (AISI 304 vs 316) и подбирает бюджетный вариант без потери качества</li>
+      <li>🔄 Координирует до 300 субагентов для параллельных расчетов</li>
+    </ul>
+    <div class="mt-4 sketchy p-3 inline-block" style="background:#ebf5fb">
+      <p class="text-lg font-block">💡 <strong>Контекст:</strong> GLM-5.2 держит 1 миллион токенов — за один проход загружает ВСЕ ГОСТы + каталоги конкурентов</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="text-center step-arrow">⬇️</div>
+
+<!-- Агент 3: Продажник -->
+<section class="fade-up">
+<div class="sketchy agent-card p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div class="md:col-span-1 text-center">
+    <div class="text-7xl mb-2">💼</div>
+    <h3 class="text-3xl font-bold">Агент-Продажник</h3>
+    <p class="font-block text-xl text-blueprint">(Клоузер)</p>
+    <div class="mt-3 space-y-1">
+      <span class="tag text-sm">Qwen 3.7 Max</span>
+      <span class="tag text-sm">DeepSeek V4 Pro</span>
+    </div>
+  </div>
+  <div class="md:col-span-2">
+    <h4 class="text-2xl font-bold mb-2">Что делает:</h4>
+    <ul class="text-xl space-y-2 font-block">
+      <li>📄 Получает результаты расчета от Оркестратора</li>
+      <li>📊 Генерирует JSON-структуры для выгрузки в 1С/CRM</li>
+      <li>📑 Создает красивый PDF-оффер (ТКП) для клиента</li>
+      <li>✅ Живой менеджер только проверяет и отправляет договор</li>
+    </ul>
+    <div class="mt-4 sketchy p-3 inline-block" style="background:#fdf2e9">
+      <p class="text-lg font-block">💡 <strong>Результат:</strong> От получения письма до готового ТКП — <span class="text-marker font-bold">минуты вместо дней</span></p>
+    </div>
+  </div>
+</div>
+</section>
+
+</main>
+</body>
+</html>

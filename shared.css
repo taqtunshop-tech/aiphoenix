@@ -1,0 +1,758 @@
+/* shared.css — AIPhoenix pencil-on-paper */
+@import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Caveat:wght@400;600;700&display=swap');
+
+*{box-sizing:border-box}
+body{
+  background:#f9f7f3;
+  font-family:'Caveat',cursive;
+  color:#2d3436;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 31px,rgba(45,52,54,.06) 31px,rgba(45,52,54,.06) 32px),
+    repeating-linear-gradient(90deg,transparent,transparent 31px,rgba(45,52,54,.04) 31px,rgba(45,52,54,.04) 32px);
+  background-size:32px 32px;
+}
+
+/* --- Sketchy card --- */
+.sketchy{
+  border:2.5px solid #2d3436;
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+  background:#fffefc;
+  box-shadow:
+    3px 6px 0 rgba(45,52,54,.07),
+    inset 0 0 0 1px rgba(45,52,54,.03);
+  transition:transform .3s,box-shadow .3s;
+  position:relative;
+}
+.sketchy::before{
+  content:'';position:absolute;inset:-1px;border-radius:inherit;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='.65' numOctaves='3'/><feDisplacementMap in='SourceGraphic' scale='2'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='.04'/></svg>");
+  pointer-events:none;opacity:.6
+}
+.sketchy:hover{
+  transform:rotate(-.8deg) scale(1.01);
+  box-shadow:5px 10px 0 rgba(45,52,54,.1),inset 0 0 0 1px rgba(45,52,54,.05);
+}
+
+/* --- Tags --- */
+.tag{
+  border:2px solid #2d3436;
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+  padding:4px 14px;
+  display:inline-block;
+  background:#fffefc;
+  font-family:'Architects Daughter',cursive;
+  font-size:.95rem;
+  position:relative;
+  box-shadow:1px 2px 0 rgba(45,52,54,.08);
+  transition:transform .15s;
+}
+.tag:hover{transform:rotate(-1deg) scale(1.05)}
+.tag::after{
+  content:'';position:absolute;bottom:-1px;left:20%;right:20%;
+  height:2px;background:rgba(45,52,54,.15);border-radius:50%;
+  transform:rotate(-1deg);
+}
+
+/* --- Navigation --- */
+.nav-link{
+  border:2px solid #2d3436;
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+  padding:8px 18px;
+  background:#fffefc;
+  transition:all .2s;
+  text-decoration:none;
+  color:#2d3436;
+  font-family:'Architects Daughter',cursive;
+  font-size:1.05rem;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.nav-link:hover{background:#2d3436;color:#fff;transform:rotate(-2deg) scale(1.04)}
+.nav-link.active{background:#2d3436;color:#fff}
+.nav-link svg{width:18px;height:18px;flex-shrink:0}
+
+/* --- Animations --- */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .6s ease-out both}
+.fade-up:nth-child(2){animation-delay:.1s}
+.fade-up:nth-child(3){animation-delay:.15s}
+.fade-up:nth-child(4){animation-delay:.2s}
+.fade-up:nth-child(5){animation-delay:.25s}
+.fade-up:nth-child(6){animation-delay:.3s}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.float{animation:float 3s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.05);opacity:1}}
+.breathe{animation:breathe 3s ease-in-out infinite}
+
+/* --- Hero note (dashed callout) --- */
+.hero-note{
+  position:relative;
+  background:#fffdf7;
+  border:2.5px dashed #2d3436;
+  border-radius:34px 12px 28px 16px/16px 30px 12px 28px;
+  padding:14px 18px;
+  box-shadow:2px 4px 10px rgba(0,0,0,.04);
+  transform:rotate(-1deg);
+  font-family:'Architects Daughter',cursive;
+}
+.hero-note::after{
+  content:'';position:absolute;bottom:-6px;right:20px;
+  width:40px;height:3px;background:#d63031;border-radius:2px;
+  transform:rotate(-3deg);opacity:.5;
+}
+.hero-note.alt{transform:rotate(1deg);background:#f7fbff}
+.hero-note.alt::after{left:20px;right:auto;background:#0984e3}
+
+/* --- Video frame --- */
+.video-frame{
+  width:100%;
+  border:2.5px solid #2d3436;
+  border-radius:28px 12px 30px 14px/14px 28px 12px 26px;
+  background:#fff;
+  box-shadow:4px 8px 0 rgba(45,52,54,.08);
+  padding:10px;
+}
+.video-frame video{width:100%;border-radius:16px;display:block;background:#ececec}
+
+/* --- Stat pill --- */
+.stat-pill{
+  border:2px dashed #2d3436;
+  border-radius:999px;
+  padding:6px 18px;
+  background:#fffefc;
+  font-family:'Architects Daughter',cursive;
+  font-size:1.05rem;
+  display:inline-block;
+  position:relative;
+  box-shadow:1px 2px 0 rgba(45,52,54,.06);
+  transition:transform .15s;
+}
+.stat-pill:hover{transform:scale(1.04)}
+.stat-pill::before{
+  content:'✓';position:absolute;left:2px;top:-2px;
+  font-size:11px;color:#00b894;font-weight:bold;
+}
+
+/* --- Sketch divider (wavy pencil line) --- */
+.sketch-divider{
+  height:24px;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 24'><path d='M3 12 Q 30 4, 58 12 T 113 12 T 168 12 T 223 12 T 278 12 T 333 12 T 388 12 T 443 12 T 498 12 T 553 12 T 597 12' fill='none' stroke='%232d3436' stroke-width='2.5' stroke-linecap='round' stroke-dasharray='8 6' opacity='.6'/></svg>") center/contain no-repeat;
+}
+
+/* --- Brand --- */
+.brand-mark{width:100%;height:88px;object-fit:contain;border-radius:8px;background:#fff;padding:8px;border:2px dashed #2d3436}
+.brand-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:stretch}
+.brand-chip{border:2px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;background:#fffefc;padding:10px;text-align:center}
+.brand-chip img{width:100%;height:54px;object-fit:contain}
+
+/* --- Currency bar --- */
+.currency-bar{
+  background:#fffefc;
+  border-bottom:2.5px dashed #2d3436;
+  padding:8px 16px;
+  font-family:'Architects Daughter',cursive;
+  font-size:1rem;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  position:relative;
+  z-index:60;
+}
+.currency-bar .rate{
+  border:2px solid #2d3436;
+  border-radius:999px;
+  padding:4px 14px;
+  background:#fffdf7;
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  line-height:1;
+  box-shadow:1px 2px 0 rgba(45,52,54,.06);
+}
+.currency-bar .rate-label{color:#636e72}
+.currency-bar .rate-value{font-weight:700;color:#2d3436;font-size:1.05rem}
+.currency-chart-wrap{
+  border:2px solid #2d3436;
+  border-radius:14px;
+  padding:4px 6px;
+  background:#fffdf7;
+  line-height:0;
+  flex-shrink:0;
+  box-shadow:1px 2px 0 rgba(45,52,54,.06);
+}
+.currency-chart-wrap canvas{display:block;border-radius:10px}
+
+/* --- Section icons (inline SVG replacement for emoji) --- */
+.section-icon{
+  display:inline-flex;
+  align-items:center;justify-content:center;
+  width:56px;height:56px;
+  border:2.5px solid #2d3436;
+  border-radius:50%;
+  background:#fffefc;
+  margin:0 auto 8px;
+  box-shadow:2px 3px 0 rgba(45,52,54,.08);
+}
+.section-icon svg{width:28px;height:28px}
+.section-icon.blue{border-color:#0984e3;background:#f0f8ff}
+.section-icon.green{border-color:#00b894;background:#f0fff4}
+.section-icon.red{border-color:#d63031;background:#fff5f5}
+.section-icon.purple{border-color:#6c5ce7;background:#f8f5ff}
+
+/* --- Pencil underline for headings --- */
+.pencil-underline{
+  position:relative;
+  display:inline-block;
+}
+.pencil-underline::after{
+  content:'';position:absolute;left:0;bottom:-4px;width:100%;height:3px;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 6'><path d='M2 3 Q 30 0, 60 3 T 120 3 T 180 3 T 198 3' fill='none' stroke='%23d63031' stroke-width='2.5' stroke-linecap='round'/></svg>") repeat-x;
+  background-size:100% 100%;
+}
+
+/* --- Bullet list pencil style --- */
+.pencil-list{list-style:none;padding-left:0}
+.pencil-list li{
+  position:relative;
+  padding-left:22px;
+  margin-bottom:6px;
+}
+.pencil-list li::before{
+  content:'';position:absolute;left:0;top:6px;
+  width:10px;height:10px;
+  border:2px solid #2d3436;
+  border-radius:50%;
+  background:#fffefc;
+}
+.pencil-list li.checked::before{
+  background:#00b894;border-color:#00b894;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2 6 L5 9 L10 3' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'/></svg>");
+  background-size:cover;
+}
+
+/* --- Card image with pencil border --- */
+.card-sketch-img{
+  width:100%;height:180px;object-fit:contain;
+  border:2.5px solid #2d3436;
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+  background:#f9f7f3;
+  padding:10px;
+  box-shadow:2px 4px 0 rgba(45,52,54,.08);
+  transition:transform .2s;
+}
+.card-sketch-img:hover{transform:rotate(-1deg)}
+
+/* --- Footer --- */
+.footer-sketch{
+  border:2.5px solid #2d3436;
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+  background:#fffefc;
+  padding:24px 36px;
+  display:inline-block;
+  box-shadow:3px 6px 0 rgba(45,52,54,.08);
+  position:relative;
+}
+.footer-sketch::before{
+  content:'~';position:absolute;top:-10px;left:50%;transform:translateX(-50%);
+  font-size:22px;color:#d63031;font-weight:bold;
+}
+.footer-sketch::after{
+  content:'';position:absolute;bottom:-2px;left:15%;right:15%;
+  height:3px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 6'><path d='M2 3 Q 25 0, 50 3 T 98 3' fill='none' stroke='%23d63031' stroke-width='2' stroke-linecap='round' opacity='.4'/></svg>") repeat-x;
+}
+
+/* ===== 3D Neural Network Training Animation ===== */
+.nn-stage{position:relative;overflow-x:auto;padding:20px 0}
+.nn-scene{display:flex;align-items:center;justify-content:center;gap:8px;min-width:900px;transform-style:preserve-3d;animation:nnTilt 8s ease-in-out infinite}
+@keyframes nnTilt{0%,100%{transform:rotateY(0deg) rotateX(0deg)}25%{transform:rotateY(3deg) rotateX(1deg)}75%{transform:rotateY(-3deg) rotateX(-1deg)}}
+.nn-col{display:flex;flex-direction:column;gap:6px;align-items:center}
+.nn-label{font-family:'Architects Daughter',cursive;font-size:1.1rem;font-weight:700;color:#2d3436;text-align:center;margin-bottom:4px}
+.nn-item{font-family:'Architects Daughter',cursive;font-size:.95rem;border:2px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:6px 14px;background:#fffefc;opacity:0;animation:nnAppear .5s ease-out forwards;position:relative;white-space:nowrap}
+.nn-item::before{content:'';position:absolute;right:-14px;top:50%;width:12px;height:2px;background:#d63031;transform:translateY(-50%)}
+.nn-item:last-child::before{display:none}
+.nn-item.out{border-color:#0984e3;color:#0984e3}
+.nn-item.out::before{display:none}
+.nn-item.out::after{content:'';position:absolute;left:-14px;top:50%;width:12px;height:2px;background:#0984e3;transform:translateY(-50%)}
+@keyframes nnAppear{from{opacity:0;transform:translateX(-12px) scale(.9)}to{opacity:1;transform:translateX(0) scale(1)}}
+.nn-flow{gap:10px;min-width:60px}
+.nn-arrow{width:40px;height:4px;background:linear-gradient(90deg,transparent,#d63031,transparent);border-radius:2px;opacity:0;animation:nnPulse 2.5s ease-in-out infinite;position:relative}
+.nn-arrow::after{content:'';position:absolute;right:-4px;top:-3px;width:0;height:0;border-left:8px solid #d63031;border-top:5px solid transparent;border-bottom:5px solid transparent}
+.nn-arrow.out{background:linear-gradient(90deg,transparent,#0984e3,transparent)}
+.nn-arrow.out::after{border-left-color:#0984e3}
+@keyframes nnPulse{0%,100%{opacity:.25;transform:scaleX(.6)}50%{opacity:1;transform:scaleX(1.1)}}
+.nn-brain{position:relative}
+.nn-brain-body{display:flex;flex-direction:column;gap:4px;border:2.5px solid #2d3436;border-radius:20px;padding:14px 18px;background:linear-gradient(135deg,#fffdf7,#f0f4ff);box-shadow:0 0 30px rgba(9,132,227,.12);position:relative;overflow:hidden}
+.nn-brain-body::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(9,132,227,.03) 10px,rgba(9,132,227,.03) 12px);animation:nnScan 3s linear infinite}
+@keyframes nnScan{from{background-position:0 0}to{background-position:34px 34px}}
+.nn-layer{display:flex;flex-direction:column;border:2px dashed #0984e3;border-radius:12px;padding:8px 14px;background:rgba(255,255,255,.85);opacity:0;animation:nnLayerIn .6s ease-out forwards;animation-delay:var(--d)}
+.nn-layer span{font-family:'Architects Daughter',cursive;font-size:1rem;font-weight:700;color:#0984e3}
+.nn-layer small{font-family:'Architects Daughter',cursive;font-size:.82rem;color:#636e72}
+@keyframes nnLayerIn{from{opacity:0;transform:scaleY(.7) translateY(8px)}to{opacity:1;transform:scaleY(1) translateY(0)}}
+.nn-lock{font-family:'Architects Daughter',cursive;font-size:.85rem;color:#00b894;border:2px dashed #00b894;border-radius:999px;padding:4px 12px;background:#fff;margin-top:6px;text-align:center;animation:nnBlink 3s ease-in-out infinite}
+@keyframes nnBlink{0%,100%{opacity:1}50%{opacity:.55}}
+
+/* --- Pencil cross-hatch overlay for hero --- */
+.crosshatch{
+  position:relative;overflow:hidden;
+}
+.crosshatch::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    repeating-linear-gradient(45deg,transparent,transparent 14px,rgba(45,52,54,.015) 14px,rgba(45,52,54,.015) 15px),
+    repeating-linear-gradient(-45deg,transparent,transparent 14px,rgba(45,52,54,.015) 14px,rgba(45,52,54,.015) 15px);
+}
+
+@media(max-width:768px){
+  .nn-scene{min-width:900px;transform-origin:top left}
+}
+
+/* =============================================
+   MODERN ANIMATIONS
+   ============================================= */
+
+/* --- Scroll-triggered fade-in --- */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal.left{transform:translateX(-60px)}.reveal.left.visible{transform:translateX(0)}
+.reveal.right{transform:translateX(60px)}.reveal.right.visible{transform:translateX(0)}
+.reveal.scale{transform:scale(.85)}.reveal.scale.visible{transform:scale(1)}
+
+/* --- Staggered children --- */
+.stagger>.reveal:nth-child(1){transition-delay:.05s}
+.stagger>.reveal:nth-child(2){transition-delay:.12s}
+.stagger>.reveal:nth-child(3){transition-delay:.19s}
+.stagger>.reveal:nth-child(4){transition-delay:.26s}
+.stagger>.reveal:nth-child(5){transition-delay:.33s}
+.stagger>.reveal:nth-child(6){transition-delay:.40s}
+.stagger>.reveal:nth-child(7){transition-delay:.47s}
+.stagger>.reveal:nth-child(8){transition-delay:.54s}
+
+/* --- Card hover: tilt + glow --- */
+.sketchy{
+  transition:transform .35s cubic-bezier(.4,0,.2,1),box-shadow .35s cubic-bezier(.4,0,.2,1);
+}
+.sketchy:hover{
+  transform:rotate(-.5deg) translateY(-4px) scale(1.01);
+  box-shadow:4px 10px 0 rgba(45,52,54,.1),0 0 20px rgba(9,132,227,.06);
+}
+
+/* --- Pencil draw-on animation --- */
+@keyframes drawLine{from{stroke-dashoffset:var(--len,300)}to{stroke-dashoffset:0}}
+.draw-on{stroke-dasharray:var(--len,300);stroke-dashoffset:var(--len,300)}
+.draw-on.visible{animation:drawLine 1.2s ease-out forwards}
+
+/* --- Float entrance --- */
+@keyframes floatIn{0%{opacity:0;transform:translateY(20px) rotate(2deg)}100%{opacity:1;transform:translateY(0) rotate(0)}}
+.float-in{animation:floatIn .6s ease-out both}
+
+/* --- Pulse glow --- */
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(9,132,227,.3)}50%{box-shadow:0 0 18px 4px rgba(9,132,227,.12)}}
+.pulse-glow{animation:pulseGlow 2.5s ease-in-out infinite}
+
+/* --- Typing cursor --- */
+@keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
+.typing-cursor::after{content:'|';animation:blink 1s step-end infinite;color:#d63031;font-weight:bold}
+
+/* --- Wobble on hover --- */
+@keyframes wobble{0%{transform:rotate(0)}25%{transform:rotate(-2deg)}50%{transform:rotate(1.5deg)}75%{transform:rotate(-1deg)}100%{transform:rotate(0)}}
+.wobble:hover{animation:wobble .4s ease-in-out}
+
+/* --- Slide up counter --- */
+@keyframes countUp{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:translateY(0)}}
+.count-up{display:inline-block;animation:countUp .5s ease-out both}
+
+/* --- Border trace --- */
+@keyframes traceBorder{0%{background-position:0 0,100% 100%,0 100%,100% 0}100%{background-position:100% 0,0 100%,0 0,100% 100%}}
+.trace-border{
+  background-image:
+    linear-gradient(90deg,#2d3436 50%,transparent 50%),
+    linear-gradient(90deg,#2d3436 50%,transparent 50%),
+    linear-gradient(0deg,#2d3436 50%,transparent 50%),
+    linear-gradient(0deg,#2d3436 50%,transparent 50%);
+  background-size:0 2px,0 2px,2px 0,2px 0;
+  background-position:0 0,100% 100%,0 100%,100% 0;
+  background-repeat:no-x,no-x,no-y,no-y;
+  transition:background-size .5s cubic-bezier(.4,0,.2,1);
+}
+.trace-border:hover,.trace-border.visible{
+  background-size:100% 2px,100% 2px,2px 100%,2px 100%;
+}
+
+/* --- Gradient text shimmer --- */
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+.shimmer{
+  background:linear-gradient(90deg,#2d3436 0%,#d63031 25%,#0984e3 50%,#d63031 75%,#2d3436 100%);
+  background-size:200% auto;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:shimmer 4s linear infinite;
+}
+
+/* --- Parallax scroll (subtle) --- */
+.parallax{transition:transform .1s linear;will-change:transform}
+
+/* --- Tag hover bounce --- */
+.tag{transition:transform .2s cubic-bezier(.4,0,.2,1),box-shadow .2s}
+.tag:hover{transform:translateY(-3px) rotate(-1deg);box-shadow:2px 4px 0 rgba(45,52,54,.1)}
+
+/* --- Section icon spin on scroll --- */
+@keyframes iconSpin{0%{transform:rotate(0) scale(1)}50%{transform:rotate(180deg) scale(1.1)}100%{transform:rotate(360deg) scale(1)}}
+.section-icon.spin{animation:iconSpin .6s ease-in-out}
+
+/* --- Nav link underline draw --- */
+.nav-link{position:relative;overflow:hidden}
+.nav-link::after{
+  content:'';position:absolute;bottom:4px;left:10%;width:0;height:2px;
+  background:#d63031;border-radius:2px;
+  transition:width .3s cubic-bezier(.4,0,.2,1);
+}
+.nav-link:hover::after,.nav-link.active::after{width:80%}
+
+/* --- Footer shimmer line --- */
+.footer-sketch::after{
+  content:'';position:absolute;bottom:-2px;left:15%;right:15%;
+  height:3px;
+  background:linear-gradient(90deg,transparent,#d63031,#0984e3,#00b894,transparent);
+  background-size:200% 100%;
+  animation:shimmer 3s linear infinite;
+  border-radius:2px;
+}
+
+/* --- Hero note entrance --- */
+.hero-note{animation:floatIn .8s ease-out both}
+.hero-note.alt{animation-delay:.2s}
+
+/* --- Visitor info slots --- */
+.visitor-slot{
+  border:2px solid #2d3436;
+  border-radius:12px;
+  padding:8px 12px;
+  background:#fffefc;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  box-shadow:1px 2px 0 rgba(45,52,54,.06);
+  transition:transform .15s;
+}
+.visitor-slot:hover{transform:scale(1.03)}
+.v-label{
+  font-family:'Architects Daughter',cursive;
+  font-size:.75rem;
+  color:#636e72;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+.v-val{
+  font-family:'Architects Daughter',cursive;
+  font-size:1rem;
+  font-weight:700;
+  color:#2d3436;
+  word-break:break-all;
+}
+
+/* =============================================
+   CLICKABLE CARD MODALS
+   ============================================= */
+
+/* --- Overlay --- */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(45,52,54,.45);
+  backdrop-filter:blur(4px);
+  z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  opacity:0;pointer-events:none;
+  transition:opacity .35s ease;
+}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+
+/* --- Modal card --- */
+.modal-card{
+  background:#fffefc;
+  border:3px solid #2d3436;
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+  padding:0;
+  max-width:640px;width:100%;
+  max-height:85vh;overflow-y:auto;
+  position:relative;
+  box-shadow:6px 10px 0 rgba(45,52,54,.12),0 0 40px rgba(0,0,0,.1);
+  transform:scale(.7) rotate(3deg);
+  transition:transform .45s cubic-bezier(.4,0,.2,1);
+}
+.modal-overlay.open .modal-card{transform:scale(1) rotate(0)}
+
+/* --- Анимации модалки (каждый раз разная) --- */
+.modal-overlay.anim-flip .modal-card{animation:modalFlip .5s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes modalFlip{0%{transform:perspective(800px) rotateY(-90deg) scale(.8)}100%{transform:perspective(800px) rotateY(0) scale(1)}}
+
+.modal-overlay.anim-slide .modal-card{animation:modalSlide .45s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes modalSlide{0%{transform:translateY(60px) scale(.9);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
+
+.modal-overlay.anim-zoom .modal-card{animation:modalZoom .4s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes modalZoom{0%{transform:scale(.3);opacity:0}100%{transform:scale(1);opacity:1}}
+
+.modal-overlay.anim-rotate .modal-card{animation:modalRotate .5s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes modalRotate{0%{transform:rotate(-15deg) scale(.6);opacity:0}100%{transform:rotate(0) scale(1);opacity:1}}
+
+.modal-overlay.anim-fold .modal-card{animation:modalFold .5s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes modalFold{0%{transform:perspective(600px) rotateX(-60deg) scaleY(.3);transform-origin:top;opacity:0}100%{transform:perspective(600px) rotateX(0) scaleY(1);transform-origin:top;opacity:1}}
+
+/* --- Заголовок модалки --- */
+.modal-header{
+  padding:20px 24px 14px;
+  border-bottom:2.5px dashed #2d3436;
+  display:flex;align-items:flex-start;gap:12px;
+}
+.modal-header h2{
+  font-family:'Caveat',cursive;
+  font-size:1.8rem;font-weight:700;
+  color:#2d3436;
+  margin:0;flex:1;
+}
+.modal-close{
+  width:36px;height:36px;
+  border:2px solid #2d3436;border-radius:50%;
+  background:#fffefc;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:bold;color:#2d3436;
+  transition:transform .2s,background .2s;
+  flex-shrink:0;
+}
+.modal-close:hover{transform:rotate(90deg);background:#d63031;color:#fff}
+
+/* --- Тело модалки --- */
+.modal-body{
+  padding:20px 24px 24px;
+  font-family:'Architects Daughter',cursive;
+  font-size:1.05rem;
+  line-height:1.6;
+  color:#2d3436;
+}
+.modal-body h3{
+  font-family:'Caveat',cursive;
+  font-size:1.4rem;font-weight:700;
+  color:#0984e3;
+  margin:16px 0 6px;
+}
+.modal-body ul{
+  list-style:none;padding-left:0;margin:8px 0;
+}
+.modal-body li{
+  position:relative;padding-left:20px;margin-bottom:6px;
+}
+.modal-body li::before{
+  content:'—';position:absolute;left:0;top:0;
+  color:#d63031;font-weight:bold;
+}
+.modal-body .highlight{
+  background:#fff5f5;
+  border-left:3px solid #d63031;
+  padding:8px 12px;border-radius:0 8px 8px 0;
+  margin:10px 0;
+  font-style:italic;
+}
+.modal-body .tip{
+  background:#f0fff4;
+  border-left:3px solid #00b894;
+  padding:8px 12px;border-radius:0 8px 8px 0;
+  margin:10px 0;
+}
+
+/* --- Курсив-подпись модалки --- */
+.modal-caption{
+  font-family:'Caveat',cursive;
+  font-size:.9rem;
+  color:#636e72;
+  padding:0 24px 16px;
+  text-align:right;
+}
+
+/* --- Скроллбар модалки --- */
+.modal-card::-webkit-scrollbar{width:6px}
+.modal-card::-webkit-scrollbar-track{background:transparent}
+.modal-card::-webkit-scrollbar-thumb{background:#2d3436;border-radius:3px}
+
+/* =============================================
+   FLIP CARDS FOR ANALOG BRANDS
+   ============================================= */
+
+.flip-card {
+  perspective: 1000px;
+  height: 320px;
+  cursor: pointer;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(.4,0,.2,1);
+  transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+/* Different flip animations */
+.flip-card.flip-x.flipped .flip-card-inner {
+  animation: flipX 0.6s cubic-bezier(.4,0,.2,1) forwards;
+}
+
+.flip-card.flip-y.flipped .flip-card-inner {
+  animation: flipY 0.6s cubic-bezier(.4,0,.2,1) forwards;
+}
+
+.flip-card.flip-diagonal.flipped .flip-card-inner {
+  animation: flipDiagonal 0.7s cubic-bezier(.4,0,.2,1) forwards;
+}
+
+.flip-card.flip-scale.flipped .flip-card-inner {
+  animation: flipScale 0.5s cubic-bezier(.4,0,.2,1) forwards;
+}
+
+.flip-card.flip-bounce.flipped .flip-card-inner {
+  animation: flipBounce 0.7s cubic-bezier(.4,0,.2,1) forwards;
+}
+
+@keyframes flipY {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(180deg); }
+}
+
+@keyframes flipX {
+  0% { transform: rotateX(0deg); }
+  100% { transform: rotateX(180deg); }
+}
+
+@keyframes flipDiagonal {
+  0% { transform: rotate3d(1,1,0,0deg); }
+  100% { transform: rotate3d(1,1,0,180deg); }
+}
+
+@keyframes flipScale {
+  0% { transform: scale(1) rotateY(0deg); }
+  50% { transform: scale(0.8) rotateY(90deg); }
+  100% { transform: scale(1) rotateY(180deg); }
+}
+
+@keyframes flipBounce {
+  0% { transform: rotateY(0deg); }
+  30% { transform: rotateY(190deg); }
+  50% { transform: rotateY(170deg); }
+  70% { transform: rotateY(185deg); }
+  100% { transform: rotateY(180deg); }
+}
+
+.flip-card-front, .flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border: 2.5px solid #2d3436;
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  background: #fffefc;
+  padding: 20px;
+  box-shadow: 3px 6px 0 rgba(45,52,54,.07);
+  overflow: hidden;
+}
+
+.flip-card-front {
+  z-index: 2;
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, #fffefc 0%, #f8f9fa 100%);
+}
+
+.flip-card-front::before,
+.flip-card-back::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='.65' numOctaves='3'/><feDisplacementMap in='SourceGraphic' scale='2'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='.04'/></svg>");
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.flip-card-logo {
+  width: 100%;
+  height: 50px;
+  object-fit: contain;
+  margin-bottom: 12px;
+  border-bottom: 2px dashed #2d3436;
+  padding-bottom: 8px;
+}
+
+.flip-card-title {
+  font-family: 'Caveat', cursive;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2d3436;
+  margin-bottom: 8px;
+}
+
+.flip-card-desc {
+  font-family: 'Architects Daughter', cursive;
+  font-size: 0.95rem;
+  color: #636e72;
+  line-height: 1.4;
+}
+
+.flip-card-back h4 {
+  font-family: 'Caveat', cursive;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0984e3;
+  margin: 10px 0 6px;
+  border-bottom: 1px dashed #0984e3;
+  padding-bottom: 4px;
+}
+
+.flip-card-back p,
+.flip-card-back li {
+  font-family: 'Architects Daughter', cursive;
+  font-size: 0.85rem;
+  color: #2d3436;
+  line-height: 1.4;
+}
+
+.flip-card-back ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 4px 0;
+}
+
+.flip-card-back li {
+  position: relative;
+  padding-left: 14px;
+  margin-bottom: 3px;
+}
+
+.flip-card-back li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #d63031;
+  font-weight: bold;
+}
+
+.flip-card-hint {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-family: 'Architects Daughter', cursive;
+  font-size: 0.75rem;
+  color: #b2bec3;
+  font-style: italic;
+}
+
+.flip-card-front .flip-card-hint::after {
+  content: ' ↻';
+}

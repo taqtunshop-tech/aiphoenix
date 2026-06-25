@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 120">
+  <rect x="8" y="8" width="304" height="104" rx="18" fill="#fbfbfa" stroke="#2d3436" stroke-width="3" stroke-dasharray="5 4"/>
+  <path d="M42 62c18-22 48-30 78-22 18 5 35 17 46 34-14-10-30-16-46-18-21-3-39 2-56 15 8-18 24-31 46-35-31-2-54 10-68 26z" fill="none" stroke="#2d3436" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="100" cy="62" r="17" fill="none" stroke="#2d3436" stroke-width="4"/>
+  <circle cx="100" cy="62" r="6" fill="#2d3436"/>
+  <text x="178" y="54" font-family="'Architects Daughter', 'Comic Sans MS', cursive" font-size="24" fill="#2d3436" font-weight="700">NVIDIA</text>
+  <text x="178" y="80" font-family="'Caveat', cursive" font-size="20" fill="#636e72">GPU / RTX / Ada</text>
+</svg>

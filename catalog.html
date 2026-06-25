@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Каталог продукции — AIPhoenix</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="shared.css">
+<script>
+tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil-light':'#636e72',marker:'#d63031',blueprint:'#0984e3',green:'#00b894'},fontFamily:{sketch:['Caveat','cursive'],block:['"Architects Daughter"','cursive']}}}}
+</script>
+</head>
+<body class="min-h-screen p-4 md:p-8 overflow-x-hidden">
+
+<header class="max-w-6xl mx-auto mb-6 text-center relative z-10">
+  <img src="logo.png" alt="Феникс" class="h-28 mx-auto mb-2" style="filter:drop-shadow(2px 4px 6px rgba(0,0,0,.1))">
+  <h1 class="text-5xl md:text-7xl font-bold mb-1">Каталог продукции</h1>
+  <p class="text-2xl md:text-3xl text-pencil-light font-block">Пластинчатые теплообменники «Феникс» и аналоги ведущих брендов</p>
+</header>
+
+<nav class="max-w-6xl mx-auto mb-8 flex flex-wrap justify-center gap-3 relative z-10">
+  <a href="index.html" class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/></svg>
+    Главная
+  </a>
+  <a href="catalog.html" class="nav-link active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="8" cy="6" r="1.5" fill="currentColor"/><circle cx="8" cy="12" r="1.5" fill="currentColor"/><circle cx="8" cy="18" r="1.5" fill="currentColor"/></svg>
+    Каталог
+  </a>
+  <a href="agents.html" class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="17" cy="7" r="4"/><path d="M21 21v-2a4 4 0 00-3-3.87"/></svg>
+    Рой Агентов
+  </a>
+  <a href="rag.html" class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 3v18"/><path d="M8 7l4-4 4 4"/><path d="M8 17l4 4 4-4"/><path d="M3 12h18"/></svg>
+    RAG
+  </a>
+  <a href="hardware.html" class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+    Железо
+  </a>
+</nav>
+
+<main class="max-w-7xl mx-auto relative z-10">
+
+<!-- ===== ПРОДУКЦИЯ ФЕНИКС — ОСНОВНАЯ ===== -->
+<section class="sketchy crosshatch p-6 mb-8 fade-up">
+  <h2 class="text-3xl font-bold mb-2 text-center">
+    <span class="pencil-underline">Продукция завода «Феникс»</span>
+  </h2>
+  <p class="text-xl font-block text-center mb-6 text-pencil-light">Пластинчатые теплообменники (ПТО) российского производства — основа каталога AIPhoenix</p>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="phoenixProducts">
+
+    <!-- ТП-Б-0.35 -->
+    <div class="sketchy p-5 product-card" data-card="ph-tpb035" style="cursor:pointer">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="section-icon blue" style="width:44px;height:44px;min-width:44px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#0984e3" stroke-width="2" stroke-linecap="round"><rect x="3" y="6" width="18" height="12" rx="1"/><path d="M3 10h18M3 14h18M7 6v12M11 6v12M15 6v12"/></svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold">ТП-Б-0.35</h3>
+          <span class="tag text-sm">Пластинчатый ПТО</span>
+        </div>
+      </div>
+      <div class="space-y-1 font-block text-base mb-3">
+        <p><strong>Тип:</strong> демонтируемый (openable)</p>
+        <p><strong>Площадь:</strong> 0,35 м² (на пластина)</p>
+        <p><strong>Давление:</strong> до 2,5 МПа (25 бар)</p>
+        <p><strong>Температура:</strong> до 200°С</p>
+        <p><strong>Профиль:</strong> TL (жёсткий, 30°)</p>
+        <p><strong>Материал:</strong> AISI 304 / AISI 316</p>
+        <p><strong>Уплотнения:</strong> EPDM / NBR / Viton</p>
+      </div>
+      <div class="border-t border-dashed border-pencil pt-2">
+        <p class="text-sm text-pencil-light font-block">Модульная конструкция: от 12 до 500 пластин в пакете. Идеален для малых и средних нагрузок.</p>
+      </div>
+      <div class="flex flex-wrap gap-1 mt-2">
+        <span class="tag text-xs">Вода–Вода</span>
+        <span class="tag text-xs">Гликоль</span>
+        <span class="tag text-xs">Масло</span>
+      </div>
+    </div>
+
+    <!-- ТП-Б-0.70 -->
+    <div class="sketchy p-5 product-card" data-card="ph-tpb070" style="cursor:pointer">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="section-icon green" style="width:44px;height:44px;min-width:44px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00b894" stroke-width="2" stroke-linecap="round"><rect x="3" y="6" width="18" height="12" rx="1"/><path d="M3 10h18M3 14h18M7 6v12M11 6v12M15 6v12"/></svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold">ТП-Б-0.70</h3>
+          <span class="tag text-sm">Пластинчатый ПТО</span>
+        </div>
+      </div>
+      <div class="space-y-1 font-block text-base mb-3">
+        <p><strong>Тип:</strong> демонтируемый</p>
+        <p><strong>Площадь:</strong> 0,70 м² (на пластина)</p>
+        <p><strong>Давление:</strong> до 2,5 МПа</p>
+        <p><strong>Температура:</strong> до 200°С</p>
+        <p><strong>Профиль:</strong> TL (жёсткий, 30°)</p>
+        <p><strong>Материал:</strong> AISI 304 / AISI 316</p>
+        <p><strong>Уплотнения:</strong> EPDM / NBR / Viton</p>
+      </div>
+      <div class="border-t border-dashed border-pencil pt-2">
+        <p class="text-sm text-pencil-light font-block">Увеличенная площадь пластины — для средних и крупных объектов. Высокий k при противотоке.</p>
+      </div>
+      <div class="flex flex-wrap gap-1 mt-2">
+        <span class="tag text-xs">Вода–Вода</span>
+        <span class="tag text-xs">Гликоль</span>
+        <span class="tag text-xs">Промышленные</span>
+      </div>
+    </div>
+
+    <!-- ТПМ (промышленные) -->
+    <div class="sketchy p-5 product-card" data-card="ph-tpm" style="cursor:pointer">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="section-icon red" style="width:44px;height:44px;min-width:44px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#d63031" stroke-width="2" stroke-linecap="round"><rect x="3" y="6" width="18" height="12" rx="1"/><path d="M3 10h18M3 14h18M7 6v12M11 6v12M15 6v12"/><circle cx="19" cy="6" r="2"/></svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold">ТПМ</h3>
+          <span class="tag text-sm">Промышленный</span>
+        </div>
+      </div>
+      <div class="space-y-1 font-block text-base mb-3">
+        <p><strong>Тип:</strong> промышленный демонтируемый</p>
+        <p><strong>Площадь:</strong> 0,135–1,5 м² (на пластина)</p>
+        <p><strong>Давление:</strong> до 2,5 МПа</p>
+        <p><strong>Температура:</strong> до 200°С</p>
+        <p><strong>Профиль:</strong> TL / TK (по заказу)</p>
+        <p><strong>Материал:</strong> AISI 304 / 316 / титан</p>
+        <p><strong>Уплотнения:</strong> EPDM / NBR / Viton</p>
+      </div>
+      <div class="border-t border-dashed border-pencil pt-2">
+        <p class="text-sm text-pencil-light font-block">Серия для промышленных объектов: ТЭЦ, ГПЗ, химические предприятия. Высокие расходы и давления.</p>
+      </div>
+      <div class="flex flex-wrap gap-1 mt-2">
+        <span class="tag text-xs">ТЭЦ</span>
+        <span class="tag text-xs">ГПЗ</span>
+        <span class="tag text-xs">Химия</span>
+        <span class="tag text-xs">Нефтегаз</span>
+      </div>
+    </div>
+
+    <!-- Пластины запасные -->
+    <div class="sketchy p-5 product-card" data-card="ph-plates" style="cursor:pointer">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="section-icon blue" style="width:44px;height:44px;min-width:44px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#0984e3" stroke-width="2" stroke-linecap="round"><path d="M4 4h16v16H4z"/><path d="M4 8h16M4 12h16M4 16h16M8 4v16M12 4v16M16 4v16"/></svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold">Пластины запасные</h3>
+          <span class="tag text-sm">Запчасти</span>
+        </div>
+      </div>
+      <div class="space-y-1 font-block text-base mb-3">
+        <p><strong>Модели:</strong> ТП-Б, ТПМ, APR-21/43/84</p>
+        <p><strong>Материал:</strong> AISI 304, AISI 316, титан</p>
+        <p><strong>Профили:</strong> TK (мягкий) / TL (жёсткий)</p>
+        <p><strong>Гофра:</strong> подбор под серию аппарата</p>
+      </div>
+      <div class="border-t border-dashed border-pencil pt-2">
+        <p class="text-sm text-pencil-light font-block">Запасные пластины для модернизации и ремонта. Подходят к аппаратам Феникс и аналогам.</p>
+      </div>
+    </div>
+
+    <!-- Рамы и плиты -->
+    <div class="sketchy p-5 product-card" data-card="ph-frames" style="cursor:pointer">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="section-icon green" style="width:44px;height:44px;min-width:44px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00b894" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8h20M6 4v16M18 4v16"/></svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold">Рамы и плиты</h3>
+          <span class="tag text-sm">Комплектующие</span>
+        </div>
+      </div>
+      <div class="space-y-1 font-block text-base mb-3">
+        <p><strong>Рамы:</strong> стационарная + подвижная</p>
+        <p><strong>Направляющие:</strong> стальные, с покрытием</p>
+        <p><strong>Болты:</strong> высокопрочные, с гайками</p>
+        <p><strong>Размер:</strong> по серии аппарата</p>
+      </div>
+      <div class="border-t border-dashed border-pencil pt-2">
+        <p class="text-sm text-pencil-light font-block">Комплекты рам для сборки и модернизации ПТО. Стандарт и усиленный вариант.</p>
+      </div>
+    </div>
+
+    <!-- Комплекты уплотнений -->
+    <div class="sketchy p-5 product-card" data-card="ph-seals" style="cursor:pointer">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="section-icon red" style="width:44px;height:44px;min-width:44px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#d63031" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold">Уплотнения</h3>
+          <span class="tag text-sm">Расходники</span>
+        </div>
+      </div>
+      <div class="space-y-1 font-block text-base mb-3">
+        <p><strong>EPDM:</strong> вода, гликоль, до 150°С</p>
+        <p><strong>NBR:</strong> масло, углеводороды, до 130°С</p>
+        <p><strong>Viton:</strong> агрессивные среды, до 200°С</p>
+        <p><strong>Форма:</strong> под серию пластины</p>
+      </div>
+      <div class="border-t border-dashed border-pencil pt-2">
+        <p class="text-sm text-pencil-light font-block">Комплекты уплотнительных прокладок для каждой серии ПТО. Герметичность и долговечность.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== СРАВНЕНИЕ С АНАЛОГАМИ ===== -->
+<section class="sketchy crosshatch p-6 mb-8 fade-up">
+  <h2 class="text-3xl font-bold mb-2 text-center">
+    <span class="pencil-underline">Сравнение:</span> Феникс vs ведущие бренды
+  </h2>
+  <p class="text-xl font-block text-center mb-6 text-pencil-light">Пластинчатые теплообменники: ключевые характеристики для выбора аналога</p>
+
+  <!-- Таблица сравнения -->
+  <div class="overflow-x-auto mb-6">
+    <table class="w-full text-left font-block text-base" style="border-collapse:separate;border-spacing:0">
+      <thead>
+        <tr class="border-b-2 border-pencil">
+          <th class="p-3 font-bold">Параметр</th>
+          <th class="p-3 font-bold" style="color:#d63031">Феникс (Россия)</th>
+          <th class="p-3 font-bold">Alfa Laval (Швеция)</th>
+          <th class="p-3 font-bold">SWEP (Швеция)</th>
+          <th class="p-3 font-bold">Hisaka (Япония)</th>
+          <th class="p-3 font-bold">Funke (Германия)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b border-dashed border-pencil/30">
+          <td class="p-3 font-bold">Тип</td>
+          <td class="p-3" style="color:#d63031;font-weight:700">Демонтируемый</td>
+          <td class="p-3">Демонтируемый / паяный</td>
+          <td class="p-3">Паяный / демонтируемый</td>
+          <td class="p-3">Демонтируемый</td>
+          <td class="p-3">Демонтируемый</td>
+        </tr>
+        <tr class="border-b border-dashed border-pencil/30">
+          <td class="p-3 font-bold">Давление, МПа</td>
+          <td class="p-3" style="color:#d63031;font-weight:700">до 2,5</td>
+          <td class="p-3">до 2,5 (M15: до 4,0)</td>
+          <td class="p-3">до 3,0 (B30: до 10,0)</td>
+          <td class="p-3">до 2,5</td>
+          <td class="p-3">до 2,5</td>
+        </tr>
+        <tr class="border-b border-dashed border-pencil/30">
+          <td class="p-3 font-bold">Температура, °С</td>
+          <td class="p-3" style="color:#d63031;font-weight:700">до 200</td>
+          <td class="p-3">до 200 (паяный: до 100)</td>
+          <td class="p-3">до 150 (паяный)</td>
+          <td class="p-3">до 200</td>
+          <td class="p-3">до 200</td>
+        </tr>
+        <tr class="border-b border-dashed border-pencil/30">
+          <td class="p-3 font-bold">Площадь пластины, м²</td>
+          <td class="p-3" style="color:#d63031;font-weight:700">0,035–1,5</td>
+          <td class="p-3">0,027–2,2</td>
+          <td class="p-3">0,032–3,1</td>
+          <td class="p-3">0,04–1,8</td>
+          <td class="p-3">0,05–1,6</td>
+        </tr>
+        <tr class="border-b border-dashed border-pencil/30">
+          <td class="p-3 font-bold">Профили пластин</td>
+          <td class="p-3" style="color:#d63031;font-weight:700">TK (60°) / TL (30°)</td>
+          <td class="p-3">CX, LB, GL</td>
+          <td class="p-3">BX, NX</td>
+          <td class="p-3">QR, QP, QS</td>
+          <td class="p-3">Sigma 250–1600</td>
+        </tr>
+        <tr class="border-b border-dashed border-pencil/30">
+          <td class="p-3 font-bold">Материал пластин</td>
+          <td class="p-3" style="color:#d63031;font-weight:700">AISI 304, 316, титан</td>
+          <td class="p-3">AISI 304, 316, титан, Hastelloy</td>
+          <td class="p-3">AISI 304, 316</td>
+          <td class="p-3">AISI 304, 316, титан</td>
+          <td class="p-3">AISI 304, 316</td>
+        </tr>
+        <tr class="border-b border-dashed border-pencil/30">
+          <td class="p-3 font-bold">Уплотнения</td>
+          <td class="p-3" style="color:#d63031;font-weight:700">EPDM, NBR, Viton</td>
+          <td class="p-3">EPDM, NBR, Viton, Neoprene</td>
+          <td class="p-3">EPDM, NBR</td>
+          <td class="p-3">EPDM, NBR, Viton</td>
+          <td class="p-3">EPDM, NBR</td>
+        </tr>
+        <tr class="border-b border-dashed border-pencil/30">
+          <td class="p-3 font-bold">Цена (относит.)</td>
+          <td class="p-3" style="color:#00b894;font-weight:700">x1,0 (базовая)</td>
+          <td class="p-3">x3,5–5,0</td>
+          <td class="p-3">x2,5–4,0</td>
+          <td class="p-3">x2,0–3,5</td>
+          <td class="p-3">x2,5–4,0</td>
+        </tr>
+        <tr class="border-b border-dashed border-pencil/30">
+          <td class="p-3 font-bold">Сроки поставки</td>
+          <td class="p-3" style="color:#00b894;font-weight:700">2–4 недели</td>
+          <td class="p-3">6–12 недель</td>
+          <td class="p-3">4–8 недель</td>
+          <td class="p-3">6–10 недель</td>
+          <td class="p-3">6–10 недель</td>
+        </tr>
+        <tr>
+          <td class="p-3 font-bold">Запчасти</td>
+          <td class="p-3" style="color:#00b894;font-weight:700">В наличии (РФ)</td>
+          <td class="p-3">Под заказ, склад NL</td>
+          <td class="p-3">Под заказ, склад SE</td>
+          <td class="p-3">Под заказ, склад JP</td>
+          <td class="p-3">Под заказ, склад DE</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Карточки брендов-аналогов (flip cards) -->
+  <h3 class="text-2xl font-bold mb-4">Бренды-аналоги в каталоге Феникс</h3>
+  <p class="text-lg font-block text-center mb-6 text-pencil-light">Нажмите на карточку, чтобы перевернуть и увидеть подробности</p>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="analogCards">
+
+    <!-- Alfa Laval -->
+    <div class="flip-card" data-brand="alfalaval" data-flip="flip-y">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <img src="img/logo-alfalaval.svg" alt="Alfa Laval" class="flip-card-logo">
+          <h4 class="flip-card-title">Alfa Laval</h4>
+          <p class="flip-card-desc">Швеция. Лидер рынка ПТО. Серии M3/M6/M10/M15 (демонтируемые) и CB/BV (паяные).</p>
+          <div class="flex flex-wrap gap-1 mt-2">
+            <span class="tag text-xs">M3–M15</span>
+            <span class="tag text-xs">CB/BV</span>
+            <span class="tag text-xs">GL</span>
+          </div>
+          <p class="text-sm text-pencil-light font-block mt-2"><strong>Цена:</strong> x3,5–5,0 от Феникс</p>
+          <span class="flip-card-hint">Нажмите для подробностей</span>
+        </div>
+        <div class="flip-card-back">
+          <h4>О бренде Alfa Laval</h4>
+          <ul>
+            <li>Основана в 1883 году, штаб-квартира: Лунд, Швеция</li>
+            <li>Крупнейший в мире производитель ПТО</li>
+            <li>140+ лет на рынке теплообменного оборудования</li>
+          </ul>
+          <h4>Ключевые серии</h4>
+          <ul>
+            <li><strong>M3/M6/M10/M15</strong> — демонтируемые</li>
+            <li><strong>CB/BV</strong> — паяные, компактные</li>
+            <li><strong>GL</strong> — для пищевой промышленности</li>
+          </ul>
+          <h4>Кросс-референс с Феникс</h4>
+          <ul>
+            <li>M6 ↔ ТП-Б-0.35 (APR-21)</li>
+            <li>M10 ↔ ТП-Б-0.70 (APR-43)</li>
+            <li>M15 ↔ ТПМ-0.35/0.70</li>
+          </ul>
+          <span class="flip-card-hint">Нажмите для возврата</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SWEP -->
+    <div class="flip-card" data-brand="swep" data-flip="flip-x">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <img src="img/logo-swep.svg" alt="SWEP" class="flip-card-logo">
+          <h4 class="flip-card-title">SWEP</h4>
+          <p class="flip-card-desc">Швеция (дочерняя Danfoss). Специалист по паяным ПТО. Серии B12–B50, FP12–30.</p>
+          <div class="flex flex-wrap gap-1 mt-2">
+            <span class="tag text-xs">B12–B50</span>
+            <span class="tag text-xs">FP12–30</span>
+            <span class="tag text-xs">T21–T55</span>
+          </div>
+          <p class="text-sm text-pencil-light font-block mt-2"><strong>Цена:</strong> x2,5–4,0 от Феникс</p>
+          <span class="flip-card-hint">Нажмите для подробностей</span>
+        </div>
+        <div class="flip-card-back">
+          <h4>О бренде SWEP</h4>
+          <ul>
+            <li>Основана в 1983 году, дочерняя компания Danfoss</li>
+            <li>Специализация: паяные пластинчатые теплообменники</li>
+            <li>Штаб-квартира: Мальмё, Швеция</li>
+          </ul>
+          <h4>Ключевые серии</h4>
+          <ul>
+            <li><strong>B12/B18/B26/B32/B45/B50</strong> — паяные</li>
+            <li><strong>FP12–30</strong> — для фреоновых контуров</li>
+            <li><strong>T21–T55</strong> — промышленные</li>
+          </ul>
+          <h4>Кросс-референс с Феникс</h4>
+          <ul>
+            <li>B12/B18 ↔ ТП-Б-0.35</li>
+            <li>B26/B32 ↔ ТП-Б-0.70</li>
+          </ul>
+          <span class="flip-card-hint">Нажмите для возврата</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hisaka -->
+    <div class="flip-card" data-brand="hisaka" data-flip="flip-diagonal">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <img src="img/logo-hisaka.svg" alt="Hisaka" class="flip-card-logo">
+          <h4 class="flip-card-title">Hisaka</h4>
+          <p class="flip-card-desc">Япония. Серии QR (стандарт), QP (высокое давление), QS (компакт). CPS/CSR — паяные.</p>
+          <div class="flex flex-wrap gap-1 mt-2">
+            <span class="tag text-xs">QR–QS</span>
+            <span class="tag text-xs">CPS/CSR</span>
+            <span class="tag text-xs">US</span>
+          </div>
+          <p class="text-sm text-pencil-light font-block mt-2"><strong>Цена:</strong> x2,0–3,5 от Феникс</p>
+          <span class="flip-card-hint">Нажмите для подробностей</span>
+        </div>
+        <div class="flip-card-back">
+          <h4>О бренде Hisaka</h4>
+          <ul>
+            <li>Основана в 1960 году, Япония</li>
+            <li>Один из крупнейших производителей ПТО в Азии</li>
+            <li>Высокое качество металла и точные допуски</li>
+          </ul>
+          <h4>Ключевые серии</h4>
+          <ul>
+            <li><strong>QR</strong> — стандартные демонтируемые</li>
+            <li><strong>QP</strong> — высокое давление (до 3,0 МПа)</li>
+            <li><strong>QS</strong> — компактные</li>
+            <li><strong>CPS/CSR</strong> — паяные</li>
+          </ul>
+          <h4>Кросс-референс с Феникс</h4>
+          <ul>
+            <li>QR30–QR50 ↔ ТП-Б-0.35</li>
+            <li>QR70–QR90 ↔ ТП-Б-0.70</li>
+            <li>QR130–QR250 ↔ ТПМ</li>
+          </ul>
+          <span class="flip-card-hint">Нажмите для возврата</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Funke -->
+    <div class="flip-card" data-brand="funke" data-flip="flip-scale">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <img src="img/logo-funke.svg" alt="Funke" class="flip-card-logo">
+          <h4 class="flip-card-title">Funke</h4>
+          <p class="flip-card-desc">Германия. Серия Sigma 250–1600. Промышленные решения для крупных объектов.</p>
+          <div class="flex flex-wrap gap-1 mt-2">
+            <span class="tag text-xs">Sigma 250</span>
+            <span class="tag text-xs">Sigma 500</span>
+            <span class="tag text-xs">Sigma 1000</span>
+          </div>
+          <p class="text-sm text-pencil-light font-block mt-2"><strong>Цена:</strong> x2,5–4,0 от Феникс</p>
+          <span class="flip-card-hint">Нажмите для подробностей</span>
+        </div>
+        <div class="flip-card-back">
+          <h4>О бренде Funke</h4>
+          <ul>
+            <li>Funke Wärmeaustauscher, Германия</li>
+            <li>Штаб-квартира: Оснабрюк</li>
+            <li>Специализация: промышленные ПТО и кожухотрубные</li>
+          </ul>
+          <h4>Ключевые серии</h4>
+          <ul>
+            <li><strong>Sigma 250</strong> — малая нагрузка</li>
+            <li><strong>Sigma 500</strong> — средняя</li>
+            <li><strong>Sigma 1000</strong> — крупная</li>
+            <li><strong>Sigma 2500</strong> — экстремальная</li>
+          </ul>
+          <h4>Кросс-референс с Феникс</h4>
+          <ul>
+            <li>Sigma 250 ↔ ТПМ-0.135</li>
+            <li>Sigma 500 ↔ ТПМ-0.35/0.70</li>
+            <li>Sigma 1000 ↔ ТПМ-1.5</li>
+          </ul>
+          <span class="flip-card-hint">Нажмите для возврата</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- APV -->
+    <div class="flip-card" data-brand="apv" data-flip="flip-bounce">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <img src="img/logo-apv.svg" alt="APV" class="flip-card-logo">
+          <h4 class="flip-card-title">APV</h4>
+          <p class="flip-card-desc">Великобритания (SPX Flow). Серии GP (стандарт), H (высокое давление), паяные A系列.</p>
+          <div class="flex flex-wrap gap-1 mt-2">
+            <span class="tag text-xs">GP20–GP810</span>
+            <span class="tag text-xs">H12–H52</span>
+            <span class="tag text-xs">A系列</span>
+          </div>
+          <p class="text-sm text-pencil-light font-block mt-2"><strong>Цена:</strong> x2,5–4,0 от Феникс</p>
+          <span class="flip-card-hint">Нажмите для подробностей</span>
+        </div>
+        <div class="flip-card-back">
+          <h4>О бренде APV</h4>
+          <ul>
+            <li>Часть SPX Flow, Великобритания</li>
+            <li>История более 100 лет</li>
+            <li>Специализация: пищевая и химическая промышленность</li>
+          </ul>
+          <h4>Ключевые серии</h4>
+          <ul>
+            <li><strong>GP20–GP810</strong> — демонтируемые</li>
+            <li><strong>H12–H52</strong> — высокое давление</li>
+            <li><strong>A系列</strong> — паяные</li>
+          </ul>
+          <h4>Кросс-референс с Феникс</h4>
+          <ul>
+            <li>GP35/GP70 ↔ ТП-Б-0.35/0.70</li>
+            <li>GP190/GP410 ↔ ТПМ-0.35/0.70</li>
+          </ul>
+          <span class="flip-card-hint">Нажмите для возврата</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sigma (Andritz) -->
+    <div class="flip-card" data-brand="sigma" data-flip="flip-y">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <img src="img/logo-sigma.svg" alt="Sigma (Andritz)" class="flip-card-logo">
+          <h4 class="flip-card-title">Sigma (Andritz)</h4>
+          <p class="flip-card-desc">Австрия (Andritz). Серия Sigma系列 250–2500. Тяжёлые промышленные условия.</p>
+          <div class="flex flex-wrap gap-1 mt-2">
+            <span class="tag text-xs">Sigma 250</span>
+            <span class="tag text-xs">Sigma 1000</span>
+            <span class="tag text-xs">Sigma 2500</span>
+          </div>
+          <p class="text-sm text-pencil-light font-block mt-2"><strong>Цена:</strong> x3,0–5,0 от Феникс</p>
+          <span class="flip-card-hint">Нажмите для подробностей</span>
+        </div>
+        <div class="flip-card-back">
+          <h4>О бренде Sigma (Andritz)</h4>
+          <ul>
+            <li>Концерн Andritz, Австрия</li>
+            <li>Крупнейший поставщик промышленного оборудования</li>
+            <li>Для целлюлозно-бумажных заводов, ГПЗ</li>
+          </ul>
+          <h4>Ключевые серии</h4>
+          <ul>
+            <li><strong>Sigma 250–600</strong> — малые и средние</li>
+            <li><strong>Sigma 1000–1600</strong> — крупные объекты</li>
+            <li><strong>Sigma 2500</strong> — экстремальные</li>
+          </ul>
+          <h4>Кросс-референс с Феникс</h4>
+          <ul>
+            <li>Sigma 250 ↔ ТПМ-0.135</li>
+            <li>Sigma 1000 ↔ ТПМ-1.5</li>
+          </ul>
+          <span class="flip-card-hint">Нажмите для возврата</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== ПОДБОР ПО ПАРАМЕТРАМ ===== -->
+<section class="sketchy crosshatch p-6 mb-8 fade-up">
+  <h2 class="text-3xl font-bold mb-2 text-center">
+    <span class="pencil-underline">Быстрый подбор</span> по параметрам задачи
+  </h2>
+  <p class="text-xl font-block text-center mb-6 text-pencil-light">Какой теплообменник выбрать? Ориентир по нагрузкам.</p>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <div class="sketchy p-5 text-center" style="border-color:#00b894">
+      <div class="text-4xl font-bold mb-2" style="color:#00b894">до 50 кВт</div>
+      <h3 class="text-xl font-bold mb-2">Бытовой / Малый</h3>
+      <p class="font-block text-base mb-2">ГВС, отопление частного дома, малый цех</p>
+      <p class="font-block text-lg"><strong>Рекомендация:</strong></p>
+      <p class="font-block text-lg" style="color:#d63031;font-weight:700">ТП-Б-0.35 (12–50 пластин)</p>
+      <p class="text-sm text-pencil-light font-block mt-2">Аналоги: SWEP B12/B18, Hisaka QR30, Alfa Laval M6</p>
+    </div>
+
+    <div class="sketchy p-5 text-center" style="border-color:#0984e3">
+      <div class="text-4xl font-bold mb-2" style="color:#0984e3">50–500 кВт</div>
+      <h3 class="text-xl font-bold mb-2">Средний / Коммерческий</h3>
+      <p class="font-block text-base mb-2">Тепловые пункты, вентиляция, промышленные процессы</p>
+      <p class="font-block text-lg"><strong>Рекомендация:</strong></p>
+      <p class="font-block text-lg" style="color:#d63031;font-weight:700">ТП-Б-0.70 / ТПМ-0.135</p>
+      <p class="text-sm text-pencil-light font-block mt-2">Аналоги: SWEP B26/B32, Hisaka QR90, Funke Sigma 250</p>
+    </div>
+
+    <div class="sketchy p-5 text-center" style="border-color:#d63031">
+      <div class="text-4xl font-bold mb-2" style="color:#d63031">500+ кВт</div>
+      <h3 class="text-xl font-bold mb-2">Промышленный / Крупный</h3>
+      <p class="font-block text-base mb-2">ТЭЦ, ГПЗ, химия, нефтегаз</p>
+      <p class="font-block text-lg"><strong>Рекомендация:</strong></p>
+      <p class="font-block text-lg" style="color:#d63031;font-weight:700">ТПМ-0.35 / ТПМ-0.70 / ТПМ-1.5</p>
+      <p class="text-sm text-pencil-light font-block mt-2">Аналоги: Alfa Laval M15, Funke Sigma 500/1000, APV GP410</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== КАЛЬКУЛЯТОР (JS) ===== -->
+<section class="sketchy crosshatch p-6 mb-8 fade-up">
+  <h2 class="text-3xl font-bold mb-2 text-center">
+    <span class="pencil-underline">Онлайн-калькулятор</span> Phoenix-select
+  </h2>
+  <p class="text-xl font-block text-center mb-4 text-pencil-light">Базовый расчёт тепловой мощности, напора и площади теплообмена</p>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="space-y-3">
+      <div>
+        <label class="block font-block text-lg font-bold mb-1">Расход греющей среды (кг/с)</label>
+        <input type="number" id="calcG" value="15" step="0.1" class="w-full border-2 border-pencil rounded-lg p-2 font-block text-lg" style="background:#fffefc;border-radius:255px 15px 225px 15px/15px 225px 15px 255px">
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block font-block text-lg font-bold mb-1">T вход горяч. (°C)</label>
+          <input type="number" id="calcT1" value="90" class="w-full border-2 border-pencil rounded-lg p-2 font-block text-lg" style="background:#fffefc;border-radius:255px 15px 225px 15px/15px 225px 15px 255px">
+        </div>
+        <div>
+          <label class="block font-block text-lg font-bold mb-1">T выход горяч. (°C)</label>
+          <input type="number" id="calcT2" value="70" class="w-full border-2 border-pencil rounded-lg p-2 font-block text-lg" style="background:#fffefc;border-radius:255px 15px 225px 15px/15px 225px 15px 255px">
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block font-block text-lg font-bold mb-1">T вход холодн. (°C)</label>
+          <input type="number" id="calcT3" value="20" class="w-full border-2 border-pencil rounded-lg p-2 font-block text-lg" style="background:#fffefc;border-radius:255px 15px 225px 15px/15px 225px 15px 255px">
+        </div>
+        <div>
+          <label class="block font-block text-lg font-bold mb-1">T выход холодн. (°C)</label>
+          <input type="number" id="calcT4" value="40" class="w-full border-2 border-pencil rounded-lg p-2 font-block text-lg" style="background:#fffefc;border-radius:255px 15px 225px 15px/15px 225px 15px 255px">
+        </div>
+      </div>
+      <div>
+        <label class="block font-block text-lg font-bold mb-1">Коэфф. теплопередачи k (Вт/м²·К)</label>
+        <select id="calcK" class="w-full border-2 border-pencil rounded-lg p-2 font-block text-lg" style="background:#fffefc;border-radius:255px 15px 225px 15px/15px 225px 15px 255px">
+          <option value="5500">Вода–Вода (TL, 5500)</option>
+          <option value="4500">Вода–Гликоль 30% (TL, 4500)</option>
+          <option value="3500">Вода–Гликоль 30% (TK, 3500)</option>
+          <option value="950">Вода–Масло (TL, 950)</option>
+          <option value="6000">Пар–Вода (TL, 6000)</option>
+          <option value="custom">Свой k...</option>
+        </select>
+      </div>
+      <div id="customKWrap" style="display:none">
+        <label class="block font-block text-lg font-bold mb-1">Свой k (Вт/м²·К)</label>
+        <input type="number" id="calcKcustom" value="5000" class="w-full border-2 border-pencil rounded-lg p-2 font-block text-lg" style="background:#fffefc;border-radius:255px 15px 225px 15px/15px 225px 15px 255px">
+      </div>
+      <button onclick="runCalc()" class="w-full py-3 font-bold text-xl font-block border-2 border-pencil" style="background:#2d3436;color:#fff;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;cursor:pointer;transition:all .2s" onmouseover="this.style.transform='rotate(-1deg) scale(1.02)'" onmouseout="this.style.transform=''">
+        Рассчитать
+      </button>
+    </div>
+
+    <div id="calcResult" class="sketchy p-5" style="min-height:200px">
+      <p class="text-xl font-block text-pencil-light text-center mt-8">Введите параметры и нажмите «Рассчитать»</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- Футер -->
+<footer class="max-w-6xl mx-auto mt-12 text-center relative z-10 pb-8">
+  <div class="footer-sketch">
+    <img src="logo.png" alt="Феникс" class="h-12 mx-auto mb-2">
+    <p class="text-xl font-block">AIPhoenix · Завод теплообменников «Феникс» · 2026</p>
+    <p class="text-lg text-pencil-light">Человек = Капитан · ИИ = Экипаж</p>
+  </div>
+</footer>
+
+<script>
+function runCalc(){
+  var res=document.getElementById('calcResult');
+
+  // чтение значений
+  var G=parseFloat(document.getElementById('calcG').value);
+  var t1=parseFloat(document.getElementById('calcT1').value);
+  var t2=parseFloat(document.getElementById('calcT2').value);
+  var t3=parseFloat(document.getElementById('calcT3').value);
+  var t4=parseFloat(document.getElementById('calcT4').value);
+  var kSel=document.getElementById('calcK').value;
+  var k=kSel==='custom'?parseFloat(document.getElementById('calcKcustom').value):parseFloat(kSel);
+
+  // валидация
+  var err=[];
+  if(isNaN(G)||G<=0) err.push('Расход должен быть > 0 кг/с');
+  if(isNaN(t1)) err.push('T вход горяч. — число');
+  if(isNaN(t2)) err.push('T выход горяч. — число');
+  if(isNaN(t3)) err.push('T вход холодн. — число');
+  if(isNaN(t4)) err.push('T выход холодн. — число');
+  if(isNaN(k)||k<=0) err.push('Коэффициент k должен быть > 0');
+  if(!err.length && t1<=t2) err.push('T вход горяч. должна быть > T выход горяч.');
+  if(!err.length && t3>=t4) err.push('T вход холодн. должна быть < T выход холодн.');
+  if(!err.length && t1<=t4) err.push('T горяч. вход не может быть ≤ T холодн. выход');
+  if(!err.length && t2<=t3) err.push('T горяч. выход не может быть ≤ T холодн. вход');
+
+  if(err.length){
+    res.innerHTML='<div class="p-4" style="color:#d63031"><h3 class="text-xl font-bold mb-2">Ошибка ввода</h3><ul class="pencil-list font-block">'+err.map(function(e){return '<li>'+e+'</li>'}).join('')+'</ul></div>';
+    return;
+  }
+
+  // расчёт тепловой мощности, кВт
+  var Q=G*4.18*(t1-t2);
+
+  // среднелогарифмический напор
+  var dt1=t1-t4;
+  var dt2=t2-t3;
+  var dT;
+  if(Math.abs(dt1-dt2)<0.001) dT=dt1;
+  else dT=(dt1-dt2)/Math.log(dt1/dt2);
+
+  // площадь теплообмена, м²
+  var F=(Q*1000)/(k*dT);
+
+  // подбор пластины (по возрастанию площади)
+  var plates=[
+    {name:'ТП-Б-0.35',area:0.035,maxF:20,profile:'TL',desc:'малая нагрузка'},
+    {name:'ТП-Б-0.70',area:0.070,maxF:40,profile:'TL',desc:'средняя нагрузка'},
+    {name:'APR-21',area:0.082,maxF:50,profile:'TL',desc:'компактный'},
+    {name:'APR-43',area:0.442,maxF:250,profile:'TK',desc:'крупный'},
+    {name:'APR-84',area:0.646,maxF:400,profile:'TK',desc:'промышленный'}
+  ];
+  var chosen=null,nPlates=0;
+  for(var i=0;i<plates.length;i++){
+    if(plates[i].maxF>=F){
+      chosen=plates[i];
+      nPlates=Math.ceil(F/(plates[i].area*0.85))+2;
+      if(nPlates<12) nPlates=12;
+      if(nPlates>plates[i].maxF/(plates[i].area*0.85)+2) nPlates=Math.ceil(plates[i].maxF/(plates[i].area*0.85))+2;
+      break;
+    }
+  }
+  if(!chosen){
+    chosen=plates[plates.length-1];
+    nPlates=Math.ceil(F/(chosen.area*0.85))+2;
+  }
+
+  // аналоги
+  var analogs=[];
+  if(chosen.name.indexOf('0.35')>-1||chosen.name==='APR-21'){
+    analogs=[{b:'Alfa Laval',m:'M6 / M10'},{b:'SWEP',m:'B12 / B18'},{b:'Hisaka',m:'QR30 / QR50'}];
+  }else if(chosen.name.indexOf('0.70')>-1){
+    analogs=[{b:'Alfa Laval',m:'M10 / M15'},{b:'SWEP',m:'B26 / B32'},{b:'Funke',m:'Sigma 250'}];
+  }else{
+    analogs=[{b:'Alfa Laval',m:'M15+'},{b:'Funke',m:'Sigma 500 / 1000'},{b:'APV',m:'GP190 / GP410'}];
+  }
+
+  // профиль
+  var profName=chosen.profile==='TL'?'жёсткий (30°, max k)':'мягкий (60°, min ΔP)';
+  var profK=chosen.profile==='TL'?'~5500':'~3500';
+
+  var h='';
+  h+='<h3 class="text-2xl font-bold mb-3 text-center">Результаты расчёта</h3>';
+  h+='<div class="space-y-3 font-block text-lg">';
+  h+='<div class="p-3 rounded-lg" style="background:#f0f8ff;border-left:4px solid #0984e3">';
+  h+='<p><strong>Тепловая мощность Q:</strong></p>';
+  h+='<p style="color:#0984e3;font-size:1.5em;font-weight:700">'+Q.toFixed(2)+' кВт</p>';
+  h+='</div>';
+  h+='<p><strong>Температурный напор ΔT<sub>лн</sub>:</strong> '+dT.toFixed(2)+' °C</p>';
+  h+='<p><strong>Необходимая площадь теплообмена F:</strong></p>';
+  h+='<p style="color:#d63031;font-weight:700;font-size:1.2em">'+F.toFixed(4)+' м²</p>';
+  h+='<hr class="border-dashed border-pencil">';
+  h+='<div class="p-3 rounded-lg" style="background:#fff5f5;border-left:4px solid #d63031">';
+  h+='<p><strong>Рекомендуемая пластина:</strong></p>';
+  h+='<p style="color:#d63031;font-weight:700;font-size:1.3em">'+chosen.name+'</p>';
+  h+='<p class="text-sm text-pencil-light">'+chosen.desc+' · профиль '+chosen.profile+'</p>';
+  h+='</div>';
+  h+='<p><strong>Количество пластин в пакете:</strong> <span style="font-size:1.3em">'+nPlates+'</span></p>';
+  h+='<p><strong>Профиль:</strong> '+chosen.profile+' — '+profName+'</p>';
+  h+='<p><strong>Типичный k:</strong> '+profK+' Вт/(м²·К)</p>';
+  h+='</div>';
+
+  // аналоги
+  h+='<div class="mt-4 pt-3 border-t border-dashed border-pencil">';
+  h+='<p class="font-block text-lg font-bold mb-2">Аналоги других брендов:</p>';
+  h+='<div class="space-y-1 font-block text-base">';
+  analogs.forEach(function(a){
+    h+='<p>'+a.b+': <strong>'+a.m+'</strong></p>';
+  });
+  h+='</div></div>';
+
+  res.innerHTML=h;
+}
+
+document.getElementById('calcK').addEventListener('change',function(){
+  document.getElementById('customKWrap').style.display=this.value==='custom'?'block':'none';
+});
+</script>
+
+<!-- Модальное окно карточки -->
+<div class="modal-overlay" id="cardModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2 id="modalTitle">Заголовок</h2>
+      <button class="modal-close" id="modalClose">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-caption" id="modalCaption"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var anims=['anim-flip','anim-slide','anim-zoom','anim-rotate','anim-fold'];
+  var overlay=document.getElementById('cardModal');
+  var title=document.getElementById('modalTitle');
+  var body=document.getElementById('modalBody');
+  var caption=document.getElementById('modalCaption');
+  var closeBtn=document.getElementById('modalClose');
+
+  function openModal(data){
+    var anim=anims[Math.floor(Math.random()*anims.length)];
+    overlay.className='modal-overlay open '+anim;
+    title.textContent=data.title||'';
+    body.innerHTML=data.body||'';
+    caption.textContent=data.caption||'';
+    document.body.style.overflow='hidden';
+  }
+  function closeModal(){
+    overlay.classList.remove('open');
+    document.body.style.overflow='';
+  }
+  closeBtn.addEventListener('click',closeModal);
+  overlay.addEventListener('click',function(e){if(e.target===overlay) closeModal();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape') closeModal();});
+
+  // ── Данные карточек ──
+  var cards={
+    // === ПРОДУКЦИЯ ФЕНИКС ===
+    'ph-tpb035':{
+      title:'ТП-Б-0.35 — Пластинчатый теплообменник',
+      body:'<h3>Что это такое</h3>'+
+        '<p>ТП-Б-0.35 — это демонтируемый пластинчатый теплообменник завода «Феникс» с площадью пластины 0,035 м². «Демонтируемый» значит, что его можно разобрать, почистить или заменить пластины.</p>'+
+        '<h3>Как устроен</h3>'+
+        '<ul><li><strong>Пластины</strong> — тонкие металлические листы с гофрированной поверхностью (профиль TL, угол 30°). Между ними формируются каналы для горячей и холодной среды</li>'+
+        '<li><strong>Рама</strong> — стальная конструкция, которая сжимает пакет пластин болтами</li>'+
+        '<li><strong>Уплотнения</strong> — резиновые прокладки между пластинами, не дающие средам смешаться</li>'+
+        '<li><strong>Количество пластин</strong> — от 12 до 500 в одном пакете (чем больше пластин — тем больше мощность)</li></ul>'+
+        '<h3>Когда применяется</h3>'+
+        '<ul><li>ГВС (горячее водоснабжение) в домах и кафе</li><li>Отопление малых объектов</li><li>Малый цех: охлаждение масла, технологической воды</li><li>Тепловые пункты до 50 кВт</li></ul>'+
+        '<div class="highlight">Профиль TL (30°) — «жёсткий». Максимальный коэффициент теплопередачи k ≈ 5500 Вт/(м²·К) для пары вода-вода. Но и потери давления выше.</div>'+
+        '<div class="tip">Срок поставки: 2–4 недели. Запасные пластины и уплотнения — в наличии на складе в Ростове.</div>'+
+        '<h3>Технические лимиты</h3>'+
+        '<ul><li>Давление: до 2,5 МПа (25 бар)</li><li>Температура: до 200°С (с Viton-уплотнениями)</li><li>Материал пластин: AISI 304 (стандарт) или AISI 316 (агрессивные среды)</li></ul>',
+      caption:'Завод «Феникс» · серия ТП-Б · профиль TL · Made in Russia'
+    },
+    'ph-tpb070':{
+      title:'ТП-Б-0.70 — Пластинчатый теплообменник',
+      body:'<h3>Что это такое</h3>'+
+        '<p>ТП-Б-0.70 — увеличенная версия ТП-Б-0.35. Площадь пластины 0,070 м² (вдвое больше). Тот же демонтируемый принцип, но для более мощных задач.</p>'+
+        '<h3>Отличия от ТП-Б-0.35</h3>'+
+        '<ul><li><strong>Больше площадь</strong> — 0,070 м² вместо 0,035 м². Каждая пластина «берёт» больше тепла</li>'+
+        '<li><strong>Меньше пластин</strong> — для той же задачи нужно меньше пластин → компактнее аппарат</li>'+
+        '<li><strong>Выше пропускная способность</strong> — можно обрабатывать большие расходы</li></ul>'+
+        '<h3>Когда применяется</h3>'+
+        '<ul><li>Тепловые пункты 50–500 кВт</li><li>Вентиляция и кондиционирование</li><li>Промышленные процессы: охлаждение технологических жидкостей</li><li>Гликолевое охлаждение (30–50% этиленгликоль)</li></ul>'+
+        '<div class="tip">Часто ставится в паре с ТП-Б-0.35: одна секция для отопления, вторая для ГВС.</div>'+
+        '<h3>Аналоги других брендов</h3>'+
+        '<ul><li>Alfa Laval: M10 / M15</li><li>SWEP: B26 / B32</li><li>Funke: Sigma 250</li><li>Hisaka: QR70 / QR90</li></ul>'+
+        '<div class="highlight">Цена ТП-Б-0.70: примерно в 1,5–2 раза дороже ТП-Б-0.35, но в 3–5 раз дешевле импортных аналогов.</div>',
+      caption:'Завод «Феникс» · серия ТП-Б · профиль TL · Средняя нагрузка'
+    },
+    'ph-tpm':{
+      title:'ТПМ — Промышленный теплообменник',
+      body:'<h3>Что это такое</h3>'+
+        '<p>ТПМ — серия промышленных пластинчатых теплообменников «Феникс» для крупных объектов: ТЭЦ, газоперерабатывающие заводы, химические производства, нефтедобыча.</p>'+
+        '<h3>Особенности</h3>'+
+        '<ul><li><strong>Широкий диапазон</strong> — от 0,135 до 1,5 м² на пластину (10 моделей в серии)</li>'+
+        '<li><strong>Профиль TK/TL</strong> — выбор гофры под задачу: TK (мягкий, 60°) для малых потерь, TL (жёсткий, 30°) для максимума теплопередачи</li>'+
+        '<li><strong>Материалы</strong> — AISI 304, AISI 316, титан (для агрессивных сред: кислоты, щёлочи)</li>'+
+        '<li><strong>Давление</strong> — до 2,5 МПа (стандарт), до 4,0 МПа (усиленный вариант)</li></ul>'+
+        '<h3>Применение</h3>'+
+        '<ul><li>ТЭЦ: конденсаторы, подогреватели сетевой воды</li><li>ГПЗ: охлаждение газового конденсата</li><li>Химия: теплообмен кислот/щелочей</li><li>Нефтегаз: подогрев нефти, охлаждение товарной нефти</li><li>Пищевая промышленность: пастеризация, стерилизация</li></ul>'+
+        '<div class="highlight">Серия ТПМ — основной «рабочий» продукт завода. На неё приходится ~60% выручки от промышленных заказов.</div>'+
+        '<h3>Важно</h3>'+
+        '<ul><li>При температурах >150°С рекомендуется Viton вместо EPDM</li><li>Для сред с хлоридами — только AISI 316 или титан</li><li>Срок изготовления: 3–6 недели (в зависимости от комплектации)</li></ul>',
+      caption:'Завод «Феникс» · серия ТПМ · Промышленное применение'
+    },
+    'ph-plates':{
+      title:'Запасные пластины',
+      body:'<h3>Зачем нужны</h3>'+
+        '<p>Пластины — расходный материал. Со временем гофрированная поверхность покрывается отложениями (накипь, соль, продукты коррозии), уплотнения дубеют и теряют герметичность.</p>'+
+        '<h3>Что доступно</h3>'+
+        '<ul><li><strong>Серии:</strong> ТП-Б, ТПМ, APR-21, APR-43, APR-84</li>'+
+        '<li><strong>Материалы:</strong> AISI 304 (стандарт), AISI 316 (кислотостойкий), титан</li>'+
+        '<li><strong>Профили:</strong> TK (мягкий, 60°) — для малых потерь давления; TL (жёсткий, 30°) — для максимального k</li>'+
+        '<li><strong>Гофра:</strong> подбирается строго под серию аппарата (нельзя ставить пластины от APR-21 в ТП-Б)</li></ul>'+
+        '<h3>Когда менять</h3>'+
+        '<ul><li>Каждые 3–5 лет (при нормальной воде)</li><li>Каждые 1–2 года (при жёсткой воде или высоких температурах)</li><li>При росте перепада давления на 20–30% от начального</li></ul>'+
+        '<div class="tip">Запасные пластины Феникс совместимы с аппаратами аналогичных серий (APR-21 ≈ Alfa Laval M6, APR-43 ≈ Funke Sigma 250).</div>'+
+        '<div class="highlight">Стоимость пластины: AISI 304 ≈ x1, AISI 316 ≈ x2.5, титан ≈ x8 от базовой.</div>',
+      caption:'Запчасти для ПТО · Наличие на складе в Ростове'
+    },
+    'ph-frames':{
+      title:'Рамы и плиты для ПТО',
+      body:'<h3>Что это</h3>'+
+        '<p>Рама — стальная конструкция, которая удерживает пакет пластин под давлением. Состоит из:</p>'+
+        '<ul><li><strong>Стационарная плита</strong> — привинчена к фундаменту, на ней закреплены направляющие</li>'+
+        '<li><strong>Подвижная плита</strong> — перемещается по направляющим для сжатия пакета</li>'+
+        '<li><strong>Направляющие стержни</strong> — стальные стержни с покрытием от коррозии</li>'+
+        '<li><strong>Болты стяжные</strong> — высокопрочные, с гайками и шайбами</li></ul>'+
+        '<h3>Когда нужна замена</h3>'+
+        '<ul><li>Коррозия рамы (особенно в атмосфере с хлоридами)</li><li>Деформация направляющих</li><li>Увеличение аппарата (замена на раму большего размера)</li></ul>'+
+        '<div class="tip">Стандартная рама рассчитана на 20+ лет службы. Усиленная — для высоких давлений и вибрации.</div>',
+      caption:'Комплектующие для ПТО · Стандарт и усиленный вариант'
+    },
+    'ph-seals':{
+      title:'Уплотнительные прокладки',
+      body:'<h3>Зачем нужны</h3>'+
+        '<p>Уплотнения — критически важный элемент. Они не дают горячей и холодной средам смешаться, и не дают среде вытечь наружу.</p>'+
+        '<h3>Типы уплотнений</h3>'+
+        '<ul><li><strong>EPDM</strong> — этиленпропиленовый каучук. Рабочая температура: до 150°С. Для воды, гликоля, воздуха. Самый распространённый и дешёвый вариант.</li>'+
+        '<li><strong>NBR</strong> — нитрильовый каучук. До 130°С. Для масел, углеводородов, топлива. Не подходит для пара и горячей воды.</li>'+
+        '<li><strong>Viton (FKM)</strong> — фторкаучук. До 200°С. Универсальный: кислоты, щёлочи, растворители, пар. В 2–3 раза дороже EPDM.</li></ul>'+
+        '<h3>Когда менять</h3>'+
+        '<ul><li>При каждом вскрытии аппарата (рекомендуется)</li><li>При течи ( явный признак износа)</li><li>Каждые 1–3 года в зависимости от условий</li></ul>'+
+        '<div class="highlight">Важно: нельзя ставить NBR при температурах выше 130°С — он разрушается. Для пара — только Viton.</div>'+
+        '<div class="tip">Комплект уплотнений для ТП-Б-0.35: ~12 шт (по числу каналов). Стоимость: EPDM ≈ x1, NBR ≈ x1.3, Viton ≈ x2.</div>',
+      caption:'Расходные материалы · Наличие на складе'
+    },
+
+    // === БРЕНДЫ-АНАЛОГИ ===
+    'brand-alfalaval':{
+      title:'Alfa Laval — мировой лидер ПТО',
+      body:'<h3>О бренде</h3>'+
+        '<p>Alfa Laval — шведская компания, крупнейший в мире производство пластинчатых теплообменников. Основана в 1883 году. Штаб-квартира: Лунд, Швеция.</p>'+
+        '<h3>Ключевые серии</h3>'+
+        '<ul><li><strong>M3 / M6 / M10 / M15</strong> — демонтируемые, для средних и крупных нагрузок</li>'+
+        '<li><strong>CB / BV</strong> — паяные (паяный теплообменник), компактные, для малых задач</li>'+
+        '<li><strong>GL</strong> — для пищевой промышленности (молоко, пиво, соки)</li>'+
+        '<li><strong>semi-welded</strong> — полузварные, для агрессивных сред</li></ul>'+
+        '<h3>Почему дороже Феникс</h3>'+
+        '<ul><li>Бренд и репутация (140+ лет на рынке)</li><li>Глобальная сеть складов и сервисов</li><li>Широкий модельный ряд (300+ типоразмеров)</li><li>Собственные разработки профилей пластин</li></ul>'+
+        '<div class="highlight">Цена: в 3,5–5 раз дороже Феникс. Срок поставки: 6–12 недель (склад в Нидерландах).</div>'+
+        '<h3>Кросс-референс с Феникс</h3>'+
+        '<ul><li>Alfa Laval M6 ↔ Феникс ТП-Б-0.35 (APR-21)</li><li>Alfa Laval M10 ↔ Феникс ТП-Б-0.70 (APR-43)</li><li>Alfa Laval M15 ↔ Феникс ТПМ-0.35/0.70</li></ul>',
+      caption:'Швеция · Лидер рынка · x3,5–5,0 от Феникс'
+    },
+    'brand-swep':{
+      title:'SWEP — специалист по паяным ПТО',
+      body:'<h3>О бренде</h3>'+
+        '<p>SWEP — шведская компания, дочернее предприятие Danfoss. Специализация — паяные пластинчатые теплообменники ( brazed plate heat exchangers). Основана в 1983.</p>'+
+        '<h3>Ключевые серии</h3>'+
+        '<ul><li><strong>B12 / B18 / B26 / B32 / B45 / B50</strong> — паяные, для отопления и ГВС</li>'+
+        '<li><strong>FP12–30</strong> — для фреоновых контуров (кондиционирование)</li>'+
+        '<li><strong>T21–T55</strong> — для промышленных задач</li></ul>'+
+        '<h3>Отличия от Феникс</h3>'+
+        '<ul><li><strong>Только паяные</strong> — нельзя разобрать и почистить. При засоре — заменаwhole аппарата</li>'+
+        '<li><strong>Компактность</strong> — в 3–5 раз компактнее демонтируемых</li>'+
+        '<li><strong>Цена</strong> — дороже Феникс, но дешевле Alfa Laval</li></ul>'+
+        '<div class="highlight">Кросс-референс: SWEP B12 ↔ Феникс ТП-Б-0.35, SWEP B26 ↔ Феникс ТП-Б-0.70</div>'+
+        '<div class="tip">SWEP хорош для компактных установок (котельные, мини-ТЭЦ), где важна каждая папа. Для промышленности — лучше демонтируемые Феникс.</div>',
+      caption:'Швеция · Danfoss · Паяные ПТО · x2,5–4,0 от Феникс'
+    },
+    'brand-hisaka':{
+      title:'Hisaka — японское качество',
+      body:'<h3>О бренде</h3>'+
+        '<p>Hisaka — японская компания, один из крупнейших производителей ПТО в Азии. Основана в 1960. Специализация: демонтируемые и паяные теплообменники.</p>'+
+        '<h3>Ключевые серии</h3>'+
+        '<ul><li><strong>QR</strong> — стандартные демонтируемые (аналог Феникс ТП-Б)</li>'+
+        '<li><strong>QP</strong> — высокое давление (до 3,0 МПа)</li>'+
+        '<li><strong>QS</strong> — компактные, малый footprint</li>'+
+        '<li><strong>CPS / CSR</strong> — паяные (аналог SWEP)</li></ul>'+
+        '<h3>Почему выбирают Hisaka</h3>'+
+        '<ul><li>Высокое качество металла (японская нержавейка)</li><li>Точные допуски на гофру</li><li>Хорошая доступность в АТР</li></ul>'+
+        '<div class="highlight">Цена: в 2–3,5 раза дороже Феникс. Срок поставки: 6–10 недель (склад в Японии/Сингапуре).</div>'+
+        '<h3>Кросс-референс с Феникс</h3>'+
+        '<ul><li>Hisaka QR30–QR50 ↔ Феникс ТП-Б-0.35</li><li>Hisaka QR70–QR90 ↔ Феникс ТП-Б-0.70</li><li>Hisaka QR130–QR250 ↔ Феникс ТПМ</li></ul>',
+      caption:'Япония · Высокое качество · x2,0–3,5 от Феникс'
+    },
+    'brand-funke':{
+      title:'Funke — немецкая промышленная школа',
+      body:'<h3>О бренде</h3>'+
+        '<p>Funke Wärmeaustauscher — немецкая компания, специализация: промышленные пластинчатые и кожухотрубные теплообменники. Штаб-квартира: Оснабрюк, Германия.</p>'+
+        '<h3>Ключевые серии</h3>'+
+        '<ul><li><strong>Sigma 250</strong> — малая нагрузка (аналог ТПМ-0.135)</li>'+
+        '<li><strong>Sigma 500</strong> — средняя (аналог ТПМ-0.35/0.70)</li>'+
+        '<li><strong>Sigma 1000</strong> — крупная (аналог ТПМ-1.5)</li>'+
+        '<li><strong>Sigma 2500</strong> — экстремальная (ТЭЦ, ГПЗ)</li></ul>'+
+        '<h3>Особенности</h3>'+
+        '<ul><li><strong>Промышленная ориентация</strong> — Funke делает ставку на крупные объекты, а не на бытовой сегмент</li>'+
+        '<li><strong>Высокое давление</strong> — некоторые серии до 4,0 МПа</li>'+
+        '<li><strong>Кожухотрубные</strong> — помимо пластинчатых, Funke делает классические кожухотрубные аппараты</li></ul>'+
+        '<div class="highlight">Цена: в 2,5–4 раза дороже Феникс. Для промышленных объектов Funke — основной конкурент.</div>'+
+        '<div class="tip">Кросс-референс: Funke Sigma 250 ↔ Феникс ТПМ-0.135, Sigma 500 ↔ ТПМ-0.70</div>',
+      caption:'Германия · Промышленные решения · x2,5–4,0 от Феникс'
+    },
+    'brand-apv':{
+      title:'APV — британская школа',
+      body:'<h3>О бренде</h3>'+
+        '<p>APV (Part of SPX Flow) — британская компания с историей более 100 лет. Специализация: теплообменники для пищевой и химической промышленности.</p>'+
+        '<h3>Ключевые серии</h3>'+
+        '<ul><li><strong>GP20 / GP35 / GP70 / GP190 / GP410 / GP810</strong> — демонтируемые (стандартная линейка)</li>'+
+        '<li><strong>H12 / H19 / H32 / H52</strong> — высокое давление</li>'+
+        '<li><strong>A系列</strong> — паяные (compact)</li></ul>'+
+        '<h3>Применение</h3>'+
+        '<ul><li>Пищевая промышленность (молоко, пиво, соки)</li><li>Химия и фармацевтика</li><li>ОВиК и вентиляция</li></ul>'+
+        '<div class="highlight">Цена: в 2,5–4 раза дороже Феникс. Хорошо известен в Европе, но в России менее распространён.</div>'+
+        '<h3>Кросс-референс с Феникс</h3>'+
+        '<ul><li>APV GP35/GP70 ↔ Феникс ТП-Б-0.35/0.70</li><li>APV GP190/GP410 ↔ Феникс ТПМ-0.35/0.70</li></ul>',
+      caption:'Великобритания (SPX Flow) · x2,5–4,0 от Феникс'
+    },
+    'brand-sigma':{
+      title:'Sigma (Andritz) — австрийский тяжеловес',
+      body:'<h3>О бренде</h3>'+
+        '<p>Sigma — бренд теплообменников концерна Andritz (Австрия). Крупнейший поставщик оборудования для промышленности: от целлюлозно-бумажных заводов до ГПЗ.</p>'+
+        '<h3>Ключевые серии</h3>'+
+        '<ul><li><strong>Sigma 250–600</strong> — малые и средние нагрузки</li>'+
+        '<li><strong>Sigma 1000–1600</strong> — крупные промышленные объекты</li>'+
+        '<li><strong>Sigma 2500</strong> — экстремальные: ТЭЦ, нефтепереработка</li></ul>'+
+        '<h3>Особенности</h3>'+
+        '<ul><li><strong>Промышленная тяжесть</strong> — рассчитаны на 24/7 работу в агрессивных условиях</li>'+
+        '<li><strong>Большие типоразмеры</strong> — площадь пластины до 2,5 м²</li>'+
+        '<li><strong>Собственные профили</strong> — уникальная гофра Sigma, не совместимая с другими брендами</li></ul>'+
+        '<div class="highlight">Цена: в 3–5 раз дороже Феникс. Для крупных объектов Sigma — основной мировой конкурент.</div>'+
+        '<div class="tip">Кросс-референс: Sigma 250 ↔ Феникс ТПМ-0.135, Sigma 1000 ↔ ТПМ-1.5</div>',
+      caption:'Австрия (Andritz) · Промышленный тяжеловес · x3,0–5,0 от Феникс'
+    }
+  };
+
+  // Навешиваем клики
+  document.querySelectorAll('[data-card]').forEach(function(el){
+    el.addEventListener('click',function(e){
+      e.preventDefault();
+      var d=cards[el.dataset.card];
+      if(d) openModal(d);
+    });
+  });
+
+  window.openCardModal=openModal;
+
+  // === FLIP CARDS ===
+  var flipAnimations = ['flip-y', 'flip-x', 'flip-diagonal', 'flip-scale', 'flip-bounce'];
+  document.querySelectorAll('.flip-card').forEach(function(card) {
+    var clickCount = 0;
+    card.addEventListener('click', function(e) {
+      e.preventDefault();
+      clickCount++;
+      
+      // Remove all flip classes
+      flipAnimations.forEach(function(anim) {
+        card.classList.remove(anim);
+      });
+      
+      // Toggle flipped state
+      var isFlipped = card.classList.contains('flipped');
+      
+      if (!isFlipped) {
+        // Add new random animation
+        var randomAnim = flipAnimations[Math.floor(Math.random() * flipAnimations.length)];
+        card.classList.add(randomAnim);
+      }
+      
+      card.classList.toggle('flipped');
+      
+      // If clicking the back, open modal with detailed info
+      if (isFlipped) {
+        var brand = card.dataset.brand;
+        if (cards['brand-' + brand]) {
+          setTimeout(function() {
+            openModal(cards['brand-' + brand]);
+          }, 300);
+        }
+      }
+    });
+  });
+
+  // scroll animations
+  var targets=document.querySelectorAll('.reveal,.draw-on,.trace-border');
+  if(targets.length){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    },{threshold:.15,rootMargin:'0px 0px -40px 0px'});
+    targets.forEach(function(t){io.observe(t);});
+  }
+})();
+</script>
+
+</body>
+</html>

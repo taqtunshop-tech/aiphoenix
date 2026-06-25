@@ -1,0 +1,90 @@
+/* style.css */
+@import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Caveat:wght@400;600;700&display=swap');
+
+body {
+    /* Slight paper texture effect */
+    background-color: #fbfbfa;
+}
+
+.sketchy-box {
+    border: 2px solid #2d3436;
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+    background: #ffffff;
+    box-shadow: 3px 6px 15px rgba(0,0,0,0.04);
+}
+
+.sketchy-circle {
+    border: 3px solid #2d3436;
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
+}
+
+/* Represents the hull of the ship from the drawing */
+.sketchy-boat {
+    border: 3px solid #2d3436;
+    border-radius: 5px 5px 150px 150px / 5px 5px 60px 60px;
+    background: rgba(255, 255, 255, 0.6);
+    position: relative;
+}
+
+.sketchy-boat::after {
+    /* Add some rough pencil shading at the bottom */
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 10%;
+    width: 80%;
+    height: 10px;
+    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 10" xmlns="http://www.w3.org/2000/svg"><path d="M 0 5 Q 10 0 20 5 T 40 5 T 60 5 T 80 5 T 100 5" fill="transparent" stroke="%232d3436" stroke-width="1" stroke-dasharray="2,2"/></svg>') repeat-x;
+    background-size: 50px 10px;
+}
+
+.sketchy-tag {
+    border: 1.5px solid #2d3436;
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+    padding: 0.25rem 0.75rem;
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.9);
+    transform: rotate(calc(-1deg + 2deg * var(--rand, 0)));
+}
+
+.sketchy-tag:nth-child(even) {
+    --rand: 1;
+}
+
+.drawn-text {
+    position: relative;
+    display: inline-block;
+}
+
+.drawn-text::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 12px;
+    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 10" xmlns="http://www.w3.org/2000/svg"><path d="M 0 5 Q 25 10 50 5 T 100 5" fill="transparent" stroke="%232d3436" stroke-width="2"/></svg>') repeat-x;
+    background-size: 100px 12px;
+    animation: draw 2s ease-out forwards;
+}
+
+@keyframes draw {
+    from { opacity: 0; clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); }
+    to { opacity: 1; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+}
+
+.hover-wiggle {
+    transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.hover-wiggle:hover {
+    transform: rotate(-1deg) scale(1.02);
+}
+
+.draw-line {
+    border-radius: 50% 50% 50% 50% / 10% 10% 90% 90%;
+    /* Rough pencil texture */
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(45, 52, 54, 0.5) 2px, rgba(45, 52, 54, 0.5) 4px);
+}

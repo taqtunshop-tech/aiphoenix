@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIPhoenix — Интеграции</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="shared.css">
+<script>tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil-light':'#636e72',marker:'#d63031',blueprint:'#0984e3',green:'#00b894'},fontFamily:{sketch:['Caveat','cursive'],block:['"Architects Daughter"','cursive']}}}}</script>
+</head>
+<body class="min-h-screen p-4 md:p-8 overflow-x-hidden">
+<div class="grid-bg"></div>
+
+<header class="max-w-6xl mx-auto mb-6 text-center relative z-10">
+  <h1 class="text-5xl md:text-6xl font-bold">🔌 Интеграции</h1>
+  <p class="text-2xl text-pencil-light font-block mt-2">Весь IT-стек производства теплообменников, подключенный к единой ИИ-экосистеме</p>
+</header>
+
+<nav class="max-w-6xl mx-auto mb-8 flex flex-wrap justify-center gap-3 relative z-10">
+  <a href="index.html" class="nav-link">🏠 Главная</a>
+  <a href="agents.html" class="nav-link">🤖 Рой Агентов</a>
+  <a href="rag.html" class="nav-link">🌳 RAG</a>
+  <a href="pipeline.html" class="nav-link">🔄 Цикл Сделки</a>
+  <a href="integrations.html" class="nav-link active">🔌 Интеграции</a>
+  <a href="hardware.html" class="nav-link">🖥️ Железо</a>
+</nav>
+
+<main class="max-w-6xl mx-auto relative z-10">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+<!-- 1С -->
+<div class="sketchy p-5 fade-up">
+  <div class="flex items-center gap-3 mb-3"><div class="text-5xl">🏢</div><h2 class="text-3xl font-bold">1С / ERP</h2></div>
+  <ul class="text-xl space-y-2 font-block">
+    <li>📤 Автовыгрузка данных о сделках в формате JSON</li>
+    <li>📥 Синхронизация номенклатуры, контрагентов, цен</li>
+    <li>📊 Агент-Продажник заполняет карточки автоматически</li>
+  </ul>
+  <p class="text-sm text-pencil-light mt-3">Протокол: REST API / OData / 1С:КА</p>
+</div>
+
+<!-- CRM -->
+<div class="sketchy p-5 fade-up">
+  <div class="flex items-center gap-3 mb-3"><div class="text-5xl">📋</div><h2 class="text-3xl font-bold">CRM / CMS</h2></div>
+  <ul class="text-xl space-y-2 font-block">
+    <li>🔄 Статусы сделок обновляются в реальном времени</li>
+    <li>📧 Письма клиентов автоматически привязываются к карточкам</li>
+    <li>📈 История коммуникаций для аналитики воронки продаж</li>
+  </ul>
+  <p class="text-sm text-pencil-light mt-3">Bitrix24 / amoCRM / Собственная разработка</p>
+</div>
+
+<!-- Телефония -->
+<div class="sketchy p-5 fade-up">
+  <div class="flex items-center gap-3 mb-3"><div class="text-5xl">📞</div><h2 class="text-3xl font-bold">Телефония</h2></div>
+  <ul class="text-xl space-y-2 font-block">
+    <li>🤖 Телефонный ИИ-бот принимает первичные входящие заявки и фиксирует параметры запроса</li>
+    <li>📤 Выполняет исходящие холодные звонки по подготовленным сценариям: знакомит с производством теплообменников, выявляет интерес и назначает следующий контакт</li>
+    <li>🎙️ Запись, транскрипция и краткое резюме каждого разговора автоматически попадают в CRM и базу знаний</li>
+    <li>📊 Автоклассификация: «холодный лид / заявка / уточнение / жалоба / требуется менеджер»</li>
+  </ul>
+  <p class="text-sm text-pencil-light mt-3">Asterisk / Mango Office / МТС Exolve · входящие и исходящие голосовые сценарии</p>
+</div>
+
+<!-- Мессенджеры -->
+<div class="sketchy p-5 fade-up">
+  <div class="flex items-center gap-3 mb-3"><div class="text-5xl">💬</div><h2 class="text-3xl font-bold">Мессенджеры</h2></div>
+  <ul class="text-xl space-y-2 font-block">
+    <li>📱 WhatsApp Business API, Telegram Bot</li>
+    <li>⚡ Мгновенный ответ: ИИ обрабатывает запрос 24/7</li>
+    <li>📎 Принимает фото, документы, голосовые</li>
+  </ul>
+  <p class="text-sm text-pencil-light mt-3">WhatsApp Cloud API / Telegram Bot API</p>
+</div>
+
+<!-- Метрики -->
+<div class="sketchy p-5 fade-up">
+  <div class="flex items-center gap-3 mb-3"><div class="text-5xl">📊</div><h2 class="text-3xl font-bold">Метрики</h2></div>
+  <ul class="text-xl space-y-2 font-block">
+    <li>📈 Яндекс.Метрика / Google Analytics</li>
+    <li>🎯 Отслеживание источников заявок</li>
+    <li>💡 Данные о поведении пользователей на сайте</li>
+  </ul>
+  <p class="text-sm text-pencil-light mt-3">UTM-метки, цели, воронки конверсий</p>
+</div>
+
+<!-- Мониторинг -->
+<div class="sketchy p-5 fade-up">
+  <div class="flex items-center gap-3 mb-3"><div class="text-5xl">🖥️</div><h2 class="text-3xl font-bold">Мониторинг</h2></div>
+  <ul class="text-xl space-y-2 font-block">
+    <li>🌡️ Температура GPU, загрузка RAM 24/7</li>
+    <li>⚠️ Алерты при перегрузке системы</li>
+    <li>📉 Дашборд с метриками инференса (tok/s, latency)</li>
+  </ul>
+  <p class="text-sm text-pencil-light mt-3">Grafana / Prometheus / NVIDIA DCGM</p>
+</div>
+
+<!-- API/Бэкенды -->
+<div class="sketchy p-5 fade-up">
+  <div class="flex items-center gap-3 mb-3"><div class="text-5xl">⚙️</div><h2 class="text-3xl font-bold">Бэкенды (API)</h2></div>
+  <ul class="text-xl space-y-2 font-block">
+    <li>🔗 Phoenix-select API (калькулятор теплообменников)</li>
+    <li>🏭 Складской API (наличие пластин, прокладок)</li>
+    <li>💱 Курсы валют, логистические калькуляторы</li>
+  </ul>
+  <p class="text-sm text-pencil-light mt-3">Python FastAPI / Node.js / gRPC</p>
+</div>
+
+<!-- Почта -->
+<div class="sketchy p-5 fade-up">
+  <div class="flex items-center gap-3 mb-3"><div class="text-5xl">📧</div><h2 class="text-3xl font-bold">Почта</h2></div>
+  <ul class="text-xl space-y-2 font-block">
+    <li>📨 IMAP/SMTP — ИИ читает входящие с вложениями</li>
+    <li>📎 Автоизвлечение: PDF, Excel, изображения</li>
+    <li>🏷️ Классификация: спам / заявка / уточнение</li>
+  </ul>
+  <p class="text-sm text-pencil-light mt-3">Корп. Exchange / Yandex.Mail / Mail.ru</p>
+</div>
+
+<!-- Аудит -->
+<div class="sketchy p-5 fade-up">
+  <div class="flex items-center gap-3 mb-3"><div class="text-5xl">🔐</div><h2 class="text-3xl font-bold">Сегменты и Аудит</h2></div>
+  <ul class="text-xl space-y-2 font-block">
+    <li>👥 Разграничение доступа: инженеры / продажники / директор</li>
+    <li>📝 Полный лог действий каждого агента</li>
+    <li>🔒 On-Premise = 0 утечек данных наружу</li>
+  </ul>
+  <p class="text-sm text-pencil-light mt-3">RBAC / OAuth2 / журналирование</p>
+</div>
+
+</div>
+</main>
+</body>
+</html>

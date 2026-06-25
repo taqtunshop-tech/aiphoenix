@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 120">
+  <rect x="8" y="8" width="304" height="104" rx="18" fill="#fbfbfa" stroke="#2d3436" stroke-width="3" stroke-dasharray="5 4"/>
+  <path d="M42 70l18-26 18 26m-27-11h18" fill="none" stroke="#2d3436" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M84 45h28c10 0 16 5 16 13 0 5-3 9-8 11l11 11h-14l-9-9H94v9H84zm10 9v11h17c5 0 9-2 9-5s-4-6-9-6z" fill="#2d3436"/>
+  <text x="178" y="54" font-family="'Architects Daughter', 'Comic Sans MS', cursive" font-size="26" fill="#2d3436" font-weight="700">ASUS</text>
+  <text x="178" y="80" font-family="'Caveat', cursive" font-size="20" fill="#636e72">WRX90 / X870E</text>
+</svg>

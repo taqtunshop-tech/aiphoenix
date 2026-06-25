@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIPhoenix — Цикл Сделки</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="shared.css">
+<script>tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil-light':'#636e72',marker:'#d63031',blueprint:'#0984e3',green:'#00b894'},fontFamily:{sketch:['Caveat','cursive'],block:['"Architects Daughter"','cursive']}}}}</script>
+</head>
+<body class="min-h-screen p-4 md:p-8 overflow-x-hidden">
+<div class="grid-bg"></div>
+
+<header class="max-w-6xl mx-auto mb-6 text-center relative z-10">
+  <h1 class="text-5xl md:text-6xl font-bold">🔄 Цикл Сделки</h1>
+  <p class="text-2xl text-pencil-light font-block mt-2">От письма клиента до черновика договора — автоматизированный конвейер для завода-производителя теплообменников с обязательной проверкой человеком (первые 6 месяцев проекта)</p>
+</header>
+
+<nav class="max-w-6xl mx-auto mb-8 flex flex-wrap justify-center gap-3 relative z-10">
+  <a href="index.html" class="nav-link">🏠 Главная</a>
+  <a href="agents.html" class="nav-link">🤖 Рой Агентов</a>
+  <a href="rag.html" class="nav-link">🌳 RAG</a>
+  <a href="pipeline.html" class="nav-link active">🔄 Цикл Сделки</a>
+  <a href="integrations.html" class="nav-link">🔌 Интеграции</a>
+  <a href="hardware.html" class="nav-link">🖥️ Железо</a>
+</nav>
+
+<main class="max-w-4xl mx-auto relative z-10 space-y-6">
+
+<!-- Этап 1 -->
+<section class="fade-up">
+<div class="sketchy p-6 grid grid-cols-12 gap-4 items-center">
+  <div class="col-span-2 text-center"><div class="text-6xl float">📨</div></div>
+  <div class="col-span-10">
+    <h2 class="text-3xl font-bold">1. Триггер / Запрос</h2>
+    <p class="text-xl font-block">Клиент отправляет запрос: письмо с вложением, звонок или сообщение в мессенджере.</p>
+    <div class="mt-2 flex gap-2 flex-wrap"><span class="tag text-sm">Email</span><span class="tag text-sm">Звонок</span><span class="tag text-sm">WhatsApp</span><span class="tag text-sm">Telegram</span></div>
+    <p class="text-lg text-pencil-light mt-2">→ <strong>Агент-Оператор</strong> (Qwen3 VL) мгновенно подхватывает заявку</p>
+  </div>
+</div>
+</section>
+<div class="text-center step-arrow">⬇️</div>
+
+<!-- Этап 2 -->
+<section class="fade-up">
+<div class="sketchy p-6 grid grid-cols-12 gap-4 items-center">
+  <div class="col-span-2 text-center"><div class="text-6xl float">🔄</div></div>
+  <div class="col-span-10">
+    <h2 class="text-3xl font-bold">2. Конвертация данных</h2>
+    <p class="text-xl font-block">Входящие файлы (PDF, сканы, аудио) конвертируются в JSON/MD. OCR распознает рукописный текст, таблицы, чертежи.</p>
+    <p class="text-lg mt-2">Извлекаются: <span class="tag text-sm">Тип среды</span> <span class="tag text-sm">Мощность</span> <span class="tag text-sm">Температуры</span> <span class="tag text-sm">Давление</span></p>
+  </div>
+</div>
+</section>
+<div class="text-center step-arrow">⬇️</div>
+
+<!-- Этап 3 -->
+<section class="fade-up">
+<div class="sketchy p-6 grid grid-cols-12 gap-4 items-center">
+  <div class="col-span-2 text-center"><div class="text-6xl float">📐</div></div>
+  <div class="col-span-10">
+    <h2 class="text-3xl font-bold">3. Старт проекта / Расчет</h2>
+    <p class="text-xl font-block"><strong>Агент-Оркестратор</strong> (Kimi K2.6 / GLM-5.2) обращается к RAG-базе и калькулятору Phoenix-select:</p>
+    <ul class="text-lg font-block mt-2 space-y-1">
+      <li>🔢 Тепловой баланс: Q = G₁·cp₁·(t₁−t₂)</li>
+      <li>📏 Площадь теплообмена: F = Q / (k·Δtlog)</li>
+      <li>⚙️ Подбор профиля: TK (мягкий, 60°) или TL (жесткий, 30°)</li>
+      <li>💰 Оптимизация CAPEX: AISI 304 + EPDM vs AISI 316 + NBR</li>
+    </ul>
+  </div>
+</div>
+</section>
+<div class="text-center step-arrow">⬇️</div>
+
+<!-- Этап 4 -->
+<section class="fade-up">
+<div class="sketchy p-6 grid grid-cols-12 gap-4 items-center">
+  <div class="col-span-2 text-center"><div class="text-6xl float">📑</div></div>
+  <div class="col-span-10">
+    <h2 class="text-3xl font-bold">4. Оффер / ТКП</h2>
+    <p class="text-xl font-block"><strong>Агент-Продажник</strong> (Qwen 3.7 Max) генерирует:</p>
+    <div class="mt-2 flex gap-3 flex-wrap">
+      <div class="sketchy p-3 text-center" style="background:#f0fff4"><div class="text-3xl">📊</div><p class="font-block">JSON → 1С/CRM</p></div>
+      <div class="sketchy p-3 text-center" style="background:#ebf5fb"><div class="text-3xl">📄</div><p class="font-block">PDF-оффер клиенту</p></div>
+      <div class="sketchy p-3 text-center" style="background:#fdf2e9"><div class="text-3xl">📋</div><p class="font-block">Чертеж (БТП)</p></div>
+    </div>
+  </div>
+</div>
+</section>
+<div class="text-center step-arrow">⬇️</div>
+
+<!-- Этап 5 -->
+<section class="fade-up">
+<div class="sketchy p-6 grid grid-cols-12 gap-4 items-center" style="background:#f0fff4">
+  <div class="col-span-2 text-center"><div class="text-6xl float">👤</div></div>
+  <div class="col-span-10">
+    <h2 class="text-3xl font-bold">5. Контроль сотрудника</h2>
+    <p class="text-xl font-block">Живой инженер/менеджер проверяет оффер, вносит правки при необходимости и утверждает.</p>
+    <p class="text-lg text-green font-bold mt-2">Человек = Капитан. ИИ = Экипаж.</p>
+  </div>
+</div>
+</section>
+<div class="text-center step-arrow">⬇️</div>
+
+<!-- Этап 6 -->
+<section class="fade-up">
+<div class="sketchy p-6 grid grid-cols-12 gap-4 items-center" style="background:#ebf5fb">
+  <div class="col-span-2 text-center"><div class="text-6xl float">✅</div></div>
+  <div class="col-span-10">
+    <h2 class="text-3xl font-bold text-green">6. Договор / Оплата</h2>
+    <p class="text-xl font-block">Сделка закрыта. Документы оформлены. Данные автоматически занесены в 1С и CRM.</p>
+    <p class="text-2xl text-marker font-bold mt-2">От письма до ТКП: минуты вместо дней 🚀</p>
+  </div>
+</div>
+</section>
+
+</main>
+</body>
+</html>

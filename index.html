@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIPhoenix — ИИ для теплообменников Феникс</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="shared.css">
+<script>
+tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil-light':'#636e72',marker:'#d63031',blueprint:'#0984e3',green:'#00b894'},fontFamily:{sketch:['Caveat','cursive'],block:['"Architects Daughter"','cursive']}}}}
+</script>
+</head>
+<body class="min-h-screen p-4 md:p-8 overflow-x-hidden">
+
+<!-- Шапка -->
+<header class="max-w-6xl mx-auto mb-6 text-center relative z-10">
+  <img src="logo.png" alt="Феникс" class="h-28 mx-auto mb-2" style="filter:drop-shadow(2px 4px 6px rgba(0,0,0,.1))">
+  <h1 class="text-5xl md:text-7xl font-bold mb-1">AIPhoenix</h1>
+  <p class="text-2xl md:text-3xl text-pencil-light font-block">Интеллектуальная экосистема для завода-производителя теплообменников «Феникс»</p>
+</header>
+
+<!-- Навигация -->
+<nav class="max-w-6xl mx-auto mb-8 flex flex-wrap justify-center gap-3 relative z-10">
+  <a href="index.html" class="nav-link active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/></svg>
+    Главная
+  </a>
+  <a href="catalog.html" class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="8" cy="6" r="1.5" fill="currentColor"/><circle cx="8" cy="12" r="1.5" fill="currentColor"/><circle cx="8" cy="18" r="1.5" fill="currentColor"/></svg>
+    Каталог
+  </a>
+  <a href="products.html" class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8h20"/><circle cx="7" cy="13" r="2" fill="currentColor"/></svg>
+    Товары ФЕНИКС
+  </a>
+  <a href="agents.html" class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="17" cy="7" r="4"/><path d="M21 21v-2a4 4 0 00-3-3.87"/></svg>
+    Рой Агентов
+  </a>
+  <a href="rag.html" class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 3v18"/><path d="M8 7l4-4 4 4"/><path d="M8 17l4 4 4-4"/><path d="M3 12h18"/></svg>
+    RAG / Векторизация
+  </a>
+  <a href="pipeline.html" class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 12h16"/><path d="M14 6l6 6-6 6"/></svg>
+    Цикл Сделки
+  </a>
+  <a href="integrations.html" class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/><circle cx="12" cy="12" r="4"/></svg>
+    Интеграции
+  </a>
+  <a href="hardware.html" class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+    Железо (€20K)
+  </a>
+</nav>
+
+<main class="max-w-7xl mx-auto relative z-10">
+
+<!-- ===== ГЕРОЙ ===== -->
+<section class="sketchy crosshatch p-8 mb-6 fade-up">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+    <div class="text-left">
+      <div class="hero-note mb-4 inline-block">
+        <strong>Эскиз идеи:</strong> локальная ИИ-система для завода-производителя пластинчатых теплообменников.
+      </div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-4">
+        <span class="pencil-underline">Производство теплообменников</span>, усиленное ИИ
+      </h2>
+      <p class="text-2xl font-block mb-4">AIPhoenix помогает заводу «Феникс» быстрее обрабатывать заявки, подбирать оборудование и готовить коммерческие документы без потери инженерной точности.</p>
+      <ul class="pencil-list text-xl font-block mb-5">
+        <li class="checked">Считывание сканов, писем и опросных листов</li>
+        <li class="checked">Извлечение параметров для подбора теплообменника</li>
+        <li class="checked">Подбор пластин TK/TL и конфигурации аппарата</li>
+        <li class="checked">Импортозамещение и подготовка данных для 1С/CRM</li>
+      </ul>
+      <div class="flex flex-wrap gap-3 mt-5">
+        <span class="stat-pill">On-Premise</span>
+        <span class="stat-pill">RAG + 1С + CRM</span>
+        <span class="stat-pill">Человек проверяет финал</span>
+      </div>
+    </div>
+    <div class="space-y-4">
+      <img src="img/heat_exchanger.png" alt="Пластинчатый теплообменник завода Феникс" class="w-full max-w-md mx-auto" style="filter:drop-shadow(4px 8px 16px rgba(0,0,0,.08));border:2.5px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:8px;background:#fffefc">
+      <div class="hero-note alt text-left">
+        <strong>Что меняется:</strong> меньше ручной рутины, быстрее ответ клиенту, прозрачнее цикл от запроса до черновика ТКП.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sketch-divider mb-6 fade-up"></div>
+
+<!-- ===== ТРИ КАРТОЧКИ ===== -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 fade-up">
+  <!-- Входящие запросы -->
+  <div class="sketchy p-5 text-left" data-card="card-requests">
+    <div class="section-icon blue">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#0984e3" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg>
+    </div>
+    <h3 class="text-2xl font-bold text-center mb-3">Входящие запросы</h3>
+    <p class="text-lg font-block mb-2"><strong>Что это:</strong> любое обращение клиента — письмо, звонок, фото опросного листа, сообщение в WhatsApp.</p>
+    <p class="text-lg font-block mb-2"><strong>Что делает ИИ:</strong></p>
+    <ul class="pencil-list text-base font-block mb-2">
+      <li>Распознает текст со сканов и фото (OCR)</li>
+      <li>Извлекает параметры: среду, температуру, давление</li>
+      <li>Классифицирует: заявка / уточнение / жалоба</li>
+      <li>Сохраняет структурированные данные в систему</li>
+    </ul>
+    <p class="text-sm text-pencil-light font-block"><strong>Зачем:</strong> чтобы инженер не тратил время на ручной ввод.</p>
+  </div>
+
+  <!-- Инженерный подбор -->
+  <div class="sketchy p-5 text-left" data-card="card-engineering">
+    <div class="section-icon green">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#00b894" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg>
+    </div>
+    <h3 class="text-2xl font-bold text-center mb-3">Инженерный подбор</h3>
+    <p class="text-lg font-block mb-2"><strong>Что это:</strong> выбор конфигурации пластинчатого теплообменника под параметры задачи клиента.</p>
+    <p class="text-lg font-block mb-2"><strong>Что делает ИИ:</strong></p>
+    <ul class="pencil-list text-base font-block mb-2">
+      <li>Обращается к каталогу пластин TK/TL завода Феникс</li>
+      <li>Считает тепловой баланс и площадь теплообмена</li>
+      <li>Проверяет лимиты: 200°C, 2.5 МПа</li>
+      <li>Подбирает вариант импортозамещения</li>
+    </ul>
+    <p class="text-sm text-pencil-light font-block"><strong>Зачем:</strong> исключить ошибки и ускорить решение с дней до минут.</p>
+  </div>
+
+  <!-- Черновик ТКП -->
+  <div class="sketchy p-5 text-left" data-card="card-tkp">
+    <div class="section-icon red">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#d63031" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8m-8 4h5"/></svg>
+    </div>
+    <h3 class="text-2xl font-bold text-center mb-3">Черновик ТКП</h3>
+    <p class="text-lg font-block mb-2"><strong>Что это:</strong> ТКП — Технико-Коммерческое Предложение. Документ с описанием решения, ценой и условиями.</p>
+    <p class="text-lg font-block mb-2"><strong>Что формируется:</strong></p>
+    <ul class="pencil-list text-base font-block mb-2">
+      <li>PDF-документ с описанием и характеристиками</li>
+      <li>JSON-файл для выгрузки в 1С и CRM</li>
+      <li>Черновик сопроводительного письма</li>
+      <li>Статус: «Требует проверки инженером»</li>
+    </ul>
+    <p class="text-sm text-pencil-light font-block"><strong>Важно:</strong> ИИ готовит черновик. Финал — правило первых 6 месяцев, пока система не наберёт статистику точности.</p>
+  </div>
+</section>
+
+<!-- ===== ЦЕЛЬ ===== -->
+<section class="sketchy crosshatch p-6 mb-8 fade-up">
+  <h2 class="text-3xl font-bold mb-4 text-center">
+    <span class="pencil-underline">Главная цель:</span> обучение ИИ под бизнес теплообменников
+  </h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <h3 class="text-2xl font-bold mb-2">Зачем это нужно</h3>
+      <p class="text-lg font-block mb-2">AIPhoenix обучается именно на данных завода «Феникс»: каталоги пластин, ГОСТы, прайсы, типовые задачи клиентов, история сделок.</p>
+      <p class="text-lg font-block">Это не универсальный чат-бот, а <strong>узкоспециализированный инженерный инструмент</strong>, который понимает термодинамику, материалы и коммерцию теплообменного производства.</p>
+    </div>
+    <div>
+      <h3 class="text-2xl font-bold mb-2">Как исключаются галлюцинации</h3>
+      <ul class="pencil-list text-lg font-block space-y-1">
+        <li class="checked"><strong>STATIC_RAG:</strong> если данных нет в базе — ошибка, а не выдумка</li>
+        <li class="checked"><strong>DYNAMIC_RAG:</strong> цены и сроки — только из 1С</li>
+        <li class="checked"><strong>HUMAN-IN-THE-LOOP:</strong> финал за человеком</li>
+        <li class="checked"><strong>Строгие формулы:</strong> тепловой баланс по физике</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ВИДЕО ===== -->
+<section class="sketchy p-6 mb-8 fade-up">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+    <div>
+      <h2 class="text-3xl font-bold mb-3">Демонстрация локальной ИИ-инфраструктуры</h2>
+      <p class="text-xl font-block mb-3">Видео с концептом сервера и подхода к развертыванию AIPhoenix для завода-производителя теплообменников.</p>
+      <div class="hero-note inline-block">Сначала идея и ценность для производства, затем демонстрация инфраструктуры.</div>
+    </div>
+    <div class="video-frame">
+      <video controls preload="metadata" poster="img/server.png">
+        <source src="ии за 20000.mp4" type="video/mp4">
+        Ваш браузер не поддерживает видео.
+      </video>
+      <p class="text-lg font-block mt-3 text-center">Локальная ИИ-инфраструктура для производства теплообменников</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 3-колоночный макет ===== -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+<!-- Левый: Интеграции + Инфраструктура -->
+<aside class="lg:col-span-3 space-y-6">
+  <a href="integrations.html" class="block fade-up">
+  <div class="sketchy p-5">
+    <img src="img/integrations.png" alt="Интеграции" class="card-sketch-img mb-3">
+    <h2 class="text-2xl font-bold mb-3 border-b-2 border-pencil border-dashed pb-2">Интеграции</h2>
+    <ul class="pencil-list text-lg font-block">
+      <li>1C / CRM / CMS</li>
+      <li>Телефония</li>
+      <li>Метрики (Яндекс)</li>
+      <li>Мониторинг</li>
+      <li>Почты / Мессенджеры</li>
+      <li>Бэкенды (API)</li>
+    </ul>
+    <p class="text-blueprint text-lg mt-3 font-block">Подробнее →</p>
+  </div>
+  </a>
+  <a href="hardware.html" class="block fade-up">
+  <div class="sketchy p-5">
+    <img src="img/server.png" alt="Сервер" class="card-sketch-img mb-3">
+    <h2 class="text-2xl font-bold mb-2">Инфраструктура</h2>
+    <h3 class="text-xl font-bold">Свой Сервер (24/7)</h3>
+    <p class="text-lg font-block">Локальное On-Premise. 100% защита коммерческой тайны.</p>
+    <p class="text-lg text-blueprint mt-2 font-block">Бюджет: €20 000 · Конфигуратор →</p>
+  </div>
+  </a>
+</aside>
+
+<!-- Центр: Корабль -->
+<section class="lg:col-span-6 flex flex-col items-center justify-center">
+  <a href="agents.html" class="block w-full max-w-md mx-auto mb-4 group fade-up">
+  <div class="sketchy w-full aspect-square flex flex-col items-center justify-center p-6 text-center" style="border-radius:40% 60% 70% 30%/40% 50% 60% 50%">
+    <img src="img/agents.png" alt="Рой Агентов" class="h-32 mx-auto mb-2 object-contain">
+    <h2 class="text-3xl font-bold mb-1">Парус: Команда ИИ</h2>
+    <p class="text-xl font-block">Сотрудники и Инструменты</p>
+    <div class="flex flex-wrap justify-center gap-2 mt-3 text-lg">
+      <span class="tag">Оператор</span><span class="tag">Оркестратор</span><span class="tag">Инженер</span>
+      <span class="tag">Клоузер</span><span class="tag">RAG</span><span class="tag">1С / CRM</span><span class="tag">On-Premise</span>
+    </div>
+    <p class="text-blueprint text-lg mt-3 font-block group-hover:underline">Подробнее о рое агентов →</p>
+  </div>
+  </a>
+  <div class="w-1 h-16 bg-pencil mx-auto" style="border-radius:2px"></div>
+  <a href="pipeline.html" class="block w-full fade-up">
+  <div class="sketchy w-full p-6 text-center" style="border-radius:5px 5px 150px 150px/5px 5px 60px 60px">
+    <h2 class="text-3xl font-bold mb-3">Корпус: Цикл Сделки</h2>
+    <img src="img/pipeline.png" alt="Цикл сделки" class="w-full h-32 object-contain mb-3 mx-auto">
+    <div class="flex justify-between items-center text-lg md:text-xl font-block font-bold px-2">
+      <div>Запрос</div><div class="text-marker">➔</div>
+      <div>Проект</div><div class="text-marker">➔</div>
+      <div>Расчет</div><div class="text-marker">➔</div>
+      <div>Оффер</div><div class="text-marker">➔</div>
+      <div>Договор</div>
+    </div>
+    <p class="text-blueprint text-lg mt-3 font-block">Подробнее о цикле →</p>
+  </div>
+  </a>
+</section>
+
+<!-- Правый: RAG + Технологии -->
+<aside class="lg:col-span-3 space-y-6">
+  <a href="rag.html" class="block fade-up">
+  <div class="sketchy p-5">
+    <img src="img/rag.png" alt="RAG" class="card-sketch-img mb-3">
+    <h2 class="text-2xl font-bold mb-3 border-b-2 border-pencil border-dashed pb-2">Дерево Векторизации (RAG)</h2>
+    <div class="space-y-2 font-block text-lg">
+      <div>Файлы → <span class="text-blueprint">JSON/MD</span> → Маршрутизатор → Ядро → ТКП</div>
+      <div class="mt-2 pt-2 border-t border-pencil border-dashed">
+        <strong>Статическая:</strong> ГОСТы, СНиПы, лимиты 200°C / 2.5 МПа
+      </div>
+      <div class="mt-2 pt-2 border-t border-pencil border-dashed">
+        <strong>Динамическая:</strong> Прайсы, остатки, сроки, импортозамещение
+      </div>
+    </div>
+    <p class="text-blueprint text-lg mt-3 font-block">Подробнее →</p>
+  </div>
+  </a>
+</aside>
+
+</div>
+</main>
+
+<!-- ===== 3D-анимация ===== -->
+<section class="sketchy crosshatch p-6 mb-8 fade-up">
+  <h2 class="text-3xl font-bold mb-4 text-center">
+    <span class="pencil-underline">Как обучается нейросеть</span> AIPhoenix
+  </h2>
+  <p class="text-xl font-block text-center mb-6">Нейросеть обучается на данных завода «Феникс» и строго следует алгоритму, чтобы исключить галлюцинации</p>
+  <div class="nn-stage" style="perspective:900px">
+    <div class="nn-scene">
+      <div class="nn-col nn-sources">
+        <div class="nn-label">Источники данных</div>
+        <div class="nn-item" style="animation-delay:0s">ГОСТы, СНиПы</div>
+        <div class="nn-item" style="animation-delay:.2s">Прайсы 1С</div>
+        <div class="nn-item" style="animation-delay:.4s">Сканы листов</div>
+        <div class="nn-item" style="animation-delay:.6s">Звонки</div>
+        <div class="nn-item" style="animation-delay:.8s">Письма клиентов</div>
+      </div>
+      <div class="nn-col nn-flow">
+        <div class="nn-arrow" style="animation-delay:0s"></div>
+        <div class="nn-arrow" style="animation-delay:.3s"></div>
+        <div class="nn-arrow" style="animation-delay:.6s"></div>
+        <div class="nn-arrow" style="animation-delay:.9s"></div>
+        <div class="nn-arrow" style="animation-delay:1.2s"></div>
+      </div>
+      <div class="nn-col nn-brain">
+        <div class="nn-label">Ядро AIPhoenix</div>
+        <div class="nn-brain-body">
+          <div class="nn-layer" style="--d:0s">
+            <span>STATIC_RAG</span>
+            <small>ГОСТы · Формулы · Каталоги</small>
+          </div>
+          <div class="nn-layer" style="--d:.4s">
+            <span>DYNAMIC_RAG</span>
+            <small>1С · Цены · Сроки</small>
+          </div>
+          <div class="nn-layer" style="--d:.8s">
+            <span>Расчетное ядро</span>
+            <small>Тепловой баланс · Подбор пластин</small>
+          </div>
+        </div>
+        <div class="nn-lock">Без галлюцинаций: если данных нет — ошибка</div>
+      </div>
+      <div class="nn-col nn-flow">
+        <div class="nn-arrow out" style="animation-delay:1.4s"></div>
+        <div class="nn-arrow out" style="animation-delay:1.7s"></div>
+        <div class="nn-arrow out" style="animation-delay:2.0s"></div>
+      </div>
+      <div class="nn-col nn-output">
+        <div class="nn-label">Результат</div>
+        <div class="nn-item out" style="animation-delay:1.6s">Черновик ТКП</div>
+        <div class="nn-item out" style="animation-delay:1.9s">JSON → 1С</div>
+        <div class="nn-item out" style="animation-delay:2.2s">CRM карточка</div>
+        <div class="nn-item out" style="animation-delay:2.5s">Проверка человеком</div>
+      </div>
+    </div>
+  </div>
+  <div class="text-center mt-4">
+    <p class="text-lg font-block text-pencil-light">Каждый ответ проходит 4 проверки: <span class="tag text-sm">STATIC_RAG</span> <span class="tag text-sm">DYNAMIC_RAG</span> <span class="tag text-sm">Формулы</span> <span class="tag text-sm">Человек</span></p>
+  </div>
+</section>
+
+<!-- Футер -->
+<footer class="max-w-6xl mx-auto mt-12 text-center relative z-10 pb-8">
+
+  <!-- Курс валют + график -->
+  <div class="currency-bar mb-6 fade-up" id="currencyBar">
+    <span class="rate"><span class="rate-label">EUR/RUB:</span> <span class="rate-value" id="eurRub">—</span></span>
+    <span class="rate"><span class="rate-label">USD/RUB:</span> <span class="rate-value" id="usdRub">—</span></span>
+    <span class="rate"><span class="rate-label">Обновлено:</span> <span class="rate-value" id="rateTime">—</span></span>
+    <span class="currency-chart-wrap">
+      <canvas id="rateChart" width="520" height="160"></canvas>
+    </span>
+  </div>
+
+  <!-- Данные посетителя -->
+  <div class="sketchy p-5 mb-6 fade-up text-left">
+    <h2 class="text-2xl font-bold mb-3 text-center">Данные посетителя</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="visitorInfo">
+      <div class="visitor-slot" id="vIp"><span class="v-label">IP</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vCountry"><span class="v-label">Страна</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vCity"><span class="v-label">Город</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vRegion"><span class="v-label">Регион</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vBrowser"><span class="v-label">Браузер</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vOS"><span class="v-label">ОС</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vScreen"><span class="v-label">Экран</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vLang"><span class="v-label">Язык</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vCores"><span class="v-label">Ядра CPU</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vMemory"><span class="v-label">RAM</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vTouch"><span class="v-label">Тачскрин</span><span class="v-val">—</span></div>
+      <div class="visitor-slot" id="vTimezone"><span class="v-label">Часовой пояс</span><span class="v-val">—</span></div>
+    </div>
+  </div>
+
+  <!-- Технологии -->
+  <div class="sketchy p-5 mb-6 fade-up">
+    <h2 class="text-2xl font-bold mb-3">Технологии</h2>
+    <div class="flex flex-wrap justify-center gap-2">
+      <span class="tag">KTransformers</span>
+      <span class="tag">SGLang</span>
+      <span class="tag">vLLM</span>
+      <span class="tag">Qwen3 VL</span>
+      <span class="tag">GLM-5.2</span>
+      <span class="tag">Kimi K2.6</span>
+      <span class="tag">DeepSeek V4</span>
+      <span class="tag">llama.cpp</span>
+    </div>
+    <p class="text-sm text-pencil-light mt-3 font-block">Модели актуальны на начало проекта (2026). По мере развития открытого ИИ-стека ядро будет обновляться.</p>
+  </div>
+
+  <div class="footer-sketch">
+    <img src="logo.png" alt="Феникс" class="h-12 mx-auto mb-2">
+    <p class="text-xl font-block">AIPhoenix · Завод теплообменников «Феникс» · 2026</p>
+    <p class="text-lg text-pencil-light">Человек = Капитан · ИИ = Экипаж</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var canvas=document.getElementById('rateChart');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var dpr=window.devicePixelRatio||1;
+  var W=520,H=160;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  canvas.style.width=W+'px';canvas.style.height=H+'px';
+  ctx.scale(dpr,dpr);
+
+  function drawChart(eurData,usdData,labels){
+    var padL=48,padR=12,padT=10,padB=22;
+    var gW=W-padL-padR,gH=H-padT-padB;
+    ctx.clearRect(0,0,W,H);
+    var all=eurData.concat(usdData);
+    var mn=Math.min.apply(null,all),mx=Math.max.apply(null,all);
+    var rng=mx-mn||1;
+    var n=eurData.length;
+
+    // горизонтальная сетка + Y
+    ctx.textAlign='right';ctx.textBaseline='middle';
+    for(var g=0;g<=5;g++){
+      var gy=padT+g*(gH/5);
+      ctx.beginPath();ctx.moveTo(padL,gy);ctx.lineTo(W-padR,gy);
+      ctx.strokeStyle=g===0?'#ccc':'#e8e8e8';ctx.lineWidth=g===0?1:.5;
+      ctx.setLineDash(g===0?[]:[4,3]);ctx.stroke();ctx.setLineDash([]);
+      ctx.font='10px Arial';ctx.fillStyle='#999';
+      ctx.fillText((mx-g*(rng/5)).toFixed(1),padL-5,gy);
+    }
+
+    // X даты
+    ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.font='10px Arial';ctx.fillStyle='#666';
+    for(var xi=0;xi<n;xi++){
+      var xx=padL+xi*(gW/(n-1));
+      ctx.fillText(labels[xi],xx,H-padB+6);
+      ctx.beginPath();ctx.moveTo(xx,padT);ctx.lineTo(xx,H-padB);
+      ctx.strokeStyle='#eee';ctx.lineWidth=.5;ctx.setLineDash([3,3]);ctx.stroke();ctx.setLineDash([]);
+    }
+
+    function drawLine(data,lineColor){
+      var pts=[];
+      for(var i=0;i<data.length;i++){
+        pts.push({x:padL+i*(gW/(n-1)),y:padT+(1-(data[i]-mn)/rng)*gH,v:data[i]});
+      }
+      // заливка
+      ctx.beginPath();ctx.moveTo(pts[0].x,H-padB);
+      for(var f=0;f<pts.length;f++) ctx.lineTo(pts[f].x,pts[f].y);
+      ctx.lineTo(pts[pts.length-1].x,H-padB);ctx.closePath();
+      ctx.fillStyle=lineColor==='#d63031'?'rgba(214,48,49,.05)':'rgba(9,132,227,.05)';
+      ctx.fill();
+
+      // сегменты
+      for(var s=1;s<pts.length;s++){
+        var diff=pts[s].v-pts[s-1].v;
+        ctx.beginPath();ctx.moveTo(pts[s-1].x,pts[s-1].y);ctx.lineTo(pts[s].x,pts[s].y);
+        ctx.strokeStyle=diff>0.001?'#00b894':diff<-0.001?'#d63031':'#aaa';
+        ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();
+      }
+
+      // точки + значения
+      for(var j=0;j<pts.length;j++){
+        var dd=j>0?pts[j].v-pts[j-1].v:0;
+        var col=dd>0.001?'#00b894':dd<-0.001?'#d63031':lineColor;
+        // кружок: белый фон + цветная обводка
+        ctx.beginPath();ctx.arc(pts[j].x,pts[j].y,5.5,0,Math.PI*2);
+        ctx.fillStyle='#fff';ctx.fill();
+        ctx.strokeStyle=col;ctx.lineWidth=2;ctx.stroke();
+        ctx.beginPath();ctx.arc(pts[j].x,pts[j].y,2,0,Math.PI*2);
+        ctx.fillStyle=col;ctx.fill();
+        // значение — всегда НАД точкой, по центру
+        var labelY=pts[j].y-12;
+        // если точка у верхнего края — подпись снизу
+        if(pts[j].y<padT+20) labelY=pts[j].y+16;
+        ctx.font='bold 10px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillStyle=col;
+        ctx.fillText(pts[j].v.toFixed(2),pts[j].x,labelY);
+      }
+    }
+
+    drawLine(usdData,'#0984e3');
+    drawLine(eurData,'#d63031');
+
+    // легенда — внизу графика
+    ctx.textBaseline='top';ctx.textAlign='left';
+    ctx.font='bold 11px Arial';
+    var ly=H-padB+14;
+    ctx.fillStyle='#d63031';ctx.fillText('● EUR/RUB',padL+4,ly);
+    ctx.fillStyle='#0984e3';ctx.fillText('● USD/RUB',padL+110,ly);
+    ctx.fillStyle='#00b894';ctx.fillText('▲ рост',padL+220,ly);
+    ctx.fillStyle='#d63031';ctx.fillText('▼ падение',padL+286,ly);
+  }
+
+  var dates=[],labels=[];
+  var now=new Date();
+  var months=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  for(var i=6;i>=0;i--){
+    var dd=new Date(now);dd.setDate(dd.getDate()-i);
+    dates.push(dd.getFullYear()+'/'+String(dd.getMonth()+1).padStart(2,'0')+'/'+String(dd.getDate()).padStart(2,'0'));
+    labels.push(dd.getDate()+' '+months[dd.getMonth()]);
+  }
+  var urls=dates.map(function(dt,idx){
+    if(idx===dates.length-1) return 'https://www.cbr-xml-daily.ru/daily_json.js';
+    return 'https://www.cbr-xml-daily.ru/archive/'+dt+'/daily_json.js';
+  });
+
+  var eurVals=[],usdVals=[];
+  var loaded=0;
+  urls.forEach(function(url,idx){
+    fetch(url).then(function(r){if(!r.ok) throw new Error(r.status);return r.json()}).then(function(d){
+      eurVals[idx]=d.Valute&&d.Valute.EUR?d.Valute.EUR.Value:null;
+      usdVals[idx]=d.Valute&&d.Valute.USD?d.Valute.USD.Value:null;
+      loaded++;if(loaded===urls.length) render();
+    }).catch(function(){
+      eurVals[idx]=null;usdVals[idx]=null;
+      loaded++;if(loaded===urls.length) render();
+    });
+  });
+
+  function render(){
+    var ev=[],uv=[],lb=[];
+    for(var k=0;k<eurVals.length;k++){
+      if(eurVals[k]!==null&&usdVals[k]!==null){ev.push(eurVals[k]);uv.push(usdVals[k]);lb.push(labels[k]);}
+    }
+    if(ev.length>1) drawChart(ev,uv,lb);
+  }
+
+  fetch('https://www.cbr-xml-daily.ru/daily_json.js')
+    .then(function(r){return r.json()})
+    .then(function(d){
+      document.getElementById('eurRub').textContent=d.Valute.EUR.Value.toFixed(2)+' ₽';
+      document.getElementById('usdRub').textContent=d.Valute.USD.Value.toFixed(2)+' ₽';
+      document.getElementById('rateTime').textContent=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+    })
+    .catch(function(){
+      document.getElementById('eurRub').textContent='н/д';
+      document.getElementById('usdRub').textContent='н/д';
+    });
+})();
+</script>
+<script>
+(function(){
+  function setSlot(id,val){var el=document.getElementById(id);if(el) el.querySelector('.v-val').textContent=val||'—';}
+
+  // браузер
+  var ua=navigator.userAgent;
+  var br='—';
+  if(ua.indexOf('Edg/')>-1) br='Edge '+ua.split('Edg/')[1].split(' ')[0];
+  else if(ua.indexOf('OPR/')>-1) br='Opera '+ua.split('OPR/')[1].split(' ')[0];
+  else if(ua.indexOf('Chrome/')>-1) br='Chrome '+ua.split('Chrome/')[1].split(' ')[0];
+  else if(ua.indexOf('Firefox/')>-1) br='Firefox '+ua.split('Firefox/')[1].split(' ')[0];
+  else if(ua.indexOf('Safari/')>-1) br='Safari';
+  setSlot('vBrowser',br);
+
+  // ОС
+  var os='—';
+  if(ua.indexOf('Windows NT 10')>-1) os='Windows 10/11';
+  else if(ua.indexOf('Windows NT 6.3')>-1) os='Windows 8.1';
+  else if(ua.indexOf('Windows NT 6.1')>-1) os='Windows 7';
+  else if(ua.indexOf('Mac OS X')>-1) os='macOS '+ua.split('Mac OS X ')[1].split(' ')[0].replace(/_/g,'.');
+  else if(ua.indexOf('Linux')>-1) os='Linux';
+  else if(ua.indexOf('Android')>-1) os='Android '+ua.split('Android ')[1].split(';')[0];
+  else if(ua.indexOf('iPhone')>-1||ua.indexOf('iPad')>-1) os='iOS';
+  setSlot('vOS',os);
+
+  // экран
+  setSlot('vScreen',screen.width+'×'+screen.height+(window.devicePixelRatio>1?' @'+window.devicePixelRatio+'x':''));
+
+  // язык
+  setSlot('vLang',navigator.language||navigator.userLanguage||'—');
+
+  // ядра CPU
+  setSlot('vCores',navigator.hardwareConcurrency||'—');
+
+  // RAM
+  setSlot('vMemory',navigator.deviceMemory?navigator.deviceMemory+' ГБ':'—');
+
+  // тачскрин
+  setSlot('vTouch','ontouchstart' in window||navigator.maxTouchPoints>0?'Да ('+navigator.maxTouchPoints+')':'Нет');
+
+  // часовой пояс
+  try{
+    var tz=Intl.DateTimeFormat().resolvedOptions().timeZone;
+    var off=new Date().getTimezoneOffset();
+    var h=Math.floor(Math.abs(off)/60);var m=Math.abs(off)%60;
+    setSlot('vTimezone',tz+' (UTC'+(off<=0?'+':'-')+h+':'+(m<10?'0':'')+m+')');
+  }catch(e){setSlot('vTimezone','—');}
+
+  // IP + страна + город через бесплатный API
+  fetch('https://ipapi.co/json/')
+    .then(function(r){return r.json()})
+    .then(function(d){
+      setSlot('vIp',d.ip||'—');
+      setSlot('vCountry',d.country_name?(d.country_name+' ('+d.country_code+')'):'—');
+      setSlot('vCity',d.city||'—');
+      setSlot('vRegion',d.region||'—');
+    })
+    .catch(function(){
+      // запасной API
+      fetch('https://ipwho.is/')
+        .then(function(r){return r.json()})
+        .then(function(d){
+          setSlot('vIp',d.ip||'—');
+          setSlot('vCountry',d.country?(d.country+' ('+d.country_code+')'):'—');
+          setSlot('vCity',d.city||'—');
+          setSlot('vRegion',d.region||'—');
+        })
+        .catch(function(){});
+    });
+})();
+</script>
+<script>
+(function(){
+  // IntersectionObserver для scroll-анимаций
+  var targets=document.querySelectorAll('.reveal,.draw-on,.trace-border');
+  if(!targets.length) return;
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:.15,rootMargin:'0px 0px -40px 0px'});
+  targets.forEach(function(t){io.observe(t);});
+
+  // Parallax-эффект при скролле
+  var parallaxEls=document.querySelectorAll('.parallax');
+  var ticking=false;
+  window.addEventListener('scroll',function(){
+    if(!ticking){
+      window.requestAnimationFrame(function(){
+        var sy=window.pageYOffset;
+        parallaxEls.forEach(function(el){
+          var speed=parseFloat(el.dataset.speed)||.1;
+          var rect=el.getBoundingClientRect();
+          var cy=rect.top+rect.height/2;
+          var offset=(sy+window.innerHeight/2-cy)*speed;
+          el.style.transform='translateY('+offset+'px)';
+        });
+        ticking=false;
+      });
+      ticking=true;
+    }
+  });
+
+  // Анимация карточек при появлении
+  var cards=document.querySelectorAll('.sketchy');
+  var cio=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.style.opacity='1';
+        e.target.style.transform='translateY(0) rotate(0)';
+        cio.unobserve(e.target);
+      }
+    });
+  },{threshold:.1});
+  cards.forEach(function(c,i){
+    c.style.opacity='0';
+    c.style.transform='translateY(30px) rotate('+(Math.random()*2-1)+'deg)';
+    c.style.transition='opacity .6s cubic-bezier(.4,0,.2,1) '+(i*.06)+'s, transform .6s cubic-bezier(.4,0,.2,1) '+(i*.06)+'s';
+    cio.observe(c);
+  });
+
+  // Pulse-glow на навигации при первом входе
+  var navLinks=document.querySelectorAll('.nav-link');
+  navLinks.forEach(function(l,i){
+    setTimeout(function(){l.classList.add('pulse-glow');},500+i*150);
+    setTimeout(function(){l.classList.remove('pulse-glow');},2500+i*150);
+  });
+})();
+</script>
+
+<!-- Модальное окно карточки -->
+<div class="modal-overlay" id="cardModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2 id="modalTitle">Заголовок</h2>
+      <button class="modal-close" id="modalClose">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-caption" id="modalCaption"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var anims=['anim-flip','anim-slide','anim-zoom','anim-rotate','anim-fold'];
+  var overlay=document.getElementById('cardModal');
+  var title=document.getElementById('modalTitle');
+  var body=document.getElementById('modalBody');
+  var caption=document.getElementById('modalCaption');
+  var closeBtn=document.getElementById('modalClose');
+
+  function openModal(data){
+    var anim=anims[Math.floor(Math.random()*anims.length)];
+    overlay.className='modal-overlay open '+anim;
+    title.textContent=data.title||'';
+    body.innerHTML=data.body||'';
+    caption.textContent=data.caption||'';
+    document.body.style.overflow='hidden';
+  }
+  function closeModal(){
+    overlay.classList.remove('open');
+    document.body.style.overflow='';
+  }
+  closeBtn.addEventListener('click',closeModal);
+  overlay.addEventListener('click',function(e){if(e.target===overlay) closeModal();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape') closeModal();});
+
+  // Кликабельные карточки
+  window.openCardModal=openModal;
+})();
+</script>
+
+<!-- Данные карточек (inline JSON для карточек на главной) -->
+<script>
+(function(){
+  // Три карточки процесса
+  var cards={
+    'card-requests':{
+      title:'Входящие запросы',
+      body:'<h3>Что это такое</h3>'+
+        '<p>Когда клиент хочет купить теплообменник, он отправляет запрос. Это может быть:</p>'+
+        '<ul><li>Письмо по почте с описанием задачи</li>'+
+        '<li>Звонок по телефону</li>'+
+        '<li>Фото опросного листа ( hand-written или печатный)</li>'+
+        '<li>Сообщение в WhatsApp / Telegram</li></ul>'+
+        '<div class="highlight">Раньше менеджер вручную перечитывал каждое письмо, копировал параметры в Excel и терял время. Теперь это делает ИИ.</div>'+
+        '<h3>Что делает AIPhoenix</h3>'+
+        '<ul><li><strong>OCR</strong> — распознаёт текст со сканов и фото (даже размытых)</li>'+
+        '<li><strong>Извлечение параметров</strong> — автоматически находит: тип среды (вода/масло/пар), температуру, давление, расход, мощность</li>'+
+        '<li><strong>Классификация</strong> — определяет: это новая заявка, уточнение по старой или жалоба</li>'+
+        '<li><strong>Структурирование</strong> — сохраняет все данные в систему, чтобы инженер сразу видел полную картину</li></ul>'+
+        '<div class="tip">Среднее время обработки: 30 секунд вместо 15-20 минут вручную.</div>',
+      caption:'Агент-Оператор (Qwen3 VL) — глаза и уши системы'
+    },
+    'card-engineering':{
+      title:'Инженерный подбор',
+      body:'<h3>Что это такое</h3>'+
+        '<p>Когда мы знаем параметры задачи клиента, нужно подобрать конкретную модель теплообменника. Это как подбирать костюм — нужно чтобы всё село идеально.</p>'+
+        '<h3>Как это работает</h3>'+
+        '<ul><li><strong>Каталог пластин</strong> — система обращается к базе пластин TK/TL завода «Феникс» ( dozens типоразмеров)</li>'+
+        '<li><strong>Тепловой баланс</strong> — считает по формулам: Q = m·c·ΔT (сколько тепла нужно передать)</li>'+
+        '<li><strong>Площадь теплообмена</strong> — подбирает количество пластин и конфигурацию</li>'+
+        '<li><strong>Проверка лимитов</strong> — не превышаем 200°C и 2.5 МПа (это жёсткие ограничения)</li>'+
+        '<li><strong>Импортозамещение</strong> — если клиент просил Ридан/Alfa Laval, предлагает аналог Феникс APR</li></ul>'+
+        '<div class="highlight">Инженер-подборщик тратит на это 2-4 часа. AIPhoenix — 2-3 минуты. Но финальную проверку всегда делает живой инженер.</div>'+
+        '<div class="tip">Формулы считаются по физике, а не по «интуиции» нейросети. Если данных нет — система скажет «не знаю», а не выдумает.</div>',
+      caption:'Агент-Инженер — считает по формулам, а не гадает'
+    },
+    'card-tkp':{
+      title:'Черновик ТКП (Технико-Коммерческое Предложение)',
+      body:'<h3>Что это такое</h3>'+
+        '<p>ТКП — это документ, который компания отправляет клиенту. В нём описано: какое решение предлагается, из чего оно состоит, сколько стоит и когда будет готово.</p>'+
+        '<h3>Что формируется автоматически</h3>'+
+        '<ul><li><strong>PDF-документ</strong> — красиво оформленный черновик с описанием теплообменника, его характеристиками и схемой</li>'+
+        '<li><strong>JSON для 1С</strong> — структурированные данные для выгрузки в учётную систему (номенклатура, цены, сроки)</li>'+
+        '<li><strong>CRM-карточка</strong> — автоматически создаётся карточка сделки со всеми параметрами</li>'+
+        '<li><strong>Сопроводительное письмо</strong> — черновик письма клиенту</li></ul>'+
+        '<div class="highlight">Статус всегда: «Требует проверки инженером / менеджером». ИИ только готовит черновик. Финал — за человеком (первые 6 месяцев проекта).</div>'+
+        '<h3>Зачем это нужно</h3>'+
+        '<p>Менеджер тратит 1-2 часа на подготовку одного ТКП. С AIPhoenix — 5 минут на проверку вместо создания с нуля.</p>',
+      caption:'Агент-Клоузер — превращает расчёт в документ для клиента'
+    }
+  };
+
+  // Навешиваем клики на карточки
+  document.querySelectorAll('[data-card]').forEach(function(el){
+    el.style.cursor='pointer';
+    el.addEventListener('click',function(e){
+      e.preventDefault();
+      var d=cards[el.dataset.card];
+      if(d) openCardModal(d);
+    });
+  });
+})();
+</script>
+</body>
+</html>

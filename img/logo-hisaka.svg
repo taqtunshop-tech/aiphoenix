@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
+  <rect width="200" height="60" fill="#fff" rx="4"/>
+  <text x="100" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#D32F2F">HISAKA</text>
+  <path d="M30 48 L50 48 L40 38 Z" fill="#D32F2F"/>
+  <path d="M150 48 L170 48 L160 38 Z" fill="#D32F2F"/>
+</svg>

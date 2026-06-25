@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
+  <rect width="200" height="60" fill="#fff" rx="4"/>
+  <text x="100" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#00A651">SWEP</text>
+  <rect x="15" y="25" width="30" height="10" fill="#00A651" rx="2"/>
+  <rect x="155" y="25" width="30" height="10" fill="#00A651" rx="2"/>
+</svg>

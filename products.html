@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Каталог ФЕНИКС — Пластины и Уплотнения — AIPhoenix</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="shared.css">
+<script>
+tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil-light':'#636e72',marker:'#d63031',blueprint:'#0984e3',green:'#00b894'},fontFamily:{sketch:['Caveat','cursive'],block:['"Architects Daughter"','cursive']}}}}
+</script>
+<style>
+.product-card{transition:transform .25s,box-shadow .25s;cursor:pointer}
+.product-card:hover{transform:translateY(-4px) rotate(-.5deg);box-shadow:4px 8px 0 rgba(45,52,54,.1)}
+.product-card.selected{box-shadow:0 0 0 3px #0984e3;transform:translateY(-2px)}
+.product-img{width:100%;height:180px;object-fit:contain;background:#f9f7f3;border:2px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:8px;transition:transform .2s}
+.product-img-wrap{position:relative;display:inline-block;width:100%}
+.product-img-wrap::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,.18);mix-blend-mode:lighten;pointer-events:none;border-radius:inherit}
+.product-card:hover .product-img{transform:scale(1.05)}
+.price-tag{font-family:'Architects Daughter',cursive;font-size:1.1rem;font-weight:700;color:#d63031}
+.price-request{font-family:'Architects Daughter',cursive;font-size:.9rem;color:#636e72;font-style:italic}
+.filter-btn{border:2px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:6px 16px;background:#fffefc;font-family:'Architects Daughter',cursive;font-size:.95rem;cursor:pointer;transition:all .2s}
+.filter-btn:hover{background:#2d3436;color:#fff}
+.filter-btn.active{background:#2d3436;color:#fff}
+.search-input{border:2.5px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:10px 16px;font-family:'Architects Daughter',cursive;font-size:1.1rem;width:100%;background:#fffefc;transition:border-color .2s}
+.search-input:focus{outline:none;border-color:#0984e3}
+.sort-select{border:2px solid #2d3436;border-radius:12px;padding:6px 12px;font-family:'Architects Daughter',cursive;background:#fffefc;cursor:pointer}
+.stat-pill{display:inline-block;border:1.5px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:3px 12px;font-family:'Architects Daughter',cursive;font-size:.85rem;background:#fffefc}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.product-card{animation:fadeIn .3s ease-out both}
+.page-btn{border:2px solid #2d3436;border-radius:12px;padding:6px 14px;background:#fffefc;font-family:'Architects Daughter',cursive;font-size:.95rem;cursor:pointer;transition:all .2s}
+.page-btn:hover{background:#2d3436;color:#fff}
+.page-btn.active{background:#0984e3;color:#fff;border-color:#0984e3}
+.page-btn:disabled{opacity:.4;cursor:default}
+.calc-panel{border:3px solid #2d3436;border-radius:12px;padding:20px;background:#fffefc}
+.calc-input{border:2px solid #2d3436;border-radius:8px;padding:8px 12px;font-family:'Architects Daughter',cursive;font-size:1rem;width:100%;background:#fff}
+.calc-input:focus{outline:none;border-color:#0984e3}
+.calc-label{display:block;font-family:'Architects Daughter',cursive;font-size:.85rem;font-weight:bold;margin-bottom:4px;color:#2d3436}
+.result-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.result-item{background:#f0f8ff;border:2px solid #0984e3;border-radius:8px;padding:10px;text-align:center}
+.result-val{font-family:'Architects Daughter',cursive;font-size:1.1rem;font-weight:bold;color:#0984e3}
+.result-label{font-size:.7rem;color:#636e72;margin-top:2px}
+.warn-box{background:#fff5f5;border:2px solid #d63031;border-radius:8px;padding:10px;margin-top:8px}
+.warn-text{font-family:'Architects Daughter',cursive;color:#d63031;font-weight:bold}
+.info-box{background:#f0fff4;border:2px solid #00b894;border-radius:8px;padding:10px;margin-top:8px}
+.info-text{font-family:'Architects Daughter',cursive;color:#00b894}
+.compare-table{width:100%;border-collapse:collapse;font-family:'Architects Daughter',cursive;font-size:.85rem}
+.compare-table th{background:#2d3436;color:#fff;padding:6px 8px;text-align:center}
+.compare-table td{border:1px solid #2d3436;padding:6px 8px;text-align:center}
+.compare-table tr:nth-child(even){background:#f9f7f3}
+.compare-table .best{background:#d4edda;font-weight:bold}
+@media(min-width:768px){.result-grid{grid-template-columns:repeat(4,1fr)}}
+
+/* Product detail styles */
+.product-detail{font-family:'Architects Daughter',cursive;font-size:.75rem;color:#636e72;line-height:1.3;margin-top:4px}
+.product-detail strong{color:#2d3436;font-weight:600}
+.product-detail .model{color:#0984e3}
+.product-detail .material{color:#00b894}
+.product-detail .profile{color:#d63031}
+.product-detail .price-info{color:#00b894;font-weight:700;font-size:.8rem}
+
+/* Compatibility badge */
+.compat-badge{position:absolute;top:8px;right:8px;z-index:2;padding:4px 8px;border-radius:12px;font-family:'Architects Daughter',cursive;font-size:.7rem;font-weight:bold}
+.compat-badge.match{background:#00b894;color:#fff}
+.compat-badge.nomatch{background:#d63031;color:#fff}
+</style>
+</head>
+<body class="min-h-screen p-4 md:p-8 overflow-x-hidden">
+
+<header class="max-w-6xl mx-auto mb-6 text-center relative z-10">
+  <img src="logo.png" alt="Феникс" class="h-28 mx-auto mb-2" style="filter:drop-shadow(2px 4px 6px rgba(0,0,0,.1))">
+  <h1 class="text-5xl md:text-7xl font-bold mb-1">Каталог ФЕНИКС</h1>
+  <p class="text-2xl md:text-3xl text-pencil-light font-block">Пластины и уплотнения для теплообменников — <span id="totalCount">0</span> позиций</p>
+</header>
+
+<nav class="max-w-6xl mx-auto mb-8 flex flex-wrap justify-center gap-3 relative z-10">
+  <a href="index.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/></svg>Главная</a>
+  <a href="catalog.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Каталог</a>
+  <a href="products.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Товары ФЕНИКС</a>
+  <a href="agents.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>Рой Агентов</a>
+  <a href="hardware.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Железо</a>
+</nav>
+
+<main class="max-w-7xl mx-auto relative z-10">
+
+<!-- ============ КАЛЬКУЛЯТОР ============ -->
+<section id="calcSection" class="calc-panel mb-6">
+
+  <!-- Заголовок + режим -->
+  <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+    <h2 class="text-2xl font-block font-bold">Расчёт теплообменника</h2>
+    <div class="flex gap-2">
+      <button class="filter-btn active" id="modeCalc" onclick="setMode('calc')">Прямой расчёт</button>
+      <button class="filter-btn" id="modeReverse" onclick="setMode('reverse')">Обратный (из Q)</button>
+      <button class="filter-btn" id="modeCompare" onclick="setMode('compare')">Сравнение</button>
+    </div>
+  </div>
+
+  <!-- Выбор модели -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4 p-3" style="background:#f9f7f3;border-radius:8px">
+    <div>
+      <label class="calc-label">Модель пластины</label>
+      <select id="cModel" class="sort-select w-full" onchange="onModelChange()">
+        <option value="">-- Автоподбор --</option>
+        <option value="APR-4">APR-4 (малая)</option>
+        <option value="APR-14">APR-14</option>
+        <option value="APR-19">APR-19</option>
+        <option value="APR-20">APR-20</option>
+        <option value="APR-21">APR-21 (TL 30&deg;)</option>
+        <option value="APR-22">APR-22</option>
+        <option value="TP-B-0.35">ТП-Б-0.35 (TL 30&deg;)</option>
+        <option value="TP-B-0.70">ТП-Б-0.70 (TL 30&deg;)</option>
+        <option value="APR-41">APR-41</option>
+        <option value="APR-42">APR-42</option>
+        <option value="APR-43">APR-43 (TK 60&deg;)</option>
+        <option value="APR-47">APR-47</option>
+        <option value="APR-62">APR-62</option>
+        <option value="APR-81">APR-81</option>
+        <option value="APR-84">APR-84 (TK 60&deg;)</option>
+        <option value="APR-100">APR-100</option>
+      </select>
+    </div>
+    <div>
+      <label class="calc-label">Коэфф. k (Вт/м&sup2;К) <span style="font-weight:normal;color:#636e72">— 0 = из таблицы</span></label>
+      <input type="number" id="cKoverride" class="calc-input" value="0" step="100">
+    </div>
+    <div>
+      <label class="calc-label">Пластина (каталог)</label>
+      <div id="calcPlate" class="calc-input" style="color:#636e72;font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Не выбрана</div>
+    </div>
+    <div>
+      <label class="calc-label">Цена пластины (руб.)</label>
+      <input type="number" id="cPlatePrice" class="calc-input" value="" placeholder="0" step="0.01">
+    </div>
+  </div>
+
+  <!-- Режим "Прямой расчёт": Temperatures -->
+  <div id="inputsDirect">
+    <div class="grid grid-cols-3 md:grid-cols-6 gap-3 mb-3">
+      <div><label class="calc-label">Расход гор. (кг/с)</label><input type="number" id="cG1" class="calc-input" value="2" step="0.1"></div>
+      <div><label class="calc-label">T гор. вход (&deg;C)</label><input type="number" id="cT1" class="calc-input" value="90"></div>
+      <div><label class="calc-label">T гор. выход (&deg;C)</label><input type="number" id="cT2" class="calc-input" value="70"></div>
+      <div><label class="calc-label">T холод. вход (&deg;C)</label><input type="number" id="cT3" class="calc-input" value="20"></div>
+      <div><label class="calc-label">T холод. выход (&deg;C)</label><input type="number" id="cT4" class="calc-input" value="40"></div>
+      <div><label class="calc-label">Макс. &Delta;P (МПа)</label><input type="number" id="cMaxDP" class="calc-input" value="2.5" step="0.1"></div>
+    </div>
+  </div>
+
+  <!-- Режим "Обратный": задаём Q, ищем t4 -->
+  <div id="inputsReverse" style="display:none">
+    <div class="grid grid-cols-3 md:grid-cols-6 gap-3 mb-3">
+      <div><label class="calc-label">Расход гор. (кг/с)</label><input type="number" id="cG1r" class="calc-input" value="2" step="0.1"></div>
+      <div><label class="calc-label">T гор. вход (&deg;C)</label><input type="number" id="cT1r" class="calc-input" value="90"></div>
+      <div><label class="calc-label">T холод. вход (&deg;C)</label><input type="number" id="cT3r" class="calc-input" value="20"></div>
+      <div><label class="calc-label">T холод. выход (&deg;C)</label><input type="number" id="cT4r" class="calc-input" value="40"></div>
+      <div><label class="calc-label">Мощность Q (кВт)</label><input type="number" id="cQtarget" class="calc-input" value="100" step="1"></div>
+      <div><label class="calc-label">Макс. &Delta;P (МПа)</label><input type="number" id="cMaxDPr" class="calc-input" value="2.5" step="0.1"></div>
+    </div>
+  </div>
+
+  <!-- Среды + материал -->
+  <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+    <div><label class="calc-label">Греющая среда</label>
+      <select id="cMediaHot" class="sort-select w-full">
+        <option value="water">Вода</option><option value="glycol30">Гликоль 30%</option>
+        <option value="glycol50">Гликоль 50%</option><option value="oil">Масло</option><option value="steam">Пар</option>
+      </select>
+    </div>
+    <div><label class="calc-label">Холодная среда</label>
+      <select id="cMediaCold" class="sort-select w-full">
+        <option value="water">Вода</option><option value="glycol30">Гликоль 30%</option>
+        <option value="glycol50">Гликоль 50%</option><option value="oil">Масло</option>
+      </select>
+    </div>
+    <div><label class="calc-label">Материал</label>
+      <select id="cMaterial" class="sort-select w-full"><option value="304">AISI 304</option><option value="316">AISI 316</option></select>
+    </div>
+    <div><label class="calc-label">Уплотнение</label>
+      <select id="cSealType" class="sort-select w-full"><option value="EPDM">EPDM</option><option value="NBR">NBR</option><option value="VITON">VITON</option></select>
+    </div>
+    <div><label class="calc-label">Уплотнение (каталог)</label>
+      <div id="calcGasket" class="calc-input" style="color:#636e72;font-size:.85rem">Не выбрано</div>
+    </div>
+    <div>
+      <label class="calc-label">Цена уплотнения (руб.)</label>
+      <input type="number" id="cGasketPrice" class="calc-input" value="" placeholder="0" step="0.01">
+    </div>
+  </div>
+
+  <!-- Кнопка + результат -->
+  <div class="text-center mb-4">
+    <button onclick="runCalc()" class="filter-btn active" style="font-size:1.2rem;padding:12px 48px">Рассчитать</button>
+  </div>
+  <div id="calcResult"></div>
+
+  <!-- Таблица сравнения (скрыта по умолчанию) -->
+  <div id="compareSection" style="display:none;margin-top:16px">
+    <h3 style="font-family:Architects Daughter,cursive;font-size:1.2rem;font-weight:bold;margin-bottom:8px">Сравнение моделей</h3>
+    <div style="overflow-x:auto"><table class="compare-table" id="compareTable"></table></div>
+  </div>
+</section>
+
+<!-- ============ КАТАЛОГ ============ -->
+<section class="sketchy p-5 mb-6 fade-up">
+  <!-- Основной поиск -->
+  <div class="mb-4">
+    <label class="block font-block text-lg font-bold mb-1">Поиск по названию</label>
+    <input type="text" id="searchInput" class="search-input" placeholder="Введите название или артикул..." oninput="applyFilters()">
+  </div>
+  
+  <!-- Фильтры -->
+  <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-4">
+    <!-- Категория -->
+    <div>
+      <label class="block font-block text-sm font-bold mb-1">Категория</label>
+      <div class="flex flex-wrap gap-1">
+        <button class="filter-btn active text-xs" onclick="setCat('all',this)">Все</button>
+        <button class="filter-btn text-xs" onclick="setCat('plates',this)">Пластины</button>
+        <button class="filter-btn text-xs" onclick="setCat('gaskets',this)">Уплотнения</button>
+      </div>
+    </div>
+    
+    <!-- Модель пластины -->
+    <div>
+      <label class="block font-block text-sm font-bold mb-1">Модель</label>
+      <select id="filterModel" class="sort-select w-full text-xs" onchange="applyFilters()">
+        <option value="all">Все модели</option>
+        <option value="APR-4">APR-4</option>
+        <option value="APR-7">APR-7</option>
+        <option value="APR-8">APR-8</option>
+        <option value="APR-14">APR-14</option>
+        <option value="APR-19">APR-19</option>
+        <option value="APR-20">APR-20</option>
+        <option value="APR-21">APR-21</option>
+        <option value="APR-22">APR-22</option>
+        <option value="APR-41">APR-41</option>
+        <option value="APR-42">APR-42</option>
+        <option value="APR-43">APR-43</option>
+        <option value="APR-47">APR-47</option>
+        <option value="APR-62">APR-62</option>
+        <option value="APR-65">APR-65</option>
+        <option value="APR-81">APR-81</option>
+        <option value="APR-86">APR-86</option>
+        <option value="APR-100">APR-100</option>
+      </select>
+    </div>
+    
+    <!-- Материал -->
+    <div>
+      <label class="block font-block text-sm font-bold mb-1">Материал</label>
+      <select id="filterMaterial" class="sort-select w-full text-xs" onchange="applyFilters()">
+        <option value="all">Все</option>
+        <option value="304">AISI 304</option>
+        <option value="316">AISI 316</option>
+        <option value="titan">Титан</option>
+        <option value="SMO">SMO 254</option>
+      </select>
+    </div>
+    
+    <!-- Профиль -->
+    <div>
+      <label class="block font-block text-sm font-bold mb-1">Профиль</label>
+      <select id="filterProfile" class="sort-select w-full text-xs" onchange="applyFilters()">
+        <option value="all">Все</option>
+        <option value="TL">TL (жёсткий, 30°)</option>
+        <option value="TK">TK (мягкий, 60°)</option>
+      </select>
+    </div>
+    
+    <!-- Тип уплотнения -->
+    <div>
+      <label class="block font-block text-sm font-bold mb-1">Тип уплотнения</label>
+      <select id="filterGasketType" class="sort-select w-full text-xs" onchange="applyFilters()">
+        <option value="all">Все</option>
+        <option value="EPDM">EPDM</option>
+        <option value="NBR">NBR (Nitril)</option>
+        <option value="VITON">Viton (FKM)</option>
+      </select>
+    </div>
+    
+    <!-- Цена -->
+    <div>
+      <label class="block font-block text-sm font-bold mb-1">Цена до (руб.)</label>
+      <input type="number" id="priceMax" class="search-input text-xs" placeholder="Макс." oninput="applyFilters()">
+    </div>
+  </div>
+  
+  <!-- Сортировка -->
+  <div class="flex flex-wrap items-center gap-3 mb-4">
+    <label class="font-block text-sm font-bold">Сортировка:</label>
+    <select id="sortSelect" class="sort-select text-xs" onchange="applyFilters()">
+      <option value="name-asc">А-Я</option><option value="name-desc">Я-А</option>
+      <option value="price-asc">Цена ↑</option><option value="price-desc">Цена ↓</option>
+      <option value="price-request">Сначала с ценой</option>
+    </select>
+    <button onclick="resetAllFilters()" class="filter-btn text-xs" style="padding:4px 12px">Сбросить все фильтры</button>
+  </div>
+  
+  <!-- Статистика -->
+  <div class="flex flex-wrap gap-2">
+    <span class="stat-pill">Найдено: <strong id="foundCount">0</strong></span>
+    <span class="stat-pill">Пластины: <strong id="platesCount">0</strong></span>
+    <span class="stat-pill">Уплотнения: <strong id="gasketsCount">0</strong></span>
+    <span class="stat-pill">С ценой: <strong id="pricedCount">0</strong></span>
+    <span class="stat-pill">Цена по запросу: <strong id="requestCount">0</strong></span>
+  </div>
+</section>
+
+<div id="productGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4"></div>
+<div id="pagination" class="flex flex-wrap justify-center gap-2 mb-8"></div>
+<div id="loadingMsg" class="text-center py-12"><p class="text-2xl font-block text-pencil-light">Загрузка каталога...</p></div>
+<div id="noResults" class="sketchy p-8 text-center mb-8" style="display:none"><p class="text-2xl font-block text-pencil-light">Товары не найдены.</p></div>
+
+<!-- Compatibility Info Panel -->
+<div id="compatPanel" class="sketchy p-4 mb-6" style="display:none;background:#f0f8ff;border-color:#0984e3">
+  <div class="flex items-center gap-3">
+    <div class="section-icon blue" style="width:32px;height:32px;min-width:32px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#0984e3" stroke-width="2" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+    </div>
+    <div>
+      <h3 class="text-lg font-bold font-block" id="compatTitle">Выбрана деталь</h3>
+      <p class="text-sm font-block" id="compatDesc">Отображаются только совместимые товары</p>
+    </div>
+    <button onclick="clearSelection()" class="ml-auto filter-btn" style="font-size:.85rem;padding:4px 12px">Сбросить</button>
+  </div>
+</div>
+</main>
+
+<footer class="max-w-6xl mx-auto mt-12 text-center relative z-10 pb-8">
+  <div class="footer-sketch">
+    <img src="logo.png" alt="Феникс" class="h-12 mx-auto mb-2">
+    <p class="text-xl font-block">AIPhoenix · Завод теплообменников «Феникс» · 2026</p>
+    <p class="text-lg text-pencil-light">Данные: armoservis.ru · Обновлено: <span id="scrapedAt">—</span></p>
+  </div>
+</footer>
+
+<script>
+// ===== ДАННЫЕ =====
+var D=[], CUR_CAT='all', PAGE=0, PER_PAGE=50, FILTERED=[];
+var selectedPlateIdx=null, selectedGasketIdx=null;
+var CUR_MODE='calc';
+
+// ===== МАППИНГ МОДЕЛЕЙ =====
+var MODEL_MAP={
+  "APR-4":"APR-21","APR-14":"APR-21","APR-19":"APR-21","APR-20":"APR-21",
+  "APR-21":"APR-21","APR-22":"APR-21","ТП-Б-0.35":"TP-B-0.35","ТП-Б-0.70":"TP-B-0.70",
+  "APR-41":"APR-43","APR-42":"APR-43","APR-43":"APR-43","APR-47":"APR-43","APR-62":"APR-43",
+  "APR-81":"APR-84","APR-84":"APR-84","APR-100":"APR-84"
+};
+
+// ===== ФИЗИКА =====
+var CP={water:4.18,glycol30:3.85,glycol50:3.45,oil:2.0,steam:2.05};
+var RHO={water:998,glycol30:1040,glycol50:1075,oil:880,steam:0.6};
+var VISC={water:0.001,glycol30:0.0025,glycol50:0.006,oil:0.5,steam:0.00001};
+var K_TABLE={
+  "water|water":{"soft":3500,"hard":5500},"water|glycol30":{"soft":2800,"hard":4500},
+  "water|glycol50":{"soft":2400,"hard":3800},"water|oil":{"soft":600,"hard":950},
+  "water|air":{"soft":40,"hard":65},
+  "glycol30|water":{"soft":2800,"hard":4500},"glycol30|glycol30":{"soft":2200,"hard":3500},
+  "oil|water":{"soft":500,"hard":800},"steam|water":{"soft":4000,"hard":6000}
+};
+var GEOM={
+  "APR-4":  {L:200,W:95,A:0.019,ang:30,depth:2.5,pitch:10,profile:"TL"},
+  "APR-14": {L:310,W:120,A:0.037,ang:30,depth:2.8,pitch:10,profile:"TL"},
+  "APR-19": {L:400,W:145,A:0.058,ang:30,depth:3.0,pitch:11,profile:"TL"},
+  "APR-20": {L:420,W:155,A:0.065,ang:30,depth:3.2,pitch:11,profile:"TL"},
+  "APR-21": {L:478,W:172,A:0.082,ang:30,depth:3.5,pitch:12,profile:"TL"},
+  "APR-22": {L:500,W:185,A:0.093,ang:30,depth:3.5,pitch:12,profile:"TL"},
+  "TP-B-0.35":{L:520,W:190,A:0.099,ang:30,depth:3.2,pitch:11,profile:"TL"},
+  "TP-B-0.70":{L:780,W:295,A:0.230,ang:30,depth:3.8,pitch:13,profile:"TL"},
+  "APR-41": {L:700,W:300,A:0.210,ang:60,depth:3.5,pitch:12,profile:"TK"},
+  "APR-42": {L:800,W:350,A:0.280,ang:60,depth:3.8,pitch:13,profile:"TK"},
+  "APR-43": {L:1004,W:440,A:0.442,ang:60,depth:4.0,pitch:14,profile:"TK"},
+  "APR-47": {L:900,W:400,A:0.360,ang:60,depth:4.0,pitch:14,profile:"TK"},
+  "APR-62": {L:1050,W:460,A:0.483,ang:60,depth:4.2,pitch:15,profile:"TK"},
+  "APR-81": {L:1150,W:510,A:0.587,ang:60,depth:4.3,pitch:15,profile:"TK"},
+  "APR-84": {L:1218,W:530,A:0.646,ang:60,depth:4.5,pitch:16,profile:"TK"},
+  "APR-100":{L:1350,W:580,A:0.783,ang:60,depth:4.8,pitch:16,profile:"TK"}
+};
+var DP_COEFF={"TL":{C:1.8e5,m:1.8},"TK":{C:0.9e5,m:1.6}};
+var MAX_PLATES=500;
+
+// Стоимость-индикатор
+function costFactor(material,seal){
+  var f=1.0;
+  if(material==='316') f*=3.5;
+  if(seal==='NBR') f*=1.3; else if(seal==='VITON') f*=2.0;
+  return f;
+}
+
+// ===== UI =====
+function imgFail(el){el.style.display='none';var s=el.nextElementSibling;if(s)s.style.display='flex';}
+
+// Extract model info from product name
+function extractModelInfo(name) {
+  var m = name.match(/APR[- ]?\d+/i);
+  if(m) return m[0].replace(/ /g,'-').toUpperCase();
+  if(/ТП[- ]?Б/i.test(name)) {
+    var area = name.match(/0[.,]?\d+/);
+    if(area) return 'ТП-Б-' + area[0].replace(',','.');
+  }
+  return null;
+}
+
+// Extract material info
+function extractMaterial(name) {
+  if(/AISI\s*316/i.test(name) || /316/i.test(name)) return 'AISI 316';
+  if(/AISI\s*304/i.test(name) || /304/i.test(name)) return 'AISI 304';
+  if(/титан/i.test(name) || /Titan/i.test(name) || /ASTM\s*265/i.test(name)) return 'Титан (ASTM 265)';
+  if(/SMO\s*254/i.test(name)) return 'SMO 254';
+  if(/Hastelloy/i.test(name)) return 'Hastelloy';
+  if(/Nicrofer/i.test(name)) return 'Nicrofer';
+  return 'AISI 304 (стандарт)';
+}
+
+// Extract profile info
+function extractProfile(name) {
+  if(/TL\s*\d+/i.test(name)) {
+    var m = name.match(/TL\s*(\d+)/i);
+    return 'TL (' + (m ? m[1] : '30') + '° — жёсткий)';
+  }
+  if(/TK\s*\d+/i.test(name)) {
+    var m = name.match(/TK\s*(\d+)/i);
+    return 'TK (' + (m ? m[1] : '60') + '° — мягкий)';
+  }
+  return null;
+}
+
+// Extract thickness
+function extractThickness(name) {
+  var m = name.match(/(\d[,.]?\d*)\s*мм/i);
+  return m ? m[1].replace(',','.') + ' мм' : null;
+}
+
+// Extract model from gasket name — strict APR-XX only
+function extractGasketModel(name) {
+  var m = name.match(/для\s+(?:ФЕНИКС\s+)?(APR[- ]?\d+)/i);
+  if(m) return m[1].replace(/ /g,'-').toUpperCase();
+  m = name.match(/APR[- ]?\d+$/i);
+  if(m) return m[0].replace(/ /g,'-').toUpperCase();
+  return null;
+}
+
+// Extract model from plate name — strict APR-XX only
+function extractPlateModel(name) {
+  var m = name.match(/для\s+(?:ФЕНИКС\s+)?(APR[- ]?\d+)/i);
+  if(m) return m[1].replace(/ /g,'-').toUpperCase();
+  m = name.match(/APR[- ]?\d+$/i);
+  if(m) return m[0].replace(/ /g,'-').toUpperCase();
+  return null;
+}
+
+// Strict match: does this gasket belong to this plate?
+function isGasketCompatible(gasketName, plateName) {
+  var gModel = extractGasketModel(gasketName);
+  var pModel = extractPlateModel(plateName);
+  if(!gModel || !pModel) return false;
+  return gModel === pModel;
+}
+
+// Strict match: does this plate belong to this gasket?
+function isPlateCompatible(plateName, gasketName) {
+  return isGasketCompatible(gasketName, plateName);
+}
+
+function setMode(m){
+  CUR_MODE=m;
+  document.getElementById('modeCalc').className='filter-btn'+(m==='calc'?' active':'');
+  document.getElementById('modeReverse').className='filter-btn'+(m==='reverse'?' active':'');
+  document.getElementById('modeCompare').className='filter-btn'+(m==='compare'?' active':'');
+  document.getElementById('inputsDirect').style.display=m==='calc'?'block':'none';
+  document.getElementById('inputsReverse').style.display=m==='reverse'?'block':'none';
+  document.getElementById('compareSection').style.display=m==='compare'?'block':'none';
+}
+
+function extractModel(name){
+  var m=name.match(/APR[- ]?\d+/i);
+  if(m) return m[0].replace(/ /g,'-').toUpperCase();
+  if(/ТП[- ]?Б/i.test(name)){
+    m=name.match(/0[.,]?\d+/);
+    if(m) return 'TP-B-0.'+m[0].replace('0.','').replace(',','.');
+  }
+  return null;
+}
+
+function selectProduct(idx){
+  var p=D[idx];
+  if(p.c==='plates'){
+    if(selectedPlateIdx===idx){
+      selectedPlateIdx=null;
+    }else{
+      selectedPlateIdx=idx;
+      selectedGasketIdx=null;
+    }
+    var model=extractModel(p.n);
+    if(model&&MODEL_MAP[model]) document.getElementById('cModel').value=MODEL_MAP[model];
+  }else{
+    if(selectedGasketIdx===idx){
+      selectedGasketIdx=null;
+    }else{
+      selectedGasketIdx=idx;
+      selectedPlateIdx=null;
+    }
+  }
+  PAGE=0;
+  updateCalcInfo(); updateCompatPanel(); applyFilters();
+}
+
+function clearSelection(){
+  selectedPlateIdx=null;
+  selectedGasketIdx=null;
+  PAGE=0;
+  updateCalcInfo(); updateCompatPanel(); applyFilters();
+}
+
+function updateCompatPanel(){
+  var panel=document.getElementById('compatPanel');
+  var title=document.getElementById('compatTitle');
+  var desc=document.getElementById('compatDesc');
+  
+  if(selectedPlateIdx!==null){
+    var p=D[selectedPlateIdx];
+    var model=extractPlateModel(p.n);
+    panel.style.display='block';
+    title.textContent='Выбрана пластина: '+(model||p.n.substring(0,30));
+    desc.textContent='Показаны ТОЛЬКО прокладки для '+model;
+  }else if(selectedGasketIdx!==null){
+    var g=D[selectedGasketIdx];
+    var gModel=extractGasketModel(g.n);
+    panel.style.display='block';
+    title.textContent='Выбрана прокладка: '+(gModel||g.n.substring(0,30));
+    desc.textContent='Показаны ТОЛЬКО пластины '+gModel;
+  }else{
+    panel.style.display='none';
+  }
+}
+
+function updateCalcInfo(){
+  var cp=document.getElementById('calcPlate'),cg=document.getElementById('calcGasket');
+  if(selectedPlateIdx!==null){
+    var p=D[selectedPlateIdx];
+    cp.textContent=p.n; cp.style.color='#0984e3';
+    if(p.p!==null&&document.getElementById('cPlatePrice').value==='') document.getElementById('cPlatePrice').value=p.p.toFixed(2);
+  }else{cp.textContent='Не выбрана';cp.style.color='#636e72';}
+  if(selectedGasketIdx!==null){
+    var g=D[selectedGasketIdx];
+    cg.textContent=g.n; cg.style.color='#0984e3';
+    if(g.p!==null&&document.getElementById('cGasketPrice').value==='') document.getElementById('cGasketPrice').value=g.p.toFixed(2);
+  }else{cg.textContent='Не выбрано';cg.style.color='#636e72';}
+}
+
+function onModelChange(){}
+
+// ===== РАСЧЁТ =====
+function getK(hot,cold,profile){
+  var key=profile==='TL'?'hard':'soft';
+  var row=K_TABLE[hot+'|'+cold]||K_TABLE[cold+'|'+hot]||K_TABLE['water|water'];
+  return row?row[key]:3500;
+}
+
+function calcOne(modelKey,G1,t1,t2,t3,t4,mHot,mCold,kOverride,maxDP){
+  var geom=GEOM[modelKey];
+  if(!geom) return null;
+  var Q=G1*(CP[mHot]||4.18)*(t1-t2);
+  var dT1=t1-t4,dT2=t2-t3;
+  if(dT1<=0||dT2<=0) return {err:'Некорректные температуры'};
+  var dTL=Math.abs(dT1-dT2)>0.01?(dT1-dT2)/Math.log(dT1/dT2):dT1;
+  var k=kOverride>0?kOverride:getK(mHot,mCold,geom.profile);
+  var Freq=Q*1000/(k*dTL);
+  var F95=Freq/0.85;
+  var nPlates=Math.max(Math.ceil(F95/geom.A)+2,3);
+  if(nPlates>MAX_PLATES) nPlates=MAX_PLATES;
+  var nCh=Math.max(nPlates-1,1);
+
+  var rho=RHO[mHot]||998;
+  var mu=VISC[mHot]||0.001;
+  var gPerCh=G1/Math.max(nCh,1);
+  var vel=gPerCh/(rho*(geom.depth/1000)*(geom.W/1000));
+  var dh=2*geom.depth/1000;
+  var Re=rho*vel*dh/mu;
+  var regime=Re<200?'Ламинарный':Re<10000?'Переходный':'Турбулентный';
+  var Lch=geom.L/1000;
+  var dpC=DP_COEFF[geom.profile]||DP_COEFF['TK'];
+  var dP=dpC.C*Math.pow(Math.max(vel,0.001),dpC.m)*(Lch/dh)/1e6;
+
+  var Qcold=G1*(CP[mHot]||4.18)*(t1-t2);
+  var G2=Qcold/((CP[mCold]||4.18)*(t4-t3));
+  var QcoldCheck=G2*(CP[mCold]||4.18)*(t4-t3);
+  var balance=Math.abs(Q-QcoldCheck);
+
+  var warnings=[];
+  if(t1>200) warnings.push('T входа '+t1+'°C > 200°C — превышение для стандартных уплотнений');
+  if(t1>150&&(document.getElementById('cSealType').value==='EPDM'))
+    warnings.push('EPDM при >150°C — рекомендуется NBR или Viton');
+  if(dP>maxDP) warnings.push('ΔP = '+dP.toFixed(4)+' МПа > '+maxDP+' МПа');
+  if(nPlates>=MAX_PLATES) warnings.push('Достигнут максимум пластин ('+MAX_PLATES+'), может не хватить площади');
+
+  return {Q:Q,dTL:dTL,Freq:Freq,k:k,nPlates:nPlates,nCh:nCh,dP:dP,vel:vel,Re:Re,regime:regime,G2:G2,balance:balance,warnings:warnings,geom:geom,model:modelKey};
+}
+
+function runCalc(){
+  if(CUR_MODE==='compare'){runCompare();return;}
+  var modelKey=document.getElementById('cModel').value;
+  var mHot=document.getElementById('cMediaHot').value;
+  var mCold=document.getElementById('cMediaCold').value;
+  var material=document.getElementById('cMaterial').value;
+  var seal=document.getElementById('cSealType').value;
+  var kOv=parseFloat(document.getElementById('cKoverride').value)||0;
+  var resEl=document.getElementById('calcResult');
+
+  if(CUR_MODE==='reverse'){
+    var G1=parseFloat(document.getElementById('cG1r').value)||2;
+    var t1=parseFloat(document.getElementById('cT1r').value)||90;
+    var t3=parseFloat(document.getElementById('cT3r').value)||20;
+    var t4=parseFloat(document.getElementById('cT4r').value)||40;
+    var Qtarget=parseFloat(document.getElementById('cQtarget').value)||100;
+    var maxDP=parseFloat(document.getElementById('cMaxDPr').value)||2.5;
+    // Находим t2 из Q=G*cp*(t1-t2) => t2=t1-Q/(G*cp)
+    var cp1=CP[mHot]||4.18;
+    var t2=t1-Qtarget/(G1*cp1);
+    if(t2<=t3){resEl.innerHTML='<div class="warn-box"><p class="warn-text">T гор. выход ('+t2.toFixed(1)+'°C) ≤ T холод. вход ('+t3+'°C) — невозможно</p></div>';return;}
+
+    if(modelKey){
+      var r=calcOne(modelKey,G1,t1,t2,t3,t4,mHot,mCold,kOv,maxDP);
+      if(r&&r.err){resEl.innerHTML='<div class="warn-box"><p class="warn-text">'+r.err+'</p></div>';return;}
+      resEl.innerHTML=renderResult(r,seal,material);
+    }else{
+      var best=autoSelect(G1,t1,t2,t3,t4,mHot,mCold,kOv,maxDP);
+      if(best){resEl.innerHTML=renderResult(best,seal,material);}
+      else{resEl.innerHTML='<div class="warn-box"><p class="warn-text">Не удалось подобрать модель</p></div>';}
+    }
+    return;
+  }
+
+  // Прямой расчёт
+  var G1=parseFloat(document.getElementById('cG1').value)||2;
+  var t1=parseFloat(document.getElementById('cT1').value)||90;
+  var t2=parseFloat(document.getElementById('cT2').value)||70;
+  var t3=parseFloat(document.getElementById('cT3').value)||20;
+  var t4=parseFloat(document.getElementById('cT4').value)||40;
+  var maxDP=parseFloat(document.getElementById('cMaxDP').value)||2.5;
+
+  if(t1<=t2){resEl.innerHTML='<div class="warn-box"><p class="warn-text">T гор. вход ('+t1+') ≤ T гор. выход ('+t2+')</p></div>';return;}
+  if(t4<=t3){resEl.innerHTML='<div class="warn-box"><p class="warn-text">T холод. выход ('+t4+') ≤ T холод. вход ('+t3+')</p></div>';return;}
+
+  if(modelKey){
+    var r=calcOne(modelKey,G1,t1,t2,t3,t4,mHot,mCold,kOv,maxDP);
+    if(r.err){resEl.innerHTML='<div class="warn-box"><p class="warn-text">'+r.err+'</p></div>';return;}
+    resEl.innerHTML=renderResult(r,seal,material);
+  }else{
+    var best=autoSelect(G1,t1,t2,t3,t4,mHot,mCold,kOv,maxDP);
+    if(best){resEl.innerHTML=renderResult(best,seal,material);}
+    else{resEl.innerHTML='<div class="warn-box"><p class="warn-text">Не удалось подобрать модель</p></div>';}
+  }
+}
+
+function autoSelect(G1,t1,t2,t3,t4,mHot,mCold,kOv,maxDP){
+  var keys=['APR-4','APR-14','APR-19','APR-20','TP-B-0.35','APR-21','APR-22','TP-B-0.70','APR-41','APR-42','APR-47','APR-43','APR-62','APR-81','APR-84','APR-100'];
+  var best=null;
+  for(var i=0;i<keys.length;i++){
+    var r=calcOne(keys[i],G1,t1,t2,t3,t4,mHot,mCold,kOv,maxDP);
+    if(!r||r.err) continue;
+    if(r.dP<=maxDP){
+      if(!best||r.nPlates<best.nPlates) best=r;
+    }
+  }
+  if(!best){
+    for(var i=0;i<keys.length;i++){
+      var r=calcOne(keys[i],G1,t1,t2,t3,t4,mHot,mCold,kOv,maxDP);
+      if(r&&!r.err){if(!best||r.nPlates<best.nPlates) best=r;}
+    }
+  }
+  return best;
+}
+
+function renderResult(r,seal,material){
+  if(!r||r.err) return '<div class="warn-box"><p class="warn-text">'+(r?r.err:'Ошибка')+'</p></div>';
+  var cf=costFactor(material,seal);
+  var h='<h3 style="font-family:Architects Daughter,cursive;font-size:1.2rem;font-weight:bold;margin-bottom:10px">Результат: <span style="color:#0984e3">'+r.model+'</span> ('+r.geom.profile+')</h3>';
+  h+='<div class="result-grid">';
+  h+=ri(r.Q.toFixed(1)+' кВт','Мощность Q');
+  h+=ri(r.dTL.toFixed(1)+' °C','ΔT логарифм.');
+  h+=ri(r.Freq.toFixed(3)+' м²','Площадь F');
+  h+=ri(r.nPlates+' шт','Пластин ('+r.nCh+' каналов)');
+  h+=ri(r.k+' Вт/м²К','k коэфф.');
+  h+=ri(r.dP.toFixed(4)+' МПа','Перепад ΔP');
+  h+=ri(r.G2.toFixed(2)+' кг/с','Расход холод.');
+  h+=ri(r.Re.toFixed(0),'Re (Рейнольдс)');
+  h+=ri(r.regime,'Режим потока');
+  h+=ri(r.vel.toFixed(3)+' м/с','Скорость');
+  h+='</div>';
+
+  if(r.warnings.length){
+    h+='<div class="warn-box">';
+    for(var i=0;i<r.warnings.length;i++) h+='<p class="warn-text">⚠ '+r.warnings[i]+'</p>';
+    h+='</div>';
+  }
+
+  h+='<div class="info-box"><p class="info-text">';
+  h+='Множитель стоимости: ×'+cf.toFixed(1)+' (304+EPDM=×1.0, 316=×3.5, Viton=×2.0)';
+  var pp=parseFloat(document.getElementById('cPlatePrice').value)||0;
+  var gp=parseFloat(document.getElementById('cGasketPrice').value)||0;
+  var plateQty=r.nPlates;
+  var gasketQty=Math.max(r.nPlates-1,0);
+  var plateTotal=pp*plateQty;
+  var gasketTotal=gp*gasketQty;
+  var kitTotal=plateTotal+gasketTotal;
+  if(pp>0) h+='<br>Пластина: '+pp.toFixed(2)+' руб./шт × '+plateQty+' = <strong>'+plateTotal.toFixed(2)+' руб.</strong>';
+  if(gp>0) h+='<br>Прокладка: '+gp.toFixed(2)+' руб./шт × '+gasketQty+' = <strong>'+gasketTotal.toFixed(2)+' руб.</strong>';
+  if(pp>0||gp>0) h+='<br><strong>Итого комплект: '+kitTotal.toFixed(2)+' руб.</strong>';
+  h+='<br><small style="color:#636e72">Принято: пластин = '+plateQty+' шт, прокладок = '+gasketQty+' шт (по числу рабочих каналов / пластин в пакете минус 1).</small>';
+  h+='</p></div>';
+  return h;
+}
+
+function ri(v,l){return '<div class="result-item"><div class="result-val">'+v+'</div><div class="result-label">'+l+'</div></div>';}
+
+// ===== СРАВНЕНИЕ =====
+function runCompare(){
+  var G1=parseFloat(document.getElementById('cG1').value)||2;
+  var t1=parseFloat(document.getElementById('cT1').value)||90;
+  var t2=parseFloat(document.getElementById('cT2').value)||70;
+  var t3=parseFloat(document.getElementById('cT3').value)||20;
+  var t4=parseFloat(document.getElementById('cT4').value)||40;
+  var maxDP=parseFloat(document.getElementById('cMaxDP').value)||2.5;
+  var mHot=document.getElementById('cMediaHot').value;
+  var mCold=document.getElementById('cMediaCold').value;
+  var kOv=parseFloat(document.getElementById('cKoverride').value)||0;
+  if(t1<=t2||t4<=t3) return;
+
+  var keys=['APR-4','APR-14','APR-19','APR-20','TP-B-0.35','APR-21','APR-22','TP-B-0.70','APR-41','APR-42','APR-47','APR-43','APR-62','APR-81','APR-84','APR-100'];
+  var rows=[];
+  for(var i=0;i<keys.length;i++){
+    var r=calcOne(keys[i],G1,t1,t2,t3,t4,mHot,mCold,kOv,maxDP);
+    if(r&&!r.err) rows.push(r);
+  }
+  if(!rows.length) return;
+
+  // Находим лучшие значения для подсветки
+  var minN=Infinity,minF=Infinity,minDP=Infinity;
+  for(var i=0;i<rows.length;i++){
+    if(rows[i].nPlates<minN) minN=rows[i].nPlates;
+    if(rows[i].Freq<minF) minF=rows[i].Freq;
+    if(rows[i].dP<minDP) minDP=rows[i].dP;
+  }
+
+  var t=document.getElementById('compareTable');
+  var h='<tr><th>Модель</th><th>Профиль</th><th>F м²</th><th>Пластин</th><th>Каналов</th><th>ΔP МПа</th><th>Re</th><th>Режим</th><th>Статус</th></tr>';
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i];
+    var ok=r.dP<=maxDP;
+    h+='<tr>';
+    h+='<td'+(r.model===document.getElementById('cModel').value?' style="font-weight:bold;color:#0984e3"':'')+'>'+r.model+'</td>';
+    h+='<td>'+r.geom.profile+'</td>';
+    h+='<td'+(r.Freq===minF?' class="best"':'')+'>'+r.Freq.toFixed(3)+'</td>';
+    h+='<td'+(r.nPlates===minN?' class="best"':'')+'>'+r.nPlates+'</td>';
+    h+='<td>'+r.nCh+'</td>';
+    h+='<td'+(!ok?' style="color:#d63031;font-weight:bold"':r.dP===minDP?' class="best"':'')+'>'+r.dP.toFixed(4)+'</td>';
+    h+='<td>'+r.Re.toFixed(0)+'</td>';
+    h+='<td>'+r.regime+'</td>';
+    h+='<td>'+(ok?'OK':'ΔP!')+'</td>';
+    h+='</tr>';
+  }
+  t.innerHTML=h;
+
+  var resEl=document.getElementById('calcResult');
+  var best=autoSelect(G1,t1,t2,t3,t4,mHot,mCold,kOv,maxDP);
+  resEl.innerHTML='<div class="info-box"><p class="info-text">Лучший вариант: <strong>'+best.model+'</strong> — '+best.nPlates+' пластин, ΔP='+best.dP.toFixed(4)+' МПа</p></div>';
+}
+
+// ===== КАТАЛОГ =====
+var CUR_MODEL='all', CUR_MATERIAL='all', CUR_PROFILE='all', CUR_GASKET_TYPE='all';
+
+function setCat(c,btn){CUR_CAT=c;document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active')});btn.classList.add('active');PAGE=0;applyFilters();}
+
+function resetAllFilters(){
+  CUR_CAT='all'; CUR_MODEL='all'; CUR_MATERIAL='all'; CUR_PROFILE='all'; CUR_GASKET_TYPE='all';
+  selectedPlateIdx=null; selectedGasketIdx=null;
+  document.getElementById('searchInput').value='';
+  document.getElementById('priceMax').value='';
+  document.getElementById('filterModel').value='all';
+  document.getElementById('filterMaterial').value='all';
+  document.getElementById('filterProfile').value='all';
+  document.getElementById('filterGasketType').value='all';
+  document.getElementById('sortSelect').value='name-asc';
+  document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active')});
+  document.querySelector('.filter-btn').classList.add('active');
+  PAGE=0;
+  updateCalcInfo(); updateCompatPanel(); applyFilters();
+}
+
+function applyFilters(){
+  var q=document.getElementById('searchInput').value.toLowerCase().trim();
+  var pm=parseFloat(document.getElementById('priceMax').value)||Infinity;
+  var sort=document.getElementById('sortSelect').value;
+  CUR_MODEL=document.getElementById('filterModel').value;
+  CUR_MATERIAL=document.getElementById('filterMaterial').value;
+  CUR_PROFILE=document.getElementById('filterProfile').value;
+  CUR_GASKET_TYPE=document.getElementById('filterGasketType').value;
+  
+  FILTERED=D.filter(function(p){
+    // Basic filters
+    if(CUR_CAT!=='all'&&p.c!==CUR_CAT) return false;
+    if(q&&p.n.toLowerCase().indexOf(q)===-1) return false;
+    if(p.p!==null&&p.p>pm) return false;
+    
+    // Model filter
+    if(CUR_MODEL!=='all') {
+      if(p.c === 'plates') {
+        var pm2 = extractPlateModel(p.n);
+        if(pm2 !== CUR_MODEL) return false;
+      } else {
+        var gm = extractGasketModel(p.n);
+        if(!gm || gm !== CUR_MODEL) return false;
+      }
+    }
+    
+    // Material filter (plates only)
+    if(CUR_MATERIAL!=='all' && p.c === 'plates') {
+      var mat = extractMaterial(p.n);
+      if(CUR_MATERIAL === '304' && mat.indexOf('304') === -1) return false;
+      if(CUR_MATERIAL === '316' && mat.indexOf('316') === -1) return false;
+      if(CUR_MATERIAL === 'titan' && mat.indexOf('Титан') === -1) return false;
+      if(CUR_MATERIAL === 'SMO' && mat.indexOf('SMO') === -1) return false;
+    }
+    
+    // Profile filter (plates only)
+    if(CUR_PROFILE!=='all' && p.c === 'plates') {
+      var prof = extractProfile(p.n);
+      if(!prof || prof.indexOf(CUR_PROFILE) === -1) return false;
+    }
+    
+    // Gasket type filter (gaskets only)
+    if(CUR_GASKET_TYPE!=='all' && p.c === 'gaskets') {
+      var gType = p.n.toUpperCase();
+      if(CUR_GASKET_TYPE === 'EPDM' && gType.indexOf('EPDM') === -1) return false;
+      if(CUR_GASKET_TYPE === 'NBR' && gType.indexOf('NBR') === -1 && gType.indexOf('NITRIL') === -1) return false;
+      if(CUR_GASKET_TYPE === 'VITON' && gType.indexOf('VITON') === -1 && gType.indexOf('FKM') === -1) return false;
+    }
+    
+    // Compatibility filtering: strict 1:1 model match
+    if(selectedPlateIdx !== null) {
+      var selectedPlate = D[selectedPlateIdx];
+      var selModel = extractPlateModel(selectedPlate.n);
+      if(p.c === 'gaskets') {
+        // Only gaskets with EXACT same APR model
+        var gModel = extractGasketModel(p.n);
+        return gModel === selModel;
+      } else {
+        // Only plates with EXACT same APR model
+        var pModel = extractPlateModel(p.n);
+        return pModel === selModel;
+      }
+    }
+    
+    if(selectedGasketIdx !== null) {
+      var selectedGasket = D[selectedGasketIdx];
+      var selGModel = extractGasketModel(selectedGasket.n);
+      if(p.c === 'plates') {
+        // Only plates with EXACT same APR model
+        var pModel2 = extractPlateModel(p.n);
+        return pModel2 === selGModel;
+      } else {
+        // Only gaskets with EXACT same APR model
+        var gModel2 = extractGasketModel(p.n);
+        return gModel2 === selGModel;
+      }
+    }
+    
+    return true;
+  });
+  FILTERED.sort(function(a,b){
+    var aImg=a.i&&a.i.indexOf('img_clean/')===0?1:0;
+    var bImg=b.i&&b.i.indexOf('img_clean/')===0?1:0;
+    if(aImg!==bImg) return bImg-aImg;
+    switch(sort){
+      case 'name-asc':return a.n.localeCompare(b.n,'ru');
+      case 'name-desc':return b.n.localeCompare(a.n,'ru');
+      case 'price-asc':if(a.p===null)return 1;if(b.p===null)return -1;return a.p-b.p;
+      case 'price-desc':if(a.p===null)return 1;if(b.p===null)return -1;return b.p-a.p;
+      case 'price-request':if(a.p===null&&b.p!==null)return 1;if(a.p!==null&&b.p===null)return -1;return a.n.localeCompare(b.n,'ru');
+      default:return 0;
+    }
+  });
+  renderPage();updateStats();
+}
+
+function renderPage(){
+  var grid=document.getElementById('productGrid');
+  var noRes=document.getElementById('noResults');
+  var load=document.getElementById('loadingMsg');
+  if(!FILTERED.length){grid.innerHTML='';noRes.style.display='block';load.style.display='none';document.getElementById('pagination').innerHTML='';return;}
+  noRes.style.display='none';load.style.display='none';
+  var start=PAGE*PER_PAGE,end=Math.min(start+PER_PAGE,FILTERED.length),page=FILTERED.slice(start,end);
+  var h='';
+  for(var j=0;j<page.length;j++){
+    var p=page[j],gi=D.indexOf(p);
+    var img=p.i||'';
+    // Fix: don't prepend base URL for local paths
+    if(img && img.indexOf('http')!==0 && img.indexOf('img_clean/')!==0) {
+      img='https://moscow.armoservis.ru/'+img;
+    }
+    var ph=p.p!==null?'<div class="price-tag">'+p.p.toFixed(2)+' руб.</div>':'<div class="price-request">Цена по запросу</div>';
+    var badge=p.c==='plates'?'<span class="tag text-xs" style="position:absolute;top:8px;left:8px;z-index:2;background:#f0f8ff">Пластина</span>':'<span class="tag text-xs" style="position:absolute;top:8px;left:8px;z-index:2;background:#fff5f5">Уплотнение</span>';
+    var isSel=(selectedPlateIdx===gi)||(selectedGasketIdx===gi);
+    
+    // Extract model and material info from name
+    var modelInfo = extractModelInfo(p.n);
+    var materialInfo = extractMaterial(p.n);
+    var profileInfo = extractProfile(p.n);
+    var thicknessInfo = extractThickness(p.n);
+    
+    h+='<div class="product-card sketchy p-3 relative'+(isSel?' selected':'')+'" onclick="selectProduct('+gi+')" style="animation-delay:'+(j%20)*0.03+'s">';
+    h+=badge;
+    if(isSel) h+='<div style="position:absolute;top:8px;right:8px;z-index:2;background:#0984e3;color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold">&#10003;</div>';
+    if(img){h+='<div class="product-img-wrap"><img src="'+img+'" alt="'+p.n+'" loading="lazy" class="product-img mx-auto" onerror="imgFail(this)"><div class="product-img mx-auto items-center justify-center" style="display:none;background:#f9f7f3"><span class="font-block" style="font-size:.8rem">'+p.n.substring(0,25)+'</span></div></div>';}
+    else{h+='<div class="product-img mx-auto items-center justify-center" style="background:#f9f7f3"><span class="font-block" style="font-size:.8rem">'+p.n.substring(0,25)+'</span></div>';}
+    h+='<div class="mt-2">'+ph;
+    h+='<h3 class="text-sm font-bold mt-1 line-clamp-2" style="font-family:Architects Daughter,cursive;font-size:.85rem">'+p.n+'</h3>';
+    // Add detailed info
+    h+='<div class="product-detail">';
+    if(modelInfo) h+='<div>Модель: <span class="model"><strong>'+modelInfo+'</strong></span></div>';
+    if(thicknessInfo) h+='<div>Толщина: <strong>'+thicknessInfo+'</strong></div>';
+    if(materialInfo) h+='<div>Материал: <span class="material"><strong>'+materialInfo+'</strong></span></div>';
+    if(profileInfo) h+='<div>Профиль: <span class="profile"><strong>'+profileInfo+'</strong></span></div>';
+    h+='</div>';
+    if(p.pt) h+='<div class="text-xs font-block mt-1" style="color:#00b894">'+p.pt+'</div>';
+    h+='</div></div>';
+  }
+  grid.innerHTML=h;renderPagination();
+}
+
+function renderPagination(){
+  var total=Math.ceil(FILTERED.length/PER_PAGE),el=document.getElementById('pagination');
+  if(total<=1){el.innerHTML='';return;}
+  var h='<button class="page-btn" onclick="goPage(0)"'+(PAGE===0?' disabled':'')+'>&laquo;</button>';
+  h+='<button class="page-btn" onclick="goPage('+(PAGE-1)+')"'+(PAGE===0?' disabled':'')+'>&lsaquo;</button>';
+  var s=Math.max(0,PAGE-3),e=Math.min(total,PAGE+4);
+  if(s>0) h+='<span class="page-btn" style="cursor:default;border:none">...</span>';
+  for(var i=s;i<e;i++) h+='<button class="page-btn'+(i===PAGE?' active':'')+'" onclick="goPage('+i+')">'+(i+1)+'</button>';
+  if(e<total) h+='<span class="page-btn" style="cursor:default;border:none">...</span>';
+  h+='<button class="page-btn" onclick="goPage('+(PAGE+1)+')"'+(PAGE>=total-1?' disabled':'')+'>›</button>';
+  h+='<button class="page-btn" onclick="goPage('+(total-1)+')"'+(PAGE>=total-1?' disabled':'')+'>»</button>';
+  h+='<span class="stat-pill" style="margin-left:8px">'+(PAGE+1)+'/'+total+'</span>';
+  el.innerHTML=h;
+}
+
+function goPage(p){var t=Math.ceil(FILTERED.length/PER_PAGE);if(p<0||p>=t)return;PAGE=p;renderPage();window.scrollTo({top:document.getElementById('productGrid').offsetTop-80,behavior:'smooth'});}
+
+function updateStats(){
+  var plates=0,gaskets=0,priced=0,request=0;
+  for(var i=0;i<D.length;i++){if(D[i].c==='plates')plates++;else gaskets++;if(D[i].p!==null)priced++;else request++;}
+  document.getElementById('foundCount').textContent=FILTERED.length;
+  document.getElementById('platesCount').textContent=plates;
+  document.getElementById('gasketsCount').textContent=gaskets;
+  document.getElementById('pricedCount').textContent=priced;
+  document.getElementById('requestCount').textContent=request;
+}
+
+// Привязка ввода
+document.addEventListener('DOMContentLoaded',function(){
+  var inputs=document.querySelectorAll('#calcSection input, #calcSection select');
+  for(var i=0;i<inputs.length;i++){inputs[i].addEventListener('change',function(){if(CUR_MODE!=='compare')runCalc();});}
+});
+
+fetch('products_slim.json')
+  .then(function(r){return r.json()})
+  .then(function(data){D=data.d;document.getElementById('totalCount').textContent=D.length;document.getElementById('scrapedAt').textContent=data.s||'—';document.getElementById('loadingMsg').style.display='none';applyFilters();})
+  .catch(function(e){document.getElementById('loadingMsg').innerHTML='<p style="color:#d63031;font-size:1.2rem">Ошибка: '+e.message+'<br><small>python server.py</small></p>';});
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 120">
+  <rect x="8" y="8" width="304" height="104" rx="18" fill="#fbfbfa" stroke="#2d3436" stroke-width="3" stroke-dasharray="5 4"/>
+  <path d="M46 38h34v10H62v18H52V48H46z" fill="#2d3436"/>
+  <path d="M78 66h10V48h18V38h10v38H78z" fill="#2d3436"/>
+  <path d="M118 38h34v34h-10V48h-24z" fill="#2d3436"/>
+  <path d="M132 52l24 24" stroke="#2d3436" stroke-width="6" stroke-linecap="round"/>
+  <text x="178" y="54" font-family="'Architects Daughter', 'Comic Sans MS', cursive" font-size="26" fill="#2d3436" font-weight="700">AMD</text>
+  <text x="178" y="80" font-family="'Caveat', cursive" font-size="20" fill="#636e72">Ryzen / Threadripper</text>
+</svg>
