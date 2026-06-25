@@ -4,11 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Калькулятор теплообменников — AIPhoenix</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="tailwind-lite.css">
 <link rel="stylesheet" href="shared.css">
-<script>
-tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil-light':'#636e72',marker:'#d63031',blueprint:'#0984e3'},fontFamily:{sketch:['Caveat','cursive'],block:['"Architects Daughter"','cursive']}}}}
-</script>
 <style>
 @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 .fade-up{animation:fadeUp .6s ease-out both}
@@ -176,7 +173,7 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
     <div class="sketchy p-3 fade-up mb-3" style="background:#fff;border-radius:16px">
       <div id="product-photo" style="height:180px;display:flex;align-items:center;justify-content:center">
         <span class="photo-badge" id="photo-badge">APR-7</span>
-        <img id="product-img" src="img/phoenix-apr7.png" alt="Phoenix APR-7" style="max-height:170px;object-fit:contain" onerror="this.style.display='none'">
+        <img id="product-img" src="img/phoenix-apr7.webp" alt="Phoenix APR-7" style="max-height:170px;object-fit:contain" loading="lazy" onerror="this.style.display='none'">
       </div>
       <div class="text-center mt-1">
         <span id="product-caption" style="font-family:'Architects Daughter',cursive;color:#636e72;font-size:.8rem">Пластинчатый теплообменник Phoenix APR-7 | Ду50 | 0.07 м²/пластина</span>
@@ -212,9 +209,9 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
   <p class="font-block" style="font-size:.8rem;color:#636e72">AIPhoenix — Калькулятор теплообменников — Завод Феникс, Ростов-на-Дону</p>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js" async onload="init3D()"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js" onload="init3D()"></script>
 <script>
-if(typeof THREE!=='undefined') init3D();
+document.addEventListener('DOMContentLoaded',function(){if(typeof THREE!=='undefined')init3D()});
 
 /* ═══════════════════════════════════
    ДАННЫЕ МОДЕЛЕЙ (офиц. phoenix-apr.ru)
@@ -240,12 +237,12 @@ var MODELS={
 };
 
 var MODEL_IMAGES={
-  'APR-4':'img/phoenix-apr7.png','APR-7':'img/phoenix-apr7.png','APR-8':'img/phoenix-apr7.png',
-  'APR-14':'img/phoenix-apr21.png','APR-19':'img/phoenix-apr21.png','APR-20':'img/phoenix-apr21.png',
-  'APR-21':'img/phoenix-apr21.png','APR-22':'img/phoenix-apr43.png',
-  'APR-41':'img/phoenix-apr43.png','APR-42':'img/phoenix-apr43.png','APR-43':'img/phoenix-apr43.png',
-  'APR-47':'img/phoenix-apr84.png','APR-62':'img/phoenix-apr84.png','APR-65':'img/phoenix-apr84.png',
-  'APR-81':'img/phoenix-apr100.png','APR-86':'img/phoenix-apr100.png','APR-100':'img/phoenix-apr100.png'
+  'APR-4':'img/phoenix-apr7.webp','APR-7':'img/phoenix-apr7.webp','APR-8':'img/phoenix-apr7.webp',
+  'APR-14':'img/phoenix-apr21.webp','APR-19':'img/phoenix-apr21.webp','APR-20':'img/phoenix-apr21.webp',
+  'APR-21':'img/phoenix-apr21.webp','APR-22':'img/phoenix-apr43.webp',
+  'APR-41':'img/phoenix-apr43.webp','APR-42':'img/phoenix-apr43.webp','APR-43':'img/phoenix-apr43.webp',
+  'APR-47':'img/phoenix-apr84.webp','APR-62':'img/phoenix-apr84.webp','APR-65':'img/phoenix-apr84.webp',
+  'APR-81':'img/phoenix-apr100.webp','APR-86':'img/phoenix-apr100.webp','APR-100':'img/phoenix-apr100.webp'
 };
 
 /* ═══════════════════════════════════
@@ -306,7 +303,7 @@ function doCalc(){
 
 function onModelChange(){
   var pm=document.getElementById('plate_model').value;
-  var img=MODEL_IMAGES[pm]||'img/phoenix-apr7.png';
+  var img=MODEL_IMAGES[pm]||'img/phoenix-apr7.webp';
   var pi=document.getElementById('product-img');
   pi.style.opacity='0';
   setTimeout(function(){pi.src=img;pi.style.opacity='1'},150);
