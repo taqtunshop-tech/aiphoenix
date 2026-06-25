@@ -825,17 +825,14 @@ function init3D(){
   if(!container)return;
 
   startJokes();
-  bumpLoad(5,'Загрузка Three.js...');
+  bumpLoad(10,'Создание сцены...');
+  scene=new THREE.Scene();
+  scene.background=new THREE.Color(0xf0f2f5);
+  var w=container.clientWidth||600,h=container.clientHeight||420;
+  camera=new THREE.PerspectiveCamera(32,w/h,0.05,50);
 
-  setTimeout(function(){
-    bumpLoad(20,'Создание сцены...');
-    scene=new THREE.Scene();
-    scene.background=new THREE.Color(0xf0f2f5);
-    var w=container.clientWidth||600,h=container.clientHeight||420;
-    camera=new THREE.PerspectiveCamera(32,w/h,0.05,50);
-
-    bumpLoad(35,'Инициализация рендерера...');
-    renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
+  bumpLoad(30,'Инициализация рендерера...');
+  renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
   renderer.setSize(w,h);
   renderer.shadowMap.enabled=true;
@@ -843,6 +840,7 @@ function init3D(){
   container.appendChild(renderer.domElement);
   renderer.domElement.id='canvas3d';
 
+  bumpLoad(50,'Подсветка...');
   scene.add(new THREE.AmbientLight(0xffffff,0.5));
   scene.add(new THREE.HemisphereLight(0xddeeff,0x888888,0.4));
   var dl=new THREE.DirectionalLight(0xffffff,0.85);
@@ -859,12 +857,14 @@ function init3D(){
   var ground=new THREE.Mesh(new THREE.PlaneGeometry(6,6),new THREE.ShadowMaterial({opacity:0.18}));
   ground.rotation.x=-Math.PI/2;ground.position.y=-0.02;ground.receiveShadow=true;scene.add(ground);
 
+  bumpLoad(70,'Построение модели...');
   scaleCforModel(document.getElementById('plate_model').value);
   initMAT();buildAssembly();
   sph.r=Math.max(2.0,Math.max(C.frameW,C.frameH)*2.8);
   targetSph.r=sph.r;
   updateCam();
 
+  bumpLoad(90,'Настройка управления...');
   var drag=false,mx=0,my=0,pinchDist=0,lastTap=0;
   var momentum={vx:0,vy:0};
   var el=renderer.domElement;
@@ -949,6 +949,11 @@ function init3D(){
     var w2=container.clientWidth||600,h2=container.clientHeight||420;
     camera.aspect=w2/h2;camera.updateProjectionMatrix();renderer.setSize(w2,h2);
   });
+
+  bumpLoad(100,'Готово!');
+  stopJokes();
+  var ld=document.getElementById('viewer-loading');
+  if(ld)ld.style.display='none';
 
   var lastTime=performance.now();
   (function animate(){
