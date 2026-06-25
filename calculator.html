@@ -591,9 +591,19 @@ function makeFrameGroup(z,isFront){
     var tx=tc.getContext('2d');
     tx.fillStyle='#ffffff';tx.fillRect(0,0,1024,256);
     tx.save();tx.translate(1024,0);tx.scale(-1,1);
-    tx.fillStyle='#cc2222';tx.font='bold 40px Arial';tx.textAlign='center';tx.textBaseline='middle';
-    tx.fillText('\u2766',128,70);
-    tx.fillStyle='#1a3a8a';tx.font='bold 90px Arial';
+    tx.fillStyle='#cc2222';
+    tx.beginPath();
+    tx.moveTo(128,20);tx.bezierCurveTo(148,10,168,5,178,25);
+    tx.bezierCurveTo(188,45,168,55,158,50);
+    tx.bezierCurveTo(168,60,188,65,178,85);
+    tx.bezierCurveTo(168,105,148,100,128,90);
+    tx.bezierCurveTo(108,100,88,105,78,85);
+    tx.bezierCurveTo(68,65,88,60,98,50);
+    tx.bezierCurveTo(88,55,68,45,78,25);
+    tx.bezierCurveTo(88,5,108,10,128,20);tx.fill();
+    tx.beginPath();
+    tx.moveTo(128,45);tx.lineTo(122,88);tx.lineTo(128,80);tx.lineTo(134,88);tx.closePath();tx.fill();
+    tx.fillStyle='#1a3a8a';tx.font='bold 90px Arial';tx.textAlign='center';tx.textBaseline='middle';
     tx.fillText('\u0424\u0415\u041D\u0418\u041A\u0421',512,100);
     tx.fillStyle='#666666';tx.font='36px Arial';
     tx.fillText('Phoenix Heat Exchangers \u2014 \u0420\u043E\u0441\u0442\u043E\u0432-\u043D\u0430-\u0414\u043E\u043D\u0443',512,185);
@@ -649,12 +659,14 @@ function buildAssembly(){
     var baseZ=-packLen/2+i*gap;
     zm.position.z=baseZ;
     zm.userData.baseZ=baseZ;
+    zm.userData.plateIdx=i;
     zm.castShadow=true;zm.receiveShadow=true;
     plateGroup.add(zm);
 
     var gk=new THREE.Mesh(gkGeo,MAT.gasket);
     gk.position.z=baseZ+0.001;
     gk.userData.baseZ=baseZ+0.001;
+    gk.userData.plateIdx=i;
     plateGroup.add(gk);
   }
   heatGroup.add(plateGroup);
@@ -846,12 +858,12 @@ function init3D(){
   scene.add(new THREE.AmbientLight(0xffffff,0.5));
   scene.add(new THREE.HemisphereLight(0xddeeff,0x888888,0.4));
   var dl=new THREE.DirectionalLight(0xffffff,0.85);
-  dl.position.set(1.5,3,2);dl.castShadow=true;
-  dl.shadow.mapSize.set(1024,1024);
-  dl.shadow.camera.near=0.5;dl.shadow.camera.far=12;
-  dl.shadow.camera.left=-1.5;dl.shadow.camera.right=1.5;dl.shadow.camera.top=1.5;dl.shadow.camera.bottom=-1.5;
-  dl.shadow.bias=-0.001;
-  dl.shadow.normalBias=0.02;
+  dl.position.set(0.5,4,1.5);dl.castShadow=true;
+  dl.shadow.mapSize.set(2048,2048);
+  dl.shadow.camera.near=0.5;dl.shadow.camera.far=15;
+  dl.shadow.camera.left=-2.0;dl.shadow.camera.right=2.0;dl.shadow.camera.top=2.0;dl.shadow.camera.bottom=-2.0;
+  dl.shadow.bias=-0.0005;
+  dl.shadow.normalBias=0.04;
   scene.add(dl);
   scene.add(new THREE.DirectionalLight(0xe0e8f0,0.3).translateX(-3).translateY(2));
   scene.add(new THREE.DirectionalLight(0xffffff,0.25).translateZ(3));
@@ -967,14 +979,17 @@ function init3D(){
       if(Math.abs(explodeCurrent-explodeTarget)<0.0005)explodeCurrent=explodeTarget;
       var ec=explodeCurrent;
       if(plateGroup){
+        var half=(visPlates-1)/2;
         for(var k=0;k<plateGroup.children.length;k++){
           var ch=plateGroup.children[k];
-          if(ch.userData.baseZ!==undefined){
-            ch.position.z=ch.userData.baseZ*(1+ec*1.8);
+          if(ch.userData.baseZ!==undefined&&ch.userData.plateIdx!==undefined){
+            var idx=ch.userData.plateIdx;
+            var spread=(idx-half)*ec*0.025;
+            ch.position.z=ch.userData.baseZ+spread;
           }
         }
       }
-      if(backFrame)backFrame.position.z=backFrame.userData.baseZ+ec*0.2;
+      if(backFrame)backFrame.position.z=backFrame.userData.baseZ+ec*0.15;
     }
     if(currentMode==='rotate'&&heatGroup)heatGroup.rotation.y+=0.004;
     updateFlow(dt);
