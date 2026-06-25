@@ -1,5 +1,6 @@
 /* Tailwind-replacement: only utilities actually used by the site */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body,h1,h2,h3,h4,h5,h6,p,div,span,a,nav,header,main,footer,section,ul,ol,li,label,input,select,button,textarea{margin:0;padding:0}
+*,*::before,*::after{box-sizing:border-box}
 :root{--paper:#fbfbfa;--pencil:#2d3436;--pencil-light:#636e72;--marker:#d63031;--blueprint:#0984e3}
 .min-h-screen{min-height:100vh}
 .overflow-x-hidden{overflow-x:hidden}
