@@ -4,12 +4,46 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Калькулятор теплообменников — AIPhoenix</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <link rel="stylesheet" href="shared.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
 <script>
-tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil-light':'#636e72',marker:'#d63031',blueprint:'#0984e3',green:'#00b894'},fontFamily:{sketch:['Caveat','cursive'],block:['"Architects Daughter"','cursive']}}}}
+// Tailwind inline config
 </script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Architects+Daughter&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f9f7f3;font-family:'Caveat',cursive;color:#2d3436;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 31px,rgba(45,52,54,.06) 31px,rgba(45,52,54,.06) 32px),
+    repeating-linear-gradient(90deg,transparent,transparent 31px,rgba(45,52,54,.04) 31px,rgba(45,52,54,.04) 32px);
+  background-size:32px 32px}
+.sketchy{border:2.5px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;background:#fffefc;box-shadow:3px 6px 0 rgba(45,52,54,.07);position:relative}
+.sketchy:hover{transform:rotate(-.5deg) scale(1.005);box-shadow:5px 10px 0 rgba(45,52,54,.1)}
+.tag{border:2px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:6px 16px;display:inline-block;background:#fffefc;font-family:'Architects Daughter',cursive;font-size:.95rem;cursor:pointer;transition:all .15s;box-shadow:1px 2px 0 rgba(45,52,54,.08)}
+.tag:hover{background:#2d3436;color:#fff;transform:rotate(-1deg) scale(1.04)}
+.tag.active{background:#2d3436;color:#fff}
+.nav-link{border:2px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:8px 18px;background:#fffefc;transition:all .2s;text-decoration:none;color:#2d3436;font-family:'Architects Daughter',cursive;font-size:1.05rem;display:inline-flex;align-items:center;gap:6px}
+.nav-link:hover{background:#2d3436;color:#fff;transform:rotate(-2deg) scale(1.04)}
+.nav-link.active{background:#2d3436;color:#fff}
+.nav-link svg{width:18px;height:18px;flex-shrink:0}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .6s ease-out both}
+.hero-note{position:relative;background:#fffdf7;border:2.5px dashed #2d3436;border-radius:34px 12px 28px 16px/16px 30px 12px 28px;padding:14px 18px;box-shadow:2px 4px 10px rgba(0,0,0,.04);transform:rotate(-1deg);font-family:'Architects Daughter',cursive}
+.hero-note::after{content:'';position:absolute;bottom:-6px;right:20px;width:40px;height:3px;background:#d63031;border-radius:2px;transform:rotate(-3deg);opacity:.5}
+.hero-note.alt{transform:rotate(1deg);background:#f7fbff}
+.hero-note.alt::after{left:20px;right:auto;background:#0984e3}
+input[type=number],select{background:#fff;border:2px solid #2d3436;color:#2d3436;padding:8px 12px;border-radius:12px;font-family:'Architects Daughter',cursive;font-size:.95rem;width:100%;transition:all .2s;outline:none}
+input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 rgba(9,132,227,.15)}
+.btn-calc{padding:12px 32px;background:#2d3436;color:#fff;border:2.5px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;font-family:'Architects Daughter',cursive;font-size:1.1rem;cursor:pointer;transition:all .2s;box-shadow:3px 4px 0 rgba(45,52,54,.15)}
+.btn-calc:hover{background:#636e72;transform:rotate(-1deg) scale(1.03);box-shadow:4px 6px 0 rgba(45,52,54,.2)}
+#canvas3d{width:100%;height:100%;display:block;border-radius:12px;cursor:grab}
+#canvas3d:active{cursor:grabbing}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.result-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.result-cell{text-align:center;padding:10px 6px;background:#fff;border:2px solid #2d3436;border-radius:16px 8px 14px 8px/8px 14px 8px 16px}
+.result-cell .val{font-size:1.4rem;font-weight:700;color:#d63031}
+.result-cell .lbl{font-size:.8rem;color:#636e72;font-family:'Architects Daughter',cursive}
+</style>
 </head>
 <body class="min-h-screen p-4 md:p-8 overflow-x-hidden">
 
@@ -29,7 +63,7 @@ tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil
   </a>
   <a href="calculator.html" class="nav-link active">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16"/><path d="M9 4v16"/></svg>
-    🧮 Калькулятор
+    Калькулятор
   </a>
   <a href="hardware.html" class="nav-link">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
@@ -41,550 +75,410 @@ tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil
   </a>
 </nav>
 
-<!-- Заголовок -->
 <header class="max-w-7xl mx-auto mb-6 text-center relative z-10">
-  <h1 class="text-4xl md:text-5xl font-bold mb-2">🧮 Калькулятор теплообменников</h1>
-  <p class="text-xl text-pencil-light font-block">Расчёт мощности, подбор пластин и 3D-визуализация в реальном времени</p>
+  <h1 class="text-4xl md:text-5xl font-bold mb-2" style="font-family:'Caveat',cursive">Калькулятор теплообменников</h1>
+  <p class="text-xl font-bold" style="color:#636e72;font-family:'Architects Daughter',cursive">Расчёт мощности, подбор пластин и 3D-визуализация</p>
 </header>
 
-<!-- Основной контент: two columns -->
 <div class="max-w-7xl mx-auto relative z-10 flex flex-col lg:flex-row gap-6">
 
-  <!-- Левая панель: Форма расчёта -->
-  <div class="lg:w-[380px] flex-shrink-0 space-y-5">
+  <!-- Форма -->
+  <div class="lg:w-[370px] flex-shrink-0 space-y-4">
 
-    <!-- Горячая сторона -->
     <div class="sketchy p-5 fade-up">
-      <h3 class="text-xl font-bold mb-3" style="color:#d63031">🔥 Горячая сторона</h3>
+      <h3 class="text-xl font-bold mb-3" style="color:#d63031;font-family:'Caveat',cursive">Горячая сторона</h3>
       <div class="space-y-3">
-        <div>
-          <label class="font-block text-sm text-pencil-light mb-1 block">Среда</label>
-          <select id="hot_medium" class="w-full p-2 border-2 border-pencil rounded-lg font-block text-sm bg-white">
-            <option value="water">Вода</option>
-            <option value="glycol30">Гликоль 30%</option>
-            <option value="glycol50">Гликоль 50%</option>
-            <option value="oil">Масло</option>
-            <option value="steam">Пар</option>
-          </select>
+        <div><label class="text-sm font-bold" style="color:#636e72">Среда</label>
+          <select id="hot_medium"><option value="water">Вода</option><option value="glycol30">Гликоль 30%</option><option value="glycol50">Гликоль 50%</option><option value="oil">Масло</option><option value="steam">Пар</option></select></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="text-sm font-bold" style="color:#636e72">Расход, т/ч</label><input type="number" id="hot_flow" value="10" min="0" step="0.1"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">dP, м.в.ст.</label><input type="number" id="hot_dp" value="3" min="0" step="0.1"></div>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="font-block text-sm text-pencil-light mb-1 block">Расход, т/ч</label>
-            <input type="number" id="hot_flow" value="10" min="0" step="0.1" class="w-full p-2 border-2 border-pencil rounded-lg font-block text-sm bg-white">
-          </div>
-          <div>
-            <label class="font-block text-sm text-pencil-light mb-1 block">ΔP, м.в.ст.</label>
-            <input type="number" id="hot_dp" value="3" min="0" step="0.1" class="w-full p-2 border-2 border-pencil rounded-lg font-block text-sm bg-white">
-          </div>
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="font-block text-sm text-pencil-light mb-1 block">T вход, °C</label>
-            <input type="number" id="hot_tin" value="90" min="0" max="200" class="w-full p-2 border-2 border-pencil rounded-lg font-block text-sm bg-white">
-          </div>
-          <div>
-            <label class="font-block text-sm text-pencil-light mb-1 block">T выход, °C</label>
-            <input type="number" id="hot_tout" value="70" min="0" max="200" class="w-full p-2 border-2 border-pencil rounded-lg font-block text-sm bg-white">
-          </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="text-sm font-bold" style="color:#636e72">T вход, C</label><input type="number" id="hot_tin" value="90" min="0" max="200"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">T выход, C</label><input type="number" id="hot_tout" value="70" min="0" max="200"></div>
         </div>
       </div>
     </div>
 
-    <!-- Холодная сторона -->
     <div class="sketchy p-5 fade-up">
-      <h3 class="text-xl font-bold mb-3" style="color:#0984e3">❄️ Холодная сторона</h3>
+      <h3 class="text-xl font-bold mb-3" style="color:#0984e3;font-family:'Caveat',cursive">Холодная сторона</h3>
       <div class="space-y-3">
-        <div>
-          <label class="font-block text-sm text-pencil-light mb-1 block">Среда</label>
-          <select id="cold_medium" class="w-full p-2 border-2 border-pencil rounded-lg font-block text-sm bg-white">
-            <option value="water">Вода</option>
-            <option value="glycol30">Гликоль 30%</option>
-            <option value="glycol50">Гликоль 50%</option>
-            <option value="oil">Масло</option>
-          </select>
+        <div><label class="text-sm font-bold" style="color:#636e72">Среда</label>
+          <select id="cold_medium"><option value="water">Вода</option><option value="glycol30">Гликоль 30%</option><option value="glycol50">Гликоль 50%</option><option value="oil">Масло</option></select></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="text-sm font-bold" style="color:#636e72">Расход, т/ч</label><input type="number" id="cold_flow" value="8" min="0" step="0.1"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">dP, м.в.ст.</label><input type="number" id="cold_dp" value="3" min="0" step="0.1"></div>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="font-block text-sm text-pencil-light mb-1 block">Расход, т/ч</label>
-            <input type="number" id="cold_flow" value="8" min="0" step="0.1" class="w-full p-2 border-2 border-pencil rounded-lg font-block text-sm bg-white">
-          </div>
-          <div>
-            <label class="font-block text-sm text-pencil-light mb-1 block">ΔP, м.в.ст.</label>
-            <input type="number" id="cold_dp" value="3" min="0" step="0.1" class="w-full p-2 border-2 border-pencil rounded-lg font-block text-sm bg-white">
-          </div>
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="font-block text-sm text-pencil-light mb-1 block">T вход, °C</label>
-            <input type="number" id="cold_tin" value="20" min="0" max="200" class="w-full p-2 border-2 border-pencil rounded-lg font-block text-sm bg-white">
-          </div>
-          <div>
-            <label class="font-block text-sm text-pencil-light mb-1 block">T выход, °C</label>
-            <input type="number" id="cold_tout" value="40" min="0" max="200" class="w-full p-2 border-2 border-pencil rounded-lg font-block text-sm bg-white">
-          </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="text-sm font-bold" style="color:#636e72">T вход, C</label><input type="number" id="cold_tin" value="20" min="0" max="200"></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">T выход, C</label><input type="number" id="cold_tout" value="40" min="0" max="200"></div>
         </div>
       </div>
     </div>
 
-    <!-- Параметры аппарата -->
     <div class="sketchy p-5 fade-up">
-      <h3 class="text-xl font-bold mb-3">⚙️ Параметры аппарата</h3>
+      <h3 class="text-xl font-bold mb-3" style="font-family:'Caveat',cursive">Параметры аппарата</h3>
       <div class="space-y-3">
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="font-block text-sm text-pencil-light mb-1 block">Материал пластин</label>
-            <select id="plate_material" class="w-full p-2 border-2 border-pencil rounded-lg font-block text-sm bg-white">
-              <option value="AISI316">AISI 316</option>
-              <option value="AISI304">AISI 304</option>
-              <option value="Titanium">Титан</option>
-            </select>
-          </div>
-          <div>
-            <label class="font-block text-sm text-pencil-light mb-1 block">Уплотнения</label>
-            <select id="gasket_material" class="w-full p-2 border-2 border-pencil rounded-lg font-block text-sm bg-white">
-              <option value="EPDM">EPDM</option>
-              <option value="NBR">NBR</option>
-              <option value="Viton">Viton</option>
-            </select>
-          </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="text-sm font-bold" style="color:#636e72">Материал</label>
+            <select id="plate_material"><option value="AISI316">AISI 316</option><option value="AISI304">AISI 304</option><option value="Titanium">Титан</option></select></div>
+          <div><label class="text-sm font-bold" style="color:#636e72">Уплотнения</label>
+            <select id="gasket_material"><option value="EPDM">EPDM</option><option value="NBR">NBR</option><option value="Viton">Viton</option></select></div>
         </div>
-        <div>
-          <label class="font-block text-sm text-pencil-light mb-1 block">Запас поверхности, %</label>
-          <input type="number" id="surface_reserve" value="10" min="0" max="50" class="w-full p-2 border-2 border-pencil rounded-lg font-block text-sm bg-white">
-        </div>
-        <div>
-          <label class="font-block text-sm text-pencil-light mb-1 block">Модель пластины</label>
-          <select id="plate_model" class="w-full p-2 border-2 border-pencil rounded-lg font-block text-sm bg-white">
-            <option value="APR-21">APR-21 (0.042 м²)</option>
-            <option value="APR-43">APR-43 (0.442 м²)</option>
-            <option value="APR-84">APR-84 (0.646 м²)</option>
-            <option value="TP-B-0.35">ТП-Б-0.35 (0.099 м²)</option>
-            <option value="TP-B-0.70">ТП-Б-0.70 (0.230 м²)</option>
-          </select>
-        </div>
+        <div><label class="text-sm font-bold" style="color:#636e72">Модель пластины</label>
+          <select id="plate_model"><option value="APR-21">APR-21 (0.042 м2)</option><option value="APR-43">APR-43 (0.442 м2)</option><option value="APR-84">APR-84 (0.646 м2)</option><option value="TP-B-0.35">TP-B-0.35 (0.099 м2)</option></select></div>
+        <div><label class="text-sm font-bold" style="color:#636e72">Запас поверхности, %</label><input type="number" id="surface_reserve" value="10" min="0" max="50"></div>
       </div>
     </div>
 
-    <!-- Кнопка расчёта -->
-    <button onclick="calculate()" class="w-full py-3 px-6 bg-marker text-white text-xl font-bold border-2 border-pencil rounded-lg hover:rotate-1 hover:scale-[1.02] transition-all shadow-[3px_4px_0_#2d3436] font-block" style="border-radius:255px 15px 225px 15px/15px 225px 15px 255px">
-      ⚡ Рассчитать
-    </button>
+    <button onclick="doCalc()" class="btn-calc w-full">Рассчитать теплообменник</button>
 
-    <!-- Результаты -->
-    <div id="results" class="hidden">
-      <div class="sketchy p-5 fade-up" style="background:linear-gradient(135deg,#fffdf7,#fff8f0);border-color:#f97316">
-        <h3 class="text-xl font-bold mb-3" style="color:#f97316">📊 Результат расчёта</h3>
-        <div class="grid grid-cols-3 gap-3 mb-4">
-          <div class="text-center p-3 bg-white rounded-xl border border-pencil/10">
-            <p class="text-2xl font-bold" style="color:#f97316" id="res_power">—</p>
-            <p class="font-block text-xs text-pencil-light">Мощность, кВт</p>
-          </div>
-          <div class="text-center p-3 bg-white rounded-xl border border-pencil/10">
-            <p class="text-2xl font-bold" style="color:#f97316" id="res_area">—</p>
-            <p class="font-block text-xs text-pencil-light">Площадь, м²</p>
-          </div>
-          <div class="text-center p-3 bg-white rounded-xl border border-pencil/10">
-            <p class="text-2xl font-bold" style="color:#f97316" id="res_plates">—</p>
-            <p class="font-block text-xs text-pencil-light">Пластин</p>
-          </div>
-        </div>
-        <div class="grid grid-cols-2 gap-3 mb-3">
-          <div class="text-center p-2 bg-white rounded-xl border border-pencil/10">
-            <p class="text-sm font-bold" id="res_model">—</p>
-            <p class="font-block text-xs text-pencil-light">Модель</p>
-          </div>
-          <div class="text-center p-2 bg-white rounded-xl border border-pencil/10">
-            <p class="text-sm font-bold" id="res_dT">—</p>
-            <p class="font-block text-xs text-pencil-light">ΔT лн, °C</p>
-          </div>
-        </div>
-        <p class="font-block text-xs text-pencil-light">Профиль: <span class="font-bold text-pencil" id="res_profile">TL (жёсткий, 30°)</span></p>
+    <div id="results" class="sketchy p-5 fade-up hidden" style="background:linear-gradient(135deg,#fffdf7,#fff5eb);border-color:#d63031">
+      <h3 class="text-xl font-bold mb-2" style="color:#d63031;font-family:'Caveat',cursive">Результат расчёта</h3>
+      <div class="result-row">
+        <div class="result-cell"><div class="val" id="r_power">-</div><div class="lbl">Мощность, кВт</div></div>
+        <div class="result-cell"><div class="val" id="r_area">-</div><div class="lbl">Площадь, м2</div></div>
+        <div class="result-cell"><div class="val" id="r_plates">-</div><div class="lbl">Пластин</div></div>
+      </div>
+      <div class="result-row" style="grid-template-columns:1fr 1fr;margin-top:8px">
+        <div class="result-cell"><div class="val" style="font-size:1rem" id="r_model">-</div><div class="lbl">Модель</div></div>
+        <div class="result-cell"><div class="val" style="font-size:1rem" id="r_dT">-</div><div class="lbl">dT лн, C</div></div>
       </div>
     </div>
   </div>
 
-  <!-- Правая панель: 3D Визуализация -->
+  <!-- 3D Визуализация -->
   <div class="flex-1">
-    <div class="sketchy p-3 relative" style="min-height:500px">
-      <!-- Canvas -->
-      <div style="width:100%;height:500px;position:relative;border-radius:12px;overflow:hidden;background:#f0eeea">
-        <canvas id="canvas3d" style="width:100%;height:100%;display:block"></canvas>
-        <!-- Лоадер -->
-        <div id="loader3d" class="absolute inset-0 flex items-center justify-center bg-paper/80 z-10" style="border-radius:12px">
-          <div class="text-center">
-            <div class="w-10 h-10 border-3 border-pencil/20 border-t-marker rounded-full animate-spin mx-auto mb-3"></div>
-            <p class="font-block text-sm text-pencil-light">Загрузка 3D...</p>
-          </div>
-        </div>
+    <div class="sketchy p-3 fade-up" style="min-height:520px">
+      <div style="width:100%;height:460px;position:relative;border-radius:12px;overflow:hidden;background:#e8e6e1">
+        <canvas id="canvas3d"></canvas>
       </div>
-
-      <!-- Панель управления -->
       <div class="flex flex-wrap justify-center gap-2 mt-3">
-        <button onclick="toggleExploded()" id="btn_explode" class="tag cursor-pointer hover:bg-pencil hover:text-white">
-          💥 Разобрать
-        </button>
-        <button onclick="toggleXRay()" id="btn_xray" class="tag cursor-pointer hover:bg-pencil hover:text-white">
-          🔬 X-Ray
-        </button>
-        <button onclick="toggleAutoRotate()" id="btn_rotate" class="tag cursor-pointer hover:bg-pencil hover:text-white" style="background:#2d3436;color:#fff">
-          🔄 Вращение
-        </button>
+        <span class="tag" id="btn_explode" onclick="toggleExplode()">Разобрать</span>
+        <span class="tag" id="btn_xray" onclick="toggleXRay()">X-Ray</span>
+        <span class="tag active" id="btn_rotate" onclick="toggleRotate()">Вращение</span>
       </div>
-
-      <!-- Инфо о модели -->
-      <div class="mt-3 text-center">
-        <p class="font-block text-sm text-pencil-light">
-          <span class="font-bold text-pencil" id="model_info">31 пластина · AISI 316 · EPDM</span>
-        </p>
-        <div class="flex justify-center items-center gap-4 mt-1">
-          <span class="flex items-center gap-1 text-xs font-block text-pencil-light">
-            <span class="w-2 h-2 rounded-full bg-red-500 inline-block animate-pulse"></span> Горячий поток
+      <div class="text-center mt-2">
+        <span class="text-sm font-bold" id="model_info" style="font-family:'Architects Daughter',cursive;color:#636e72">31 пластина - AISI 316 - EPDM</span>
+        <div class="flex justify-center gap-4 mt-1">
+          <span style="font-size:.75rem;color:#636e72;font-family:'Architects Daughter',cursive">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#e74c3c;animation:pulse 1.5s infinite"></span> Горячий
           </span>
-          <span class="flex items-center gap-1 text-xs font-block text-pencil-light">
-            <span class="w-2 h-2 rounded-full bg-blue-500 inline-block animate-pulse"></span> Холодный поток
+          <span style="font-size:.75rem;color:#636e72;font-family:'Architects Daughter',cursive">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3498db;animation:pulse 1.5s infinite"></span> Холодный
           </span>
         </div>
       </div>
     </div>
-
-    <!-- Подсказка -->
     <div class="hero-note alt mt-4 fade-up">
-      <strong>Подсказка:</strong> изображение вращается автоматически. Перетаскивайте мышью для ручного поворота. Колёсико масштабирует. Нажмите «Разобрать» чтобы увидеть внутреннюю структуру пакета пластин.
+      <strong>Подсказка:</strong> Вращайте модель мышью. Колёсико масштабирует. «Разобрать» показывает внутреннюю структуру пакета пластин. «X-Ray» делает рамы полупрозрачными.
     </div>
   </div>
 </div>
 
-<!-- Футер -->
-<footer class="max-w-7xl mx-auto mt-8 mb-4 text-center relative z-10">
-  <div class="sketch-divider"></div>
-  <p class="font-block text-sm text-pencil-light mt-4">AIPhoenix · Калькулятор теплообменников · Завод «Феникс», Ростов-на-Дону</p>
+<footer class="max-w-7xl mx-auto mt-8 text-center" style="height:24px;background:linear-gradient(90deg,transparent,rgba(45,52,54,.1),transparent);border-radius:50%"></footer>
+<footer class="max-w-7xl mx-auto mt-4 mb-4 text-center">
+  <p style="font-size:.9rem;color:#636e72;font-family:'Architects Daughter',cursive">AIPhoenix - Калькулятор теплообменников - Завод Феникс, Ростов-на-Дону</p>
 </footer>
 
 <script>
-// ════════════════════════════════════════════════════════════
-// THERMAL CALCULATION ENGINE
-// ════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════
+   THERMAL CALCULATION
+   ═══════════════════════════════════════════════════════ */
+var CP={water:4.18,glycol30:3.85,glycol50:3.45,oil:2.0,steam:2.05};
+var PA={'APR-21':0.042,'APR-43':0.442,'APR-84':0.646,'TP-B-0.35':0.099};
+var KT={'water-water':{s:3500,h:5500},'water-glycol30':{s:2800,h:4500},'water-glycol50':{s:2400,h:3800},'water-oil':{s:600,h:950},'glycol30-water':{s:2800,h:4500},'oil-water':{s:500,h:800},'steam-water':{s:4000,h:6000}};
 
-const CP = { water:4.18, glycol30:3.85, glycol50:3.45, oil:2.0, steam:2.05 };
-const PLATE_AREA = { 'APR-21':0.042, 'APR-43':0.442, 'APR-84':0.646, 'TP-B-0.35':0.099, 'TP-B-0.70':0.230 };
-const K_TABLE = {
-  'water-water':{soft:3500,hard:5500}, 'water-glycol30':{soft:2800,hard:4500},
-  'water-glycol50':{soft:2400,hard:3800}, 'water-oil':{soft:600,hard:950},
-  'glycol30-water':{soft:2800,hard:4500}, 'glycol30-glycol30':{soft:2200,hard:3500},
-  'oil-water':{soft:500,hard:800}, 'steam-water':{soft:4000,hard:6000},
-};
-
-function calculate() {
-  const hotM = document.getElementById('hot_medium').value;
-  const coldM = document.getElementById('cold_medium').value;
-  const hotFlow = parseFloat(document.getElementById('hot_flow').value) || 0;
-  const t1 = parseFloat(document.getElementById('hot_tin').value) || 0;
-  const t2 = parseFloat(document.getElementById('hot_tout').value) || 0;
-  const t3 = parseFloat(document.getElementById('cold_tin').value) || 0;
-  const t4 = parseFloat(document.getElementById('cold_tout').value) || 0;
-  const reserve = parseFloat(document.getElementById('surface_reserve').value) || 10;
-  const plateModel = document.getElementById('plate_model').value;
-  const plateArea = PLATE_AREA[plateModel] || 0.042;
-
-  const G = hotFlow / 3.6;
-  const cp = CP[hotM] || 4.18;
-  const Q = G * cp * (t1 - t2);
-
-  const dt1 = t1 - t4;
-  const dt2 = t2 - t3;
-  if (dt1 <= 0 || dt2 <= 0) { alert('Проверьте температуры: T_горячей_вход должно быть > T_холодной_выход'); return; }
-  const dTln = Math.abs(dt1 - dt2) < 0.01 ? dt1 : (dt1 - dt2) / Math.log(dt1 / dt2);
-
-  const kKey = hotM + '-' + coldM;
-  const kRev = coldM + '-' + hotM;
-  const kData = K_TABLE[kKey] || K_TABLE[kRev] || K_TABLE['water-water'];
-  const k = kData.hard;
-
-  const F = (Q * 1000) / (k * dTln);
-  const FwithReserve = F * (1 + reserve / 100);
-  const nPlates = Math.max(12, Math.ceil(FwithReserve / plateArea) + 2);
-
-  document.getElementById('res_power').textContent = Q.toFixed(1);
-  document.getElementById('res_area').textContent = FwithReserve.toFixed(2);
-  document.getElementById('res_plates').textContent = nPlates;
-  document.getElementById('res_model').textContent = plateModel;
-  document.getElementById('res_dT').textContent = dTln.toFixed(1);
+function doCalc(){
+  var hm=document.getElementById('hot_medium').value;
+  var cm=document.getElementById('cold_medium').value;
+  var hf=parseFloat(document.getElementById('hot_flow').value)||0;
+  var t1=parseFloat(document.getElementById('hot_tin').value)||0;
+  var t2=parseFloat(document.getElementById('hot_tout').value)||0;
+  var t3=parseFloat(document.getElementById('cold_tin').value)||0;
+  var t4=parseFloat(document.getElementById('cold_tout').value)||0;
+  var rv=parseFloat(document.getElementById('surface_reserve').value)||10;
+  var pm=document.getElementById('plate_model').value;
+  var pa=PA[pm]||0.042;
+  var G=hf/3.6, cp=CP[hm]||4.18, Q=G*cp*(t1-t2);
+  var d1=t1-t4, d2=t2-t3;
+  if(d1<=0||d2<=0){alert('Проверьте температуры');return}
+  var dT=Math.abs(d1-d2)<0.01?d1:(d1-d2)/Math.log(d1/d2);
+  var k=(KT[hm+'-'+cm]||KT[cm+'-'+hm]||KT['water-water']).h;
+  var F=(Q*1000)/(k*dT);
+  var Fr=F*(1+rv/100);
+  var nP=Math.max(12,Math.ceil(Fr/pa)+2);
+  document.getElementById('r_power').textContent=Q.toFixed(1);
+  document.getElementById('r_area').textContent=Fr.toFixed(2);
+  document.getElementById('r_plates').textContent=nP;
+  document.getElementById('r_model').textContent=pm;
+  document.getElementById('r_dT').textContent=dT.toFixed(1);
   document.getElementById('results').classList.remove('hidden');
-
-  updateModel(nPlates);
+  updatePlates(nP);
 }
 
-// ════════════════════════════════════════════════════════════
-// THREE.JS 3D — Pencil-on-Paper Style
-// ════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════
+   THREE.JS 3D HEAT EXCHANGER
+   ═══════════════════════════════════════════════════════ */
+var scene,camera,renderer,group;
+var nPlates=31,isExploded=false,isXRay=false,isRotating=true;
+var sph={t:Math.PI/4,p:Math.PI/4,r:12};
+var dragging=false,mx=0,my=0,tick=0;
+var PW=2.2,PH=4.5,PT=0.04,PG=0.06,FT=0.4;
+var dots=[];
 
-let scene, camera, renderer;
-let plateGroup, frameFront, frameBack;
-let exploded = false, xRayMode = false, autoRotate = true;
-let plateCount = 31;
-let time = 0;
+function init3D(){
+  var c=document.getElementById('canvas3d');
+  var w=c.parentElement.clientWidth;
+  var h=c.parentElement.clientHeight;
+  if(w<10||h<10){w=600;h=460}
 
-const PW = 2.2, PH = 4.5, PT = 0.04, PGAP = 0.06, FT = 0.4;
+  scene=new THREE.Scene();
+  scene.background=new THREE.Color(0xe8e6e1);
 
-// Pencil-style materials
-const MAT = {
-  frame: new THREE.MeshLambertMaterial({ color: 0x2c3e50 }),
-  frameAccent: new THREE.MeshLambertMaterial({ color: 0x34495e }),
-  plate: new THREE.MeshPhongMaterial({ color: 0xbdc3c7, shininess: 80, specular: 0x444444 }),
-  plateHot: new THREE.MeshPhongMaterial({ color: 0xf39c12, shininess: 60, emissive: 0x331100 }),
-  gasket: new THREE.MeshLambertMaterial({ color: 0xe67e22, transparent: true, opacity: 0.8 }),
-  bolt: new THREE.MeshPhongMaterial({ color: 0x7f8c8d, shininess: 60 }),
-  flange: new THREE.MeshPhongMaterial({ color: 0x95a5a6, shininess: 40 }),
-  hotDot: new THREE.MeshBasicMaterial({ color: 0xe74c3c, transparent: true, opacity: 0.85 }),
-  coldDot: new THREE.MeshBasicMaterial({ color: 0x3498db, transparent: true, opacity: 0.85 }),
-};
+  camera=new THREE.PerspectiveCamera(30,w/h,0.1,100);
+  camera.position.set(8,5,8);
+  camera.lookAt(0,0,0);
 
-let flowDots = [];
+  renderer=new THREE.WebGLRenderer({canvas:c,antialias:true});
+  renderer.setSize(w,h);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.shadowMap.enabled=true;
 
-function init3D() {
-  const canvas = document.getElementById('canvas3d');
-  const rect = canvas.parentElement.getBoundingClientRect();
+  scene.add(new THREE.AmbientLight(0xffffff,0.5));
+  var dl=new THREE.DirectionalLight(0xffffff,0.9);
+  dl.position.set(5,10,7);dl.castShadow=true;scene.add(dl);
+  var dl2=new THREE.DirectionalLight(0xddeeff,0.3);
+  dl2.position.set(-4,6,-3);scene.add(dl2);
 
-  scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xf0eeea);
-
-  camera = new THREE.PerspectiveCamera(30, rect.width / rect.height, 0.1, 100);
-  camera.position.set(8, 5, 8);
-
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-  renderer.setSize(rect.width, rect.height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.shadowMap.enabled = true;
-
-  // Освещение (мягкое, как при дневном свете)
-  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-  const dir = new THREE.DirectionalLight(0xffffff, 0.8);
-  dir.position.set(5, 10, 7);
-  dir.castShadow = true;
-  scene.add(dir);
-  scene.add(new THREE.DirectionalLight(0xddeeff, 0.3).translateX(-3).translateY(4));
+  group=new THREE.Group();
+  scene.add(group);
 
   buildModel();
-  animate();
 
-  setTimeout(() => document.getElementById('loader3d').classList.add('hidden'), 200);
-
-  window.addEventListener('resize', () => {
-    const r = canvas.parentElement.getBoundingClientRect();
-    camera.aspect = r.width / r.height;
-    camera.updateProjectionMatrix();
-    renderer.setSize(r.width, r.height);
-  });
-
-  // Orbit (hand-rolled)
-  let drag = false, prev = {x:0,y:0};
-  let sp = {theta:Math.PI/4, phi:Math.PI/4, r:12};
-
-  canvas.addEventListener('mousedown', e => { drag = true; prev = {x:e.clientX,y:e.clientY}; autoRotate = false; document.getElementById('btn_rotate').style.background=''; document.getElementById('btn_rotate').style.color=''; });
-  canvas.addEventListener('mousemove', e => { if(!drag)return; sp.theta -= (e.clientX-prev.x)*0.005; sp.phi = Math.max(0.1,Math.min(3,sp.phi - (e.clientY-prev.y)*0.005)); prev={x:e.clientX,y:e.clientY}; });
-  canvas.addEventListener('mouseup', () => drag=false);
-  canvas.addEventListener('mouseleave', () => drag=false);
-  canvas.addEventListener('wheel', e => { sp.r = Math.max(5,Math.min(25,sp.r+e.deltaY*0.01)); e.preventDefault(); }, {passive:false});
+  // Mouse
+  c.onmousedown=function(e){dragging=true;mx=e.clientX;my=e.clientY;isRotating=false;document.getElementById('btn_rotate').className='tag'};
+  c.onmousemove=function(e){
+    if(!dragging)return;
+    sph.t-=(e.clientX-mx)*0.008;
+    sph.p=Math.max(0.2,Math.min(2.8,sph.p-(e.clientY-my)*0.008));
+    mx=e.clientX;my=e.clientY;
+  };
+  c.onmouseup=c.onmouseleave=function(){dragging=false};
+  c.onwheel=function(e){sph.r=Math.max(4,Math.min(25,sph.r+e.deltaY*0.01));e.preventDefault()};
 
   // Touch
-  canvas.addEventListener('touchstart', e => { if(e.touches.length===1){drag=true;prev={x:e.touches[0].clientX,y:e.touches[0].clientY};autoRotate=false;} });
-  canvas.addEventListener('touchmove', e => { if(!drag||e.touches.length!==1)return; sp.theta-=(e.touches[0].clientX-prev.x)*0.005; sp.phi=Math.max(0.1,Math.min(3,sp.phi-(e.touches[0].clientY-prev.y)*0.005)); prev={x:e.touches[0].clientX,y:e.touches[0].clientY}; e.preventDefault(); }, {passive:false});
-  canvas.addEventListener('touchend', () => drag=false);
+  c.ontouchstart=function(e){if(e.touches.length===1){dragging=true;mx=e.touches[0].clientX;my=e.touches[0].clientY}};
+  c.ontouchmove=function(e){if(!dragging||e.touches.length!==1)return;sph.t-=(e.touches[0].clientX-mx)*0.008;sph.p=Math.max(0.2,Math.min(2.8,sph.p-(e.touches[0].clientY-my)*0.008));mx=e.touches[0].clientX;my=e.touches[0].clientY;e.preventDefault()};
+  c.ontouchend=function(){dragging=false};
 
-  // Встроенный updateCamera в animate()
-  window._sph = sp;
+  animate();
 }
 
-function buildModel() {
-  plateGroup = new THREE.Group();
-  scene.add(plateGroup);
+function buildModel(){
+  // Clear
+  while(group.children.length>0){group.remove(group.children[0])}
+  dots=[];
 
-  // Рамы
-  const fg = new THREE.BoxGeometry(2.8, 5.2, FT);
-  frameFront = new THREE.Mesh(fg, MAT.frame);
-  frameFront.castShadow = true;
-  plateGroup.add(frameFront);
+  var fw=new THREE.MeshPhongMaterial({color:0x2c3e50,shininess:30});
+  var fd=new THREE.MeshPhongMaterial({color:0x34495e,shininess:30});
+  var pl=new THREE.MeshPhongMaterial({color:0xbdc3c7,shininess:90,specular:0x555555});
+  var gk=new THREE.MeshPhongMaterial({color:0xe67e22,transparent:true,opacity:0.8});
+  var bt=new THREE.MeshPhongMaterial({color:0x7f8c8d,shininess:60});
+  var fl=new THREE.MeshPhongMaterial({color:0x95a5a6,shininess:50});
 
-  frameBack = new THREE.Mesh(fg, MAT.frameAccent);
-  frameBack.position.z = plateCount * PGAP + FT * 2;
-  frameBack.castShadow = true;
-  plateGroup.add(frameBack);
+  var pLen=nPlates*PG+FT*2;
 
-  // Рёbra
-  const rg = new THREE.BoxGeometry(0.2, 5.2, FT + 0.2);
-  [-1.2, 1.2].forEach(x => {
-    plateGroup.add(Object.assign(new THREE.Mesh(rg, MAT.frame), {position:new THREE.Vector3(x,0,0)}));
-    plateGroup.add(Object.assign(new THREE.Mesh(rg, MAT.frameAccent), {position:new THREE.Vector3(x,0,plateCount*PGAP+FT*2)}));
+  // Front frame
+  var fm=new THREE.Mesh(new THREE.BoxGeometry(2.8,5.2,FT),fw);
+  fm.castShadow=true;group.add(fm);
+
+  // Back frame
+  var bm=new THREE.Mesh(new THREE.BoxGeometry(2.8,5.2,FT),fd);
+  bm.position.z=pLen;bm.castShadow=true;group.add(bm);
+
+  // Ribs
+  var rg=new THREE.BoxGeometry(0.15,5.2,FT+0.15);
+  [-1.2,1.2].forEach(function(x){
+    var r1=new THREE.Mesh(rg,fw);r1.position.x=x;group.add(r1);
+    var r2=new THREE.Mesh(rg,fd);r2.position.x=x;r2.position.z=pLen;group.add(r2);
   });
 
-  // Фланцы
-  const pg = new THREE.CylinderGeometry(0.25,0.25,0.6,16);
-  const fg2 = new THREE.CylinderGeometry(0.35,0.35,0.08,16);
-  [[-0.7,2,-0.3],[0.7,2,-0.3],[-0.7,-2,-0.3],[0.7,-2,-0.3]].forEach(([x,y,z]) => {
-    const p = new THREE.Mesh(pg, MAT.flange); p.position.set(x,y,z); p.rotation.x=Math.PI/2; plateGroup.add(p);
-    const f = new THREE.Mesh(fg2, MAT.bolt); f.position.set(x,y,z-0.35); plateGroup.add(f);
-    const p2 = p.clone(); p2.position.z = plateCount*PGAP+FT*2+0.3; plateGroup.add(p2);
-    const f2 = f.clone(); f2.position.z = plateCount*PGAP+FT*2+0.65; plateGroup.add(f2);
+  // Flanges
+  var portG=new THREE.CylinderGeometry(0.22,0.22,0.5,16);
+  var flG=new THREE.CylinderGeometry(0.32,0.32,0.06,16);
+  var ports=[[-0.65,1.8],[0.65,1.8],[-0.65,-1.8],[0.65,-1.8]];
+  ports.forEach(function(p){
+    var pp=new THREE.Mesh(portG,fl);pp.position.set(p[0],p[1],-0.25);pp.rotation.x=Math.PI/2;group.add(pp);
+    var ff=new THREE.Mesh(flG,bt);ff.position.set(p[0],p[1],-0.55);group.add(ff);
+    var pp2=pp.clone();pp2.position.z=pLen+0.25;group.add(pp2);
+    var ff2=ff.clone();ff2.position.z=pLen+0.55;group.add(ff2);
   });
 
-  // Пластины
-  const plateGeom = new THREE.BoxGeometry(PW, PH, PT);
-  for (let i = 0; i < plateCount; i++) {
-    const m = new THREE.Mesh(plateGeom, MAT.plate.clone());
-    m.position.z = FT + i * PGAP + PGAP/2;
-    m.castShadow = true;
-    m.userData = {type:'plate', idx:i};
-    plateGroup.add(m);
+  // Plates
+  var plG=new THREE.BoxGeometry(PW,PH,PT);
+  for(var i=0;i<nPlates;i++){
+    var m=new THREE.Mesh(plG,pl.clone());
+    m.position.z=FT+i*PG+PG/2;
+    m.castShadow=true;
+    m.userData={tp:'p',ix:i};
+    group.add(m);
 
-    // Гофры
-    for (let g = 0; g < 8; g++) {
-      const gy = -PH*0.35 + (g/8)*PH*0.7;
-      const groove = new THREE.Mesh(new THREE.BoxGeometry(PW*0.8, 0.03, 0.008), MAT.plate);
-      groove.position.set(0, gy, FT + i*PGAP + PGAP/2 + PT/2 + 0.004);
-      groove.rotation.x = g%2===0 ? 0.1 : -0.1;
-      plateGroup.add(groove);
+    // Corrugations
+    for(var g=0;g<8;g++){
+      var gy=-PH*0.35+(g/8)*PH*0.7;
+      var gr=new THREE.Mesh(new THREE.BoxGeometry(PW*0.75,0.025,0.006),pl);
+      gr.position.set(0,gy,FT+i*PG+PG/2+PT/2+0.003);
+      gr.rotation.x=g%2===0?0.12:-0.12;
+      group.add(gr);
     }
 
-    // Прокладки
-    if (i < plateCount - 1) {
-      const gk = new THREE.Mesh(new THREE.BoxGeometry(PW+0.05, PH+0.05, 0.02), MAT.gasket);
-      gk.position.z = FT + (i+1)*PGAP;
-      gk.visible = false;
-      gk.userData = {type:'gasket', idx:i};
-      plateGroup.add(gk);
+    // Gaskets (hidden until exploded)
+    if(i<nPlates-1){
+      var gkm=new THREE.Mesh(new THREE.BoxGeometry(PW+0.04,PH+0.04,0.015),gk);
+      gkm.position.z=FT+(i+1)*PG;
+      gkm.visible=false;
+      gkm.userData={tp:'g',ix:i};
+      group.add(gkm);
     }
   }
 
-  // Болты
-  const packLen = plateCount * PGAP + FT * 2;
-  const boltG = new THREE.CylinderGeometry(0.06,0.06,1,8);
-  const nutG = new THREE.CylinderGeometry(0.12,0.12,0.12,6);
-  [2.8,-2.8].forEach(y => {
-    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,packLen+1,12), MAT.bolt);
-    rod.rotation.x=Math.PI/2; rod.position.set(0,y,packLen/2); plateGroup.add(rod);
+  // Guide rods
+  var rodG=new THREE.CylinderGeometry(0.07,0.07,pLen+1,12);
+  [2.7,-2.7].forEach(function(y){
+    var rod=new THREE.Mesh(rodG,bt);
+    rod.rotation.x=Math.PI/2;rod.position.set(0,y,pLen/2);group.add(rod);
   });
-  [-1.3,1.3].forEach(x => {
-    [2.2,-2.2].forEach(y => {
-      const s = new THREE.Mesh(boltG, MAT.bolt);
-      s.rotation.x=Math.PI/2; s.scale.z=packLen+0.5; s.position.set(x,y,packLen/2); plateGroup.add(s);
-      const n1 = new THREE.Mesh(nutG, MAT.bolt); n1.position.set(x,y,packLen+0.3); plateGroup.add(n1);
-      const n2 = new THREE.Mesh(nutG, MAT.bolt); n2.position.set(x,y,-0.1); plateGroup.add(n2);
+
+  // Tie bolts
+  var boltG=new THREE.CylinderGeometry(0.05,0.05,1,8);
+  var nutG=new THREE.CylinderGeometry(0.1,0.1,0.1,6);
+  [-1.25,1.25].forEach(function(x){
+    [2.1,-2.1].forEach(function(y){
+      var s=new THREE.Mesh(boltG,bt);
+      s.rotation.x=Math.PI/2;s.scale.z=pLen+0.5;s.position.set(x,y,pLen/2);group.add(s);
+      var n1=new THREE.Mesh(nutG,bt);n1.position.set(x,y,pLen+0.25);group.add(n1);
+      var n2=new THREE.Mesh(nutG,bt);n2.position.set(x,y,-0.1);group.add(n2);
     });
   });
 
-  // Табличка
-  const lbl = new THREE.Mesh(new THREE.BoxGeometry(1.2,0.4,0.02), new THREE.MeshLambertMaterial({color:0xe67e22}));
-  lbl.position.set(0,1.2,-0.25); plateGroup.add(lbl);
+  // Brand label
+  var lb=new THREE.Mesh(new THREE.BoxGeometry(1,0.35,0.015),new THREE.MeshPhongMaterial({color:0xe67e22}));
+  lb.position.set(0,1.2,-0.22);group.add(lb);
 
-  // Потоки
-  for (let i = 0; i < 12; i++) {
-    const hd = new THREE.Mesh(new THREE.SphereGeometry(0.08,6,6), MAT.hotDot);
-    hd.userData = {type:'hot', delay:i/12, speed:0.3+Math.random()*0.2,
-      from:new THREE.Vector3(-0.7,2,-0.5), to:new THREE.Vector3(0.7,-2,packLen+0.5)};
-    plateGroup.add(hd); flowDots.push(hd);
+  // Flow particles
+  var dotG=new THREE.SphereGeometry(0.07,6,6);
+  var hotMat=new THREE.MeshBasicMaterial({color:0xe74c3c});
+  var coldMat=new THREE.MeshBasicMaterial({color:0x3498db});
+  for(var d=0;d<12;d++){
+    var hd=new THREE.Mesh(dotG,hotMat);
+    hd.userData={tp:'hot',dl:d/12,sp:0.3+Math.random()*0.2,
+      a:new THREE.Vector3(-0.65,1.8,-0.5),
+      b:new THREE.Vector3(0.65,-1.8,pLen+0.5)};
+    group.add(hd);dots.push(hd);
 
-    const cd = new THREE.Mesh(new THREE.SphereGeometry(0.08,6,6), MAT.coldDot);
-    cd.userData = {type:'cold', delay:i/12, speed:0.3+Math.random()*0.2,
-      from:new THREE.Vector3(-0.7,-2,-0.5), to:new THREE.Vector3(0.7,2,packLen+0.5)};
-    plateGroup.add(cd); flowDots.push(cd);
+    var cd=new THREE.Mesh(dotG,coldMat);
+    cd.userData={tp:'cold',dl:d/12,sp:0.3+Math.random()*0.2,
+      a:new THREE.Vector3(-0.65,-1.8,-0.5),
+      b:new THREE.Vector3(0.65,1.8,pLen+0.5)};
+    group.add(cd);dots.push(cd);
   }
 
-  // Огни потоков
-  const hl = new THREE.PointLight(0xe74c3c, 0.5, 4); hl.position.set(-0.7,2,packLen/2); plateGroup.add(hl);
-  const cl = new THREE.PointLight(0x3498db, 0.5, 4); cl.position.set(0.7,-2,packLen/2); plateGroup.add(cl);
+  // Flow lights
+  var hl=new THREE.PointLight(0xe74c3c,0.6,4);hl.position.set(-0.65,1.8,pLen/2);group.add(hl);
+  var cl=new THREE.PointLight(0x3498db,0.6,4);cl.position.set(0.65,-1.8,pLen/2);group.add(cl);
 
-  plateGroup.position.z = -packLen/2;
+  group.position.z=-pLen/2;
 }
 
-function animate() {
+function animate(){
   requestAnimationFrame(animate);
-  time += 0.016;
+  tick+=0.016;
 
-  if (autoRotate) window._sph.theta += 0.003;
-  const s = window._sph;
+  if(isRotating)sph.t+=0.004;
   camera.position.set(
-    s.r * Math.sin(s.phi) * Math.cos(s.theta),
-    s.r * Math.cos(s.phi),
-    s.r * Math.sin(s.phi) * Math.sin(s.theta)
+    sph.r*Math.sin(sph.p)*Math.cos(sph.t),
+    sph.r*Math.cos(sph.p),
+    sph.r*Math.sin(sph.p)*Math.sin(sph.t)
   );
-  camera.lookAt(0, 0, 0);
+  camera.lookAt(0,0,0);
 
-  // Exploded
-  const packLen = plateCount * PGAP + FT * 2;
-  plateGroup.children.forEach(c => {
-    if (c.userData.type === 'plate') {
-      const base = FT + c.userData.idx * PGAP + PGAP/2;
-      const target = exploded ? base + c.userData.idx * 0.18 : base;
-      c.position.z += (target - c.position.z) * 0.08;
+  // Plates animation
+  var pLen=nPlates*PG+FT*2;
+  for(var i=0;i<group.children.length;i++){
+    var c=group.children[i];
+    if(c.userData.tp==='p'){
+      var base=FT+c.userData.ix*PG+PG/2;
+      var target=isExploded?base+c.userData.ix*0.18:base;
+      c.position.z+=(target-c.position.z)*0.08;
     }
-    if (c.userData.type === 'gasket') {
-      c.visible = exploded;
-      if (exploded) {
-        const base = FT + (c.userData.idx+1) * PGAP;
-        const target = base + (c.userData.idx+1) * 0.18;
-        c.position.z += (target - c.position.z) * 0.08;
+    if(c.userData.tp==='g'){
+      c.visible=isExploded;
+      if(isExploded){
+        var base2=FT+(c.userData.ix+1)*PG;
+        var target2=base2+(c.userData.ix+1)*0.18;
+        c.position.z+=(target2-c.position.z)*0.08;
       }
     }
-  });
-
-  if (frameBack) {
-    const targetZ = exploded ? packLen + plateCount * 0.18 : packLen;
-    frameBack.position.z += (targetZ - frameBack.position.z) * 0.06;
   }
 
-  // Flow dots
-  flowDots.forEach(d => {
-    const t = (time * d.userData.speed + d.userData.delay) % 1;
-    d.position.lerpVectors(d.userData.from, d.userData.to, t);
-    d.scale.setScalar(0.5 + Math.sin(t * Math.PI * 4) * 0.3);
-  });
+  // Back frame
+  if(group.children[1]){
+    var bz=isExploded?pLen+nPlates*0.18:pLen;
+    group.children[1].position.z+=(bz-group.children[1].position.z)*0.06;
+  }
 
-  // X-Ray
-  if (frameFront) {
-    if (xRayMode) {
-      frameFront.material.transparent = true;
-      frameFront.material.opacity = 0.2;
-      frameBack.material.transparent = true;
-      frameBack.material.opacity = 0.2;
-    } else {
-      frameFront.material.opacity = 1;
-      frameFront.material.transparent = false;
-      frameBack.material.opacity = 1;
-      frameBack.material.transparent = false;
+  // Dots
+  for(var d=0;d<dots.length;d++){
+    var dot=dots[d];
+    var t=(tick*dot.userData.sp+dot.userData.dl)%1;
+    dot.position.lerpVectors(dot.userData.a,dot.userData.b,t);
+    var sc=0.5+Math.sin(t*Math.PI*4)*0.3;
+    dot.scale.set(sc,sc,sc);
+  }
+
+  renderer.render(scene,camera);
+}
+
+function updatePlates(n){
+  nPlates=n;
+  buildModel();
+  document.getElementById('model_info').textContent=
+    n+' пластин - '+document.getElementById('plate_material').value+' - '+document.getElementById('gasket_material').value;
+}
+
+function toggleExplode(){
+  isExploded=!isExploded;
+  var b=document.getElementById('btn_explode');
+  b.textContent=isExploded?'Собрать':'Разобрать';
+  b.className=isExploded?'tag active':'tag';
+}
+function toggleXRay(){
+  isXRay=!isXRay;
+  var b=document.getElementById('btn_xray');
+  b.className=isXRay?'tag active':'tag';
+  // Change frame materials
+  for(var i=0;i<group.children.length;i++){
+    var c=group.children[i];
+    if(c.isMesh&&(i===0||i===1)){
+      if(isXRay){
+        c.material=new THREE.MeshPhongMaterial({color:0x88bbee,transparent:true,opacity:0.25,shininess:80});
+      }else{
+        c.material=new THREE.MeshPhongMaterial({color:i===0?0x2c3e50:0x34495e,shininess:30});
+      }
     }
   }
-
-  renderer.render(scene, camera);
+}
+function toggleRotate(){
+  isRotating=!isRotating;
+  document.getElementById('btn_rotate').className=isRotating?'tag active':'tag';
 }
 
-// ── UI ─────────────────────────────────────────────────────
-function updateModel(n) {
-  plateCount = n;
-  while (plateGroup.children.length) plateGroup.remove(plateGroup.children[0]);
-  flowDots = [];
-  buildModel();
-  document.getElementById('model_info').textContent =
-    n + ' пластин · ' + document.getElementById('plate_material').value + ' · ' + document.getElementById('gasket_material').value;
-}
-
-function toggleExploded() {
-  exploded = !exploded;
-  document.getElementById('btn_explode').textContent = exploded ? '🔧 Собрать' : '💥 Разобрать';
-}
-function toggleXRay() {
-  xRayMode = !xRayMode;
-  const btn = document.getElementById('btn_xray');
-  btn.style.background = xRayMode ? '#2d3436' : '';
-  btn.style.color = xRayMode ? '#fff' : '';
-}
-function toggleAutoRotate() {
-  autoRotate = !autoRotate;
-  const btn = document.getElementById('btn_rotate');
-  btn.style.background = autoRotate ? '#2d3436' : '';
-  btn.style.color = autoRotate ? '#fff' : '';
-}
-
-window.addEventListener('DOMContentLoaded', () => { init3D(); calculate(); });
+window.addEventListener('load',function(){
+  init3D();
+  doCalc();
+});
 </script>
 
 </body>
