@@ -40,9 +40,13 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
 #error-box li::before{content:'\2192';position:absolute;left:0;color:#d63031;font-weight:700}
 #canvas3d{width:100%;height:100%;display:block;cursor:grab;touch-action:none}
 #canvas3d:active{cursor:grabbing}
-.tag{border:2px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:6px 16px;display:inline-block;background:#fffefc;font-family:'Architects Daughter',cursive;font-size:.95rem;cursor:pointer;transition:all .15s;box-shadow:1px 2px 0 rgba(45,52,54,.08);user-select:none}
-.tag:hover{background:#2d3436;color:#fff;transform:rotate(-1deg) scale(1.04)}
-.tag.active{background:#2d3436;color:#fff}
+.ctrl-btn{padding:4px 12px;font-size:11px;font-weight:600;font-family:'Architects Daughter',cursive;border:1px solid #e2e8f0;border-radius:8px;background:#fff;color:#64748b;cursor:pointer;transition:all .15s}
+.ctrl-btn:hover{background:#f8fafc}
+.ctrl-btn.active{background:#1e293b;color:#fff;border-color:#334155;box-shadow:0 2px 4px rgba(0,0,0,.15)}
+#product-photo{position:relative;overflow:hidden;border-radius:12px;background:#fff;border:2px dashed #d1d5db;transition:all .3s}
+#product-photo:hover{border-color:#0984e3}
+#product-img{width:100%;height:100%;object-fit:contain;transition:opacity .3s}
+.photo-badge{position:absolute;top:8px;left:8px;background:rgba(45,52,54,.85);color:#fff;font-family:'Architects Daughter',cursive;font-size:.7rem;padding:3px 10px;border-radius:20px;backdrop-filter:blur(4px)}
 @media(max-width:768px){
   .calc-layout{flex-direction:column!important}
   .calc-form{width:100%!important;flex-shrink:0!important}
@@ -117,7 +121,25 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
             <select id="gasket_material"><option value="EPDM">EPDM</option><option value="NBR">NBR</option><option value="Viton">Viton</option></select></div>
         </div>
         <div><label class="text-sm font-bold" style="color:#636e72">Модель пластины</label>
-          <select id="plate_model"><option value="APR-4">APR-4 (0.03 м²)</option><option value="APR-7" selected>APR-7 (0.23 м²)</option><option value="APR-21">APR-21 (0.042 м²)</option><option value="APR-43">APR-43 (0.442 м²)</option><option value="APR-84">APR-84 (0.646 м²)</option><option value="APR-100">APR-100 (1.0 м²)</option><option value="TP-B-0.35">TP-B-0.35 (0.099 м²)</option><option value="TP-B-0.70">TP-B-0.70 (0.70 м²)</option></select></div>
+          <select id="plate_model" onchange="onModelChange()">
+            <option value="APR-4">APR-4 — Ду32, 0.04 м²/пластина</option>
+            <option value="APR-7" selected>APR-7 — Ду50, 0.07 м²/пластина</option>
+            <option value="APR-8">APR-8 — Ду32, 0.08 м²/пластина</option>
+            <option value="APR-14">APR-14 — Ду50, 0.15 м²/пластина</option>
+            <option value="APR-19">APR-19 — Ду65, 0.22 м²/пластина</option>
+            <option value="APR-20">APR-20 — Ду50, 0.21 м²/пластина</option>
+            <option value="APR-21">APR-21 — Ду100, 0.24 м²/пластина</option>
+            <option value="APR-22">APR-22 — Ду100, 0.26 м²/пластина</option>
+            <option value="APR-41">APR-41 — Ду150, 0.45 м²/пластина</option>
+            <option value="APR-42">APR-42 — Ду150, 0.46 м²/пластина</option>
+            <option value="APR-43">APR-43 — Ду200, 0.46 м²/пластина</option>
+            <option value="APR-47">APR-47 — Ду100, 0.50 м²/пластина</option>
+            <option value="APR-62">APR-62 — Ду150, 0.68 м²/пластина</option>
+            <option value="APR-65">APR-65 — Ду200, 0.68 м²/пластина</option>
+            <option value="APR-81">APR-81 — Ду300, 0.84 м²/пластина</option>
+            <option value="APR-86">APR-86 — Ду150, 0.90 м²/пластина</option>
+            <option value="APR-100">APR-100 — Ду200, 1.00 м²/пластина</option>
+          </select></div>
         <div><label class="text-sm font-bold" style="color:#636e72">Запас поверхности, %</label>
           <input type="number" id="surface_reserve" value="10" min="0" max="50" inputmode="numeric"></div>
       </div>
@@ -138,14 +160,26 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
     </div>
   </div>
 
-  <!-- 3D Viewer -->
+  <!-- 3D Viewer + Photo -->
   <div class="flex-1 min-w-0">
-    <div class="sketchy p-3 canvas-wrap fade-up" style="min-height:500px;position:relative;background:#eef1f5;border-radius:16px">
+    <!-- Реальное фото теплообменника -->
+    <div class="sketchy p-3 fade-up mb-3" style="background:#fff;border-radius:16px">
+      <div id="product-photo" style="height:180px;display:flex;align-items:center;justify-content:center">
+        <span class="photo-badge" id="photo-badge">APR-7</span>
+        <img id="product-img" src="img/phoenix-apr7.png" alt="Phoenix APR-7" style="max-height:170px;object-fit:contain" onerror="this.style.display='none'">
+      </div>
+      <div class="text-center mt-1">
+        <span id="product-caption" style="font-family:'Architects Daughter',cursive;color:#636e72;font-size:.8rem">Пластинчатый теплообменник Phoenix APR-7 | Ду50 | 0.07 м²/пластина</span>
+      </div>
+    </div>
+
+    <!-- 3D Viewer -->
+    <div class="sketchy p-3 canvas-wrap fade-up" style="min-height:420px;position:relative;background:#eef1f5;border-radius:16px">
       <div id="viewer-loading" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font-family:'Architects Daughter',cursive;color:#636e72;z-index:10">
         <div style="width:40px;height:40px;border:4px solid #e0e0e0;border-top:4px solid #d63031;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 10px"></div>
         Загрузка 3D...
       </div>
-      <div id="viewer-container" style="width:100%;min-height:500px;position:relative;border-radius:12px;overflow:hidden"></div>
+      <div id="viewer-container" style="width:100%;min-height:420px;position:relative;border-radius:12px;overflow:hidden"></div>
       <div id="bp-controls" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);border:1px solid #e2e8f0;border-radius:12px;padding:6px 12px;box-shadow:0 4px 12px rgba(0,0,0,.08);z-index:10">
         <button class="ctrl-btn active" data-mode="assembled" onclick="setMode('assembled')">Собрать</button>
         <button class="ctrl-btn" data-mode="exploded" onclick="setMode('exploded')">Разобрать</button>
@@ -153,16 +187,11 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
         <div style="width:1px;height:20px;background:#e2e8f0;margin:0 4px"></div>
         <button class="ctrl-btn" id="btnXray" onclick="toggleXray()">X-Ray</button>
       </div>
-      <style>
-        .ctrl-btn{padding:4px 12px;font-size:11px;font-weight:600;font-family:'Architects Daughter',cursive;border:1px solid #e2e8f0;border-radius:8px;background:#fff;color:#64748b;cursor:pointer;transition:all .15s}
-        .ctrl-btn:hover{background:#f8fafc}
-        .ctrl-btn.active{background:#1e293b;color:#fff;border-color:#334155;box-shadow:0 2px 4px rgba(0,0,0,.15)}
-      </style>
       <div class="absolute bottom-3 right-3" style="z-index:10">
         <p style="font-size:9px;color:#94a3b8;font-family:'Architects Daughter',cursive">ЛКМ: вращение • Колесо: масштаб • ПКМ: перемещение</p>
       </div>
       <div class="text-center mt-2">
-        <span id="model_info" style="font-family:'Architects Daughter',cursive;color:#636e72;font-size:.85rem">Phoenix 1 SAPR-7 | 31 пластина | AISI 316 | EPDM</span>
+        <span id="model_info" style="font-family:'Architects Daughter',cursive;color:#636e72;font-size:.85rem">Phoenix APR-7 | 31 пластина | AISI 316 | EPDM</span>
       </div>
     </div>
   </div>
@@ -178,11 +207,47 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
 if(typeof THREE!=='undefined') init3D();
 
 /* ═══════════════════════════════════
+   ДАННЫЕ МОДЕЛЕЙ (офиц. phoenix-apr.ru)
+   ═══════════════════════════════════ */
+var MODELS={
+  'APR-4':  {area:0.04,maxArea:3.7,  du:32, w:0.170,h:0.375,nozzleDN:'Ду32', connection:'Патрубки'},
+  'APR-7':  {area:0.07,maxArea:7.96, du:50, w:0.300,h:0.596,nozzleDN:'Ду50', connection:'Фланцы'},
+  'APR-8':  {area:0.08,maxArea:7.39, du:32, w:0.190,h:0.410,nozzleDN:'Ду32', connection:'Патрубки'},
+  'APR-14': {area:0.15,maxArea:16.35,du:50, w:0.250,h:0.530,nozzleDN:'Ду50', connection:'Фланцы'},
+  'APR-19': {area:0.22,maxArea:34.76,du:65, w:0.320,h:0.630,nozzleDN:'Ду65', connection:'Фланцы'},
+  'APR-20': {area:0.21,maxArea:22.89,du:50, w:0.300,h:0.596,nozzleDN:'Ду50', connection:'Фланцы'},
+  'APR-21': {area:0.24,maxArea:56.16,du:100,w:0.380,h:0.720,nozzleDN:'Ду100',connection:'Фланцы'},
+  'APR-22': {area:0.26,maxArea:48.36,du:100,w:0.380,h:0.720,nozzleDN:'Ду100',connection:'Фланцы'},
+  'APR-41': {area:0.45,maxArea:217.35,du:150,w:0.460,h:0.870,nozzleDN:'Ду150',connection:'Фланцы'},
+  'APR-42': {area:0.46,maxArea:176.18,du:150,w:0.460,h:0.870,nozzleDN:'Ду150',connection:'Фланцы'},
+  'APR-43': {area:0.46,maxArea:314.64,du:200,w:0.460,h:0.870,nozzleDN:'Ду200',connection:'Фланцы'},
+  'APR-47': {area:0.50,maxArea:119.34,du:100,w:0.520,h:0.980,nozzleDN:'Ду100',connection:'Фланцы'},
+  'APR-62': {area:0.68,maxArea:328.44,du:150,w:0.580,h:1.080,nozzleDN:'Ду150',connection:'Фланцы'},
+  'APR-65': {area:0.68,maxArea:465.12,du:200,w:0.580,h:1.080,nozzleDN:'Ду200',connection:'Фланцы'},
+  'APR-81': {area:0.84,maxArea:782.04,du:300,w:0.650,h:1.200,nozzleDN:'Ду300',connection:'Фланцы'},
+  'APR-86': {area:0.90,maxArea:591.30,du:150,w:0.680,h:1.250,nozzleDN:'Ду150',connection:'Фланцы'},
+  'APR-100':{area:1.00,maxArea:666.0, du:200,w:0.700,h:1.300,nozzleDN:'Ду200',connection:'Фланцы'}
+};
+
+var MODEL_IMAGES={
+  'APR-4':'img/phoenix-apr7.png','APR-7':'img/phoenix-apr7.png','APR-8':'img/phoenix-apr7.png',
+  'APR-14':'img/phoenix-apr21.png','APR-19':'img/phoenix-apr21.png','APR-20':'img/phoenix-apr21.png',
+  'APR-21':'img/phoenix-apr21.png','APR-22':'img/phoenix-apr43.png',
+  'APR-41':'img/phoenix-apr43.png','APR-42':'img/phoenix-apr43.png','APR-43':'img/phoenix-apr43.png',
+  'APR-47':'img/phoenix-apr84.png','APR-62':'img/phoenix-apr84.png','APR-65':'img/phoenix-apr84.png',
+  'APR-81':'img/phoenix-apr100.png','APR-86':'img/phoenix-apr100.png','APR-100':'img/phoenix-apr100.png'
+};
+
+/* ═══════════════════════════════════
    РАСЧЁТ
    ═══════════════════════════════════ */
 var CP={water:4.18,glycol30:3.85,glycol50:3.45,oil:2.0,steam:2.05};
-var PA={'APR-4':0.03,'APR-7':0.23,'APR-21':0.042,'APR-43':0.442,'APR-84':0.646,'APR-100':1.0,'TP-B-0.35':0.099,'TP-B-0.70':0.70};
-var KT={'water-water':{s:3500,h:5500},'water-glycol30':{s:2800,h:4500},'water-glycol50':{s:2400,h:3800},'water-oil':{s:600,h:950},'glycol30-water':{s:2800,h:4500},'oil-water':{s:500,h:800},'steam-water':{s:4000,h:6000}};
+var KT={
+  'water-water':{s:3500,h:5500},'water-glycol30':{s:2800,h:4500},
+  'water-glycol50':{s:2400,h:3800},'water-oil':{s:600,h:950},
+  'glycol30-water':{s:2800,h:4500},'glycol50-water':{s:2400,h:3800},
+  'oil-water':{s:500,h:800},'steam-water':{s:4000,h:6000}
+};
 
 function clearErrors(){document.querySelectorAll('.field-error').forEach(function(el){el.classList.remove('field-error')});var eb=document.getElementById('error-box');eb.classList.remove('visible');eb.innerHTML=''}
 function markError(id){var el=document.getElementById(id);if(!el)return;var g=el.closest('.grid');if(g)g.classList.add('field-error');else el.parentElement.classList.add('field-error')}
@@ -194,7 +259,8 @@ function doCalc(){
   var t1=parseFloat(document.getElementById('hot_tin').value)||0,t2=parseFloat(document.getElementById('hot_tout').value)||0;
   var t3=parseFloat(document.getElementById('cold_tin').value)||0,t4=parseFloat(document.getElementById('cold_tout').value)||0;
   var rv=parseFloat(document.getElementById('surface_reserve').value)||10;
-  var pm=document.getElementById('plate_model').value,pa=PA[pm]||0.042;
+  var pm=document.getElementById('plate_model').value;
+  var pa=MODELS[pm]?MODELS[pm].area:0.07;
 
   if(hf<=0){errors.push('Расход горячей > 0');markError('hot_flow')}
   if(t1<=0){errors.push('T вход горячей > 0');markError('hot_tin')}
@@ -222,30 +288,62 @@ function doCalc(){
   document.getElementById('r_power').textContent=Q.toFixed(1);
   document.getElementById('r_area').textContent=Fr.toFixed(2);
   document.getElementById('r_plates').textContent=nP;
-  var mn={'APR-4':'Phoenix 2 SAPR-4','APR-7':'Phoenix 1 SAPR-7','APR-21':'Phoenix APR-21','APR-43':'Phoenix APR-43','APR-84':'Phoenix APR-84','APR-100':'Phoenix APR-100','TP-B-0.35':'Phoenix TP-B-0.35','TP-B-0.70':'Phoenix TP-B-0.70'};
-  document.getElementById('r_model').textContent=mn[pm]||pm;
+  document.getElementById('r_model').textContent='Phoenix '+pm;
   document.getElementById('r_dT').textContent=dT.toFixed(1);
   document.getElementById('results').classList.remove('hidden');
   updateModel(nP);
 }
 
+function onModelChange(){
+  var pm=document.getElementById('plate_model').value;
+  var img=MODEL_IMAGES[pm]||'img/phoenix-apr7.png';
+  var pi=document.getElementById('product-img');
+  pi.style.opacity='0';
+  setTimeout(function(){pi.src=img;pi.style.opacity='1'},150);
+  document.getElementById('photo-badge').textContent=pm;
+  var m=MODELS[pm];
+  if(m){
+    document.getElementById('product-caption').textContent='Пластинчатый теплообменник Phoenix '+pm+' | '+m.nozzleDN+' | '+m.area+' м²/пластина | '+m.connection;
+    pi.alt='Phoenix '+pm;
+  }
+}
+
 /* ═══════════════════════════════════
-   3D — PROFESSIONAL (как React-версия)
+   3D — PROFESSIONAL
    ═══════════════════════════════════ */
-var scene,camera,renderer,controls;
+var scene,camera,renderer;
 var heatGroup=null;
 var nPlates=31,currentMode='assembled',xrayOn=false;
-var animId;
 
-var C={plateW:0.260,plateH:0.520,plateTh:0.0006,plateGap:0.0028,
-  frameW:0.310,frameH:0.580,frameTh:0.045,
-  nozzleR:0.024,nozzleLen:0.075,flangeR:0.040,flangeTh:0.014,
-  nozzlePos:[[-0.070,0.200],[0.070,0.200],[-0.070,-0.200],[0.070,-0.200]],
-  guideR:0.012,guideYTop:0.320,guideYBot:-0.320,
-  boltR:0.007,nutR:0.012,nutH:0.012,washerR:0.015,washerH:0.002,
-  boltPos:[[-0.130,0.250],[0.130,0.250],[-0.130,0],[0.130,0],[-0.130,-0.250],[0.130,-0.250]],
-  legW:0.080,legH:0.005,legD:0.100,legStandH:0.060,legStandTh:0.005,
-  portR:0.020};
+/* Масштаб: 1 единица = 1 метр. Ось Y вверх. */
+var C={plateW:0.300,plateH:0.596,plateTh:0.0006,plateGap:0.0028,
+  frameW:0.350,frameH:0.660,frameTh:0.040,
+  nozzleR:0.022,nozzleLen:0.070,flangeR:0.038,flangeTh:0.012,
+  nozzlePos:[[-0.080,0.220],[0.080,0.220],[-0.080,-0.220],[0.080,-0.220]],
+  guideR:0.011,guideYTop:0.350,guideYBot:-0.350,
+  boltR:0.006,nutR:0.011,nutH:0.010,washerR:0.014,washerH:0.002,
+  boltPos:[[-0.145,0.280],[0.145,0.280],[-0.145,0],[0.145,0],[-0.145,-0.280],[0.145,-0.280]],
+  legW:0.070,legH:0.004,legD:0.090,legStandH:0.055,legStandTh:0.004,
+  portR:0.018};
+
+function scaleCforModel(pm){
+  var m=MODELS[pm];if(!m)return;
+  var ref=MODELS['APR-7'];
+  var sw=m.w/ref.w, sh=m.h/ref.h;
+  C.plateW=ref.w*sw; C.plateH=ref.h*sh;
+  C.frameW=C.plateW*1.17; C.frameH=C.plateH*1.12;
+  var nf=Math.max(4,Math.round(Math.sqrt(m.area/ref.area)));
+  C.nozzlePos=[[-C.frameW*0.23, C.frameH*0.33],[C.frameW*0.23, C.frameH*0.33],
+               [-C.frameW*0.23,-C.frameH*0.33],[C.frameW*0.23,-C.frameH*0.33]];
+  C.guideYTop=C.frameH*0.53; C.guideYBot=-C.frameH*0.53;
+  C.boltPos=[[-C.frameW*0.41,C.frameH*0.42],[C.frameW*0.41,C.frameH*0.42],
+             [-C.frameW*0.41,0],[C.frameW*0.41,0],
+             [-C.frameW*0.41,-C.frameH*0.42],[C.frameW*0.41,-C.frameH*0.42]];
+  C.nozzleR=Math.max(0.016,Math.min(0.035,m.du/1000*0.5));
+  C.flangeR=C.nozzleR*1.7;
+  C.portR=C.nozzleR*0.8;
+  C.legStandH=C.frameH*0.09;
+}
 
 var MAT={};
 function initMAT(){
@@ -261,17 +359,16 @@ function initMAT(){
   MAT.xrayPlate=new THREE.MeshStandardMaterial({color:0x64748b,transparent:true,opacity:0.08,metalness:0.2,roughness:0.7,depthWrite:false,side:THREE.DoubleSide});
 }
 
+var _edgeMat=new THREE.LineBasicMaterial({color:0x4b5563});
 function addE(mesh,threshold){
-  var eg=new THREE.EdgesGeometry(mesh.geometry,threshold||15);
-  mesh.add(new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:0x4b5563})));
+  mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry,threshold||15),_edgeMat));
 }
 
 function makeHexNut(pos){
   var shape=new THREE.Shape();
   for(var i=0;i<6;i++){
     var a=(Math.PI/3)*i-Math.PI/6;
-    var x=C.nutR*Math.cos(a),y=C.nutR*Math.sin(a);
-    i===0?shape.moveTo(x,y):shape.lineTo(x,y);
+    i===0?shape.moveTo(C.nutR*Math.cos(a),C.nutR*Math.sin(a)):shape.lineTo(C.nutR*Math.cos(a),C.nutR*Math.sin(a));
   }
   shape.closePath();
   var hole=new THREE.Path();
@@ -280,52 +377,47 @@ function makeHexNut(pos){
     i===0?hole.moveTo(C.boltR*Math.cos(a),C.boltR*Math.sin(a)):hole.lineTo(C.boltR*Math.cos(a),C.boltR*Math.sin(a));
   }
   shape.holes.push(hole);
-  var geo=new THREE.ExtrudeGeometry(shape,{depth:C.nutH,bevelEnabled:true,bevelThickness:0.001,bevelSize:0.0008,bevelSegments:2});
-  var m=new THREE.Mesh(geo,xrayOn?MAT.xray:MAT.nut);
-  m.position.set(pos[0],pos[1],pos[2]-C.nutH/2);
-  m.rotation.set(Math.PI/2,0,0);
-  addE(m,20);
-  return m;
+  var g=new THREE.Group();g.position.set(pos[0],pos[1],pos[2]);
+  var body=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:C.nutH,bevelEnabled:false}),xrayOn?MAT.xray:MAT.nut);
+  body.rotation.x=Math.PI/2;body.position.y=-C.nutH/2;addE(body,25);g.add(body);
+  var washer=new THREE.Mesh(new THREE.CylinderGeometry(C.washerR,C.washerR,C.washerH,20),xrayOn?MAT.xray:MAT.nut);
+  washer.position.y=-C.nutH-C.washerH/2;addE(washer);g.add(washer);
+  var bolt=new THREE.Mesh(new THREE.CylinderGeometry(C.boltR,C.boltR,C.nutH*1.5,12),xrayOn?MAT.xray:MAT.bolt);
+  bolt.position.y=C.nutH*0.3;addE(bolt);g.add(bolt);
+  return g;
 }
 
 function makeNozzle(pos,dir){
-  var g=new THREE.Group();
-  g.position.set(pos[0],pos[1],pos[2]);
-  // Труба
-  var pipe=new THREE.Mesh(new THREE.CylinderGeometry(C.nozzleR,C.nozzleR,C.nozzleLen,32),xrayOn?MAT.xray:MAT.nozzle);
-  pipe.rotation.x=Math.PI/2;pipe.position.z=dir*C.nozzleLen/2;addE(pipe);g.add(pipe);
-  // Отверстие
-  var hole=new THREE.Mesh(new THREE.CylinderGeometry(C.nozzleR*0.75,C.nozzleR*0.75,0.003,24),MAT.dark);
-  hole.rotation.x=Math.PI/2;hole.position.z=dir*C.nozzleLen;g.add(hole);
-  // Фланец
-  var fl=new THREE.Mesh(new THREE.CylinderGeometry(C.flangeR,C.flangeR,C.flangeTh,32),xrayOn?MAT.xray:MAT.nozzle);
-  fl.rotation.x=Math.PI/2;fl.position.z=dir*C.nozzleLen;addE(fl);g.add(fl);
-  // Болты фланца
+  var g=new THREE.Group();g.position.set(pos[0],pos[1],pos[2]);
+  var mat=xrayOn?MAT.xray:MAT.nozzle;
+  var pipe=new THREE.Mesh(new THREE.CylinderGeometry(C.nozzleR,C.nozzleR,C.nozzleLen,20),mat);
+  pipe.rotation.x=Math.PI/2;pipe.position.z=-C.nozzleLen/2*dir;addE(pipe);g.add(pipe);
+  var flange=new THREE.Mesh(new THREE.CylinderGeometry(C.flangeR,C.flangeR,C.flangeTh,24),mat);
+  flange.rotation.x=Math.PI/2;flange.position.z=-(C.nozzleLen+C.flangeTh/2)*dir;addE(flange);g.add(flange);
   for(var i=0;i<4;i++){
-    var a=(Math.PI/2)*i+Math.PI/4;
-    var b=new THREE.Mesh(new THREE.CylinderGeometry(0.003,0.003,C.flangeTh+0.002,8),MAT.dark);
-    b.rotation.x=Math.PI/2;b.position.set(0.032*Math.cos(a),0.032*Math.sin(a),dir*C.nozzleLen);g.add(b);
+    var a=(Math.PI*2*i)/4;
+    var bx=C.flangeR*0.75*Math.cos(a),by=C.flangeR*0.75*Math.sin(a);
+    var bPos=new THREE.Vector3(bx,by,-(C.nozzleLen+C.flangeTh)*dir);
+    g.add(makeHexNut([bPos.x,bPos.y,bPos.z]));
   }
   return g;
 }
 
-function makePlate(z,idx){
-  var g=new THREE.Group();g.position.z=z;
-  var w=C.plateW,h=C.plateH,sx=40,sy=50,amp=0.0012,freq=35;
+function makePlate(idx){
+  var w=C.plateW,h=C.plateH;
+  var segX=50,segY=70;
   var pos=[],nrm=[],idxArr=[];
-  for(var iy=0;iy<=sy;iy++){
-    for(var ix=0;ix<=sx;ix++){
-      var u=ix/sx,v=iy/sy;
-      var x=(u-0.5)*w,y=(v-0.5)*h;
-      var inPort=false;
-      for(var p=0;p<C.nozzlePos.length;p++){
-        if(Math.pow(x-C.nozzlePos[p][0],2)+Math.pow(y-C.nozzlePos[p][1],2)<C.portR*C.portR){inPort=true;break}
-      }
-      var z2=inPort?0:amp*Math.sin(freq*Math.PI*(u+v*0.4));
-      pos.push(x,y,z2);nrm.push(0,0,1);
-      if(ix<sx&&iy<sy){
-        var a=iy*(sx+1)+ix;
-        idxArr.push(a,a+sx+1,a+1,a+1,a+sx+1,a+sx+2);
+  for(var iy=0;iy<=segY;iy++){
+    for(var ix=0;ix<=segX;ix++){
+      var u=ix/segX-0.5,v=iy/segY-0.5;
+      var x=u*w,y=v*h;
+      var amp=0.0012,freq=35;
+      var z=Math.sin(v*freq)*amp*(0.5+0.5*Math.abs(Math.cos(u*freq*0.7)));
+      pos.push(x,y,z);
+      nrm.push(0,0,1);
+      if(iy<segY&&ix<segX){
+        var a=iy*(segX+1)+ix,b=a+1,c=a+segX+1,d=c+1;
+        idxArr.push(a,c,b,b,c,d);
       }
     }
   }
@@ -334,18 +426,15 @@ function makePlate(z,idx){
   geo.setAttribute('normal',new THREE.Float32BufferAttribute(nrm,3));
   geo.setIndex(idxArr);geo.computeVertexNormals();
 
-  var mat=xrayOn?MAT.xrayPlate:MAT.plate;
-  var mesh=new THREE.Mesh(geo,mat);g.add(mesh);
-
-  // Прокладка
+  var g=new THREE.Group();
+  g.add(new THREE.Mesh(geo,xrayOn?MAT.xrayPlate:MAT.plate));
   if(!xrayOn){
     var isHot=idx%2===0;
     var ring=new THREE.Mesh(new THREE.RingGeometry(Math.min(w,h)*0.48,Math.min(w,h)*0.50,4),isHot?MAT.gasketHot:MAT.gasketCold);
     ring.position.z=0.0005;g.add(ring);
   }
-  // Порты
   for(var p=0;p<C.nozzlePos.length;p++){
-    var pm=new THREE.Mesh(new THREE.CircleGeometry(C.portR,24),new THREE.MeshBasicMaterial({color:p<2?0xef4444:0x3b82f6,transparent:true,opacity:xrayOn?0.04:0.12,side:THREE.DoubleSide}));
+    var pm=new THREE.Mesh(new THREE.CircleGeometry(C.portR,20),new THREE.MeshBasicMaterial({color:p<2?0xef4444:0x3b82f6,transparent:true,opacity:xrayOn?0.04:0.12,side:THREE.DoubleSide}));
     pm.position.set(C.nozzlePos[p][0],C.nozzlePos[p][1],0.0003);g.add(pm);
   }
   return g;
@@ -354,33 +443,27 @@ function makePlate(z,idx){
 function makeFrame(z,isFront){
   var g=new THREE.Group();g.position.z=z;
   var mat=xrayOn?MAT.xray:MAT.frame;
-  // Основное тело
   var body=new THREE.Mesh(new THREE.BoxGeometry(C.frameW,C.frameH,C.frameTh),mat);addE(body);g.add(body);
-  // Рёбра жёсткости горизонтальные
   for(var i=0;i<5;i++){
     var y=C.frameH*(-0.4+0.2*i);
-    var zOff=isFront?-C.frameTh/2-0.008:C.frameTh/2+0.008;
-    var rib=new THREE.Mesh(new THREE.BoxGeometry(C.frameW*0.92,0.010,0.016),mat);
+    var zOff=isFront?-C.frameTh/2-0.007:C.frameTh/2+0.007;
+    var rib=new THREE.Mesh(new THREE.BoxGeometry(C.frameW*0.92,0.008,0.014),mat);
     rib.position.set(0,y,zOff);addE(rib,20);g.add(rib);
   }
-  // Рёbra вертикальные
   [-1,1].forEach(function(s){
-    var zOff=isFront?-C.frameTh/2-0.008:C.frameTh/2+0.008;
-    var rib=new THREE.Mesh(new THREE.BoxGeometry(0.010,C.frameH*0.85,0.016),mat);
+    var zOff=isFront?-C.frameTh/2-0.007:C.frameTh/2+0.007;
+    var rib=new THREE.Mesh(new THREE.BoxGeometry(0.008,C.frameH*0.85,0.014),mat);
     rib.position.set(s*C.frameW*0.38,0,zOff);addE(rib,20);g.add(rib);
   });
-  // Отверстия под направляющие
   [C.guideYTop,C.guideYBot].forEach(function(gy){
-    var hole=new THREE.Mesh(new THREE.CylinderGeometry(C.guideR+0.003,C.guideR+0.003,C.frameTh+0.002,24),mat);
+    var hole=new THREE.Mesh(new THREE.CylinderGeometry(C.guideR+0.003,C.guideR+0.003,C.frameTh+0.002,20),mat);
     hole.position.y=gy;g.add(hole);
   });
-  // Патрубки (только передняя)
   if(isFront&&!xrayOn){
     C.nozzlePos.forEach(function(np){g.add(makeNozzle([np[0],np[1],-C.frameTh/2],-1))});
   }
-  // Отверстия под болты
   C.boltPos.forEach(function(bp){
-    var bh=new THREE.Mesh(new THREE.CylinderGeometry(C.boltR+0.002,C.boltR+0.002,C.frameTh+0.002,16),MAT.dark);
+    var bh=new THREE.Mesh(new THREE.CylinderGeometry(C.boltR+0.002,C.boltR+0.002,C.frameTh+0.002,12),MAT.dark);
     bh.position.set(bp[0],bp[1],0);g.add(bh);
   });
   return g;
@@ -396,7 +479,7 @@ function makeLeg(pos){
   var brace=new THREE.Mesh(new THREE.BoxGeometry(C.legW*0.25,C.legStandH*0.35,C.legStandTh),MAT.frame);
   brace.position.set(C.legW*0.15,-C.legStandH*0.6,0);addE(brace,20);g.add(brace);
   [-0.025,0.025].forEach(function(dz){
-    var hole=new THREE.Mesh(new THREE.CylinderGeometry(0.005,0.005,C.legH+0.002,12),MAT.dark);
+    var hole=new THREE.Mesh(new THREE.CylinderGeometry(0.004,0.004,C.legH+0.002,10),MAT.dark);
     hole.position.set(C.legW/2,-C.legStandH+C.legH/2+0.001,dz);g.add(hole);
   });
   return g;
@@ -405,7 +488,6 @@ function makeLeg(pos){
 function buildAssembly(){
   if(heatGroup){scene.remove(heatGroup)}
   heatGroup=new THREE.Group();
-
   var explode=currentMode==='exploded'?1:0;
   var gap=C.plateGap+C.plateTh+explode*0.035;
   var packLen=Math.max(0,(nPlates-1)*gap);
@@ -413,45 +495,32 @@ function buildAssembly(){
   var backZ=packLen/2+C.frameTh/2+0.004+explode*0.10;
   var totalSpan=Math.abs(backZ-frontZ)+C.frameTh;
 
-  // Рамы
   heatGroup.add(makeFrame(frontZ,true));
   heatGroup.add(makeFrame(backZ,false));
-
-  // Пластины
   for(var i=0;i<nPlates;i++){
     heatGroup.add(makePlate(-packLen/2+i*gap,i));
   }
 
-  // Направляющие балки
   var guideLen=totalSpan+0.04;
   var midZ=(frontZ+backZ)/2;
   [C.guideYTop,C.guideYBot].forEach(function(gy){
-    var guide=new THREE.Mesh(new THREE.CylinderGeometry(C.guideR,C.guideR,guideLen,24),xrayOn?MAT.xray:MAT.frame);
+    var guide=new THREE.Mesh(new THREE.CylinderGeometry(C.guideR,C.nozzleR*0.7,guideLen,20),xrayOn?MAT.xray:MAT.frame);
     guide.rotation.x=Math.PI/2;guide.position.set(0,gy,midZ);addE(guide);heatGroup.add(guide);
+    [frontZ-0.01,backZ+0.01].forEach(function(z){
+      var cap=new THREE.Mesh(new THREE.CylinderGeometry(C.nozzleR*0.8,C.nozzleR*0.8,0.008,16),xrayOn?MAT.xray:MAT.nut);
+      cap.rotation.x=Math.PI/2;cap.position.set(0,gy,z);addE(cap);heatGroup.add(cap);
+    });
   });
 
-  // Шпильки + гайки
-  if(!xrayOn){
-    C.boltPos.forEach(function(bp){
-      var bLen=totalSpan+0.06;
-      var bolt=new THREE.Mesh(new THREE.CylinderGeometry(C.boltR,C.boltR,bLen,12),MAT.bolt);
-      bolt.rotation.x=Math.PI/2;bolt.position.set(bp[0],bp[1],midZ);addE(bolt,20);heatGroup.add(bolt);
-      // Шайбы + гайки спереди
-      var fFace=frontZ-C.frameTh/2;
-      heatGroup.add(new THREE.Mesh(new THREE.CylinderGeometry(C.washerR,C.washerR,C.washerH,20),MAT.nut).translateX(bp[0]).translateY(bp[1]).translateZ(fFace-C.washerH/2));
-      heatGroup.add(makeHexNut([bp[0],bp[1],fFace-C.washerH-C.nutH/2-0.001]));
-      // Сзади
-      var bFace=backZ+C.frameTh/2;
-      heatGroup.add(new THREE.Mesh(new THREE.CylinderGeometry(C.washerR,C.washerR,C.washerH,20),MAT.nut).translateX(bp[0]).translateY(bp[1]).translateZ(bFace+C.washerH/2));
-      heatGroup.add(makeHexNut([bp[0],bp[1],bFace+C.washerH+C.nutH/2+0.001]));
-    });
-  }
+  var tieR=0.005;
+  C.boltPos.forEach(function(bp){
+    var tie=new THREE.Mesh(new THREE.CylinderGeometry(tieR,tieR,guideLen,8),xrayOn?MAT.xray:MAT.bolt);
+    tie.rotation.x=Math.PI/2;tie.position.set(bp[0],bp[1],midZ);addE(tie);heatGroup.add(tie);
+  });
 
-  // Ноги
-  [-1,1].forEach(function(side){
-    [frontZ,backZ].forEach(function(lz){
-      heatGroup.add(makeLeg([side*(C.frameW/2+0.005),-C.frameH/2,lz]));
-    });
+  var legY=-C.frameH/2-C.legStandH-0.005;
+  [[-C.frameW*0.35,legY,0],[C.frameW*0.35,legY,0]].forEach(function(pos){
+    heatGroup.add(makeLeg(pos));
   });
 
   scene.add(heatGroup);
@@ -459,23 +528,19 @@ function buildAssembly(){
 
 function init3D(){
   if(typeof THREE==='undefined')return;
-  var el=document.getElementById('viewer-loading');if(el)el.style.display='none';
   var container=document.getElementById('viewer-container');
   if(!container)return;
-  var w=container.clientWidth||600,h=container.clientHeight||500;
-
-  initMAT();
+  document.getElementById('viewer-loading').style.display='none';
 
   scene=new THREE.Scene();
   scene.background=new THREE.Color(0xeef1f5);
 
-  camera=new THREE.PerspectiveCamera(38,w/h,0.01,100);
-  camera.position.set(0.55,0.35,0.55);
-  camera.lookAt(0,0,0);
+  camera=new THREE.PerspectiveCamera(35,container.clientWidth/(container.clientHeight||420),0.05,20);
+  camera.position.set(0.6,0.4,1.0);camera.lookAt(0,0,0);
 
-  renderer=new THREE.WebGLRenderer({antialias:true});
-  renderer.setSize(w,h);
+  renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(container.clientWidth,container.clientHeight||420);
   renderer.shadowMap.enabled=true;
   renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
@@ -483,7 +548,6 @@ function init3D(){
   container.appendChild(renderer.domElement);
   renderer.domElement.id='canvas3d';
 
-  // Освещение (студия)
   scene.add(new THREE.AmbientLight(0xffffff,0.45));
   var dl1=new THREE.DirectionalLight(0xffffff,1.0);
   dl1.position.set(4,8,5);dl1.castShadow=true;
@@ -493,40 +557,27 @@ function init3D(){
   var dl2=new THREE.DirectionalLight(0xffffff,0.35);dl2.position.set(-3,5,-3);scene.add(dl2);
   var dl3=new THREE.DirectionalLight(0xe2e8f0,0.15);dl3.position.set(0,-2,4);scene.add(dl3);
 
-  // Тень на полу
-  var shadowGeo=new THREE.PlaneGeometry(3,3);
-  var shadowMat=new THREE.ShadowMaterial({opacity:0.35});
-  var shadowPlane=new THREE.Mesh(shadowGeo,shadowMat);
-  shadowPlane.rotation.x=-Math.PI/2;
-  shadowPlane.position.y=-C.frameH/2-C.legStandH-0.005;
-  shadowPlane.receiveShadow=true;
-  scene.add(shadowPlane);
+  var shadowPlane=new THREE.Mesh(new THREE.PlaneGeometry(3,3),new THREE.ShadowMaterial({opacity:0.35}));
+  shadowPlane.rotation.x=-Math.PI/2;shadowPlane.position.y=-C.frameH/2-C.legStandH-0.005;
+  shadowPlane.receiveShadow=true;scene.add(shadowPlane);
 
+  scaleCforModel(document.getElementById('plate_model').value);
   buildAssembly();
 
-  // Orbit Controls (hand-rolled)
   var sph={t:0.8,p:0.9,r:1.2};
   var drag=false,mx=0,my=0,pinchDist=0;
   var el=renderer.domElement;
-
   function updateCam(){
     camera.position.set(sph.r*Math.sin(sph.p)*Math.cos(sph.t),sph.r*Math.cos(sph.p),sph.r*Math.sin(sph.p)*Math.sin(sph.t));
     camera.lookAt(0,0,0);
   }
   updateCam();
-
   el.addEventListener('mousedown',function(e){if(e.button===0){drag=true;mx=e.clientX;my=e.clientY}});
-  el.addEventListener('mousemove',function(e){
-    if(!drag)return;
-    sph.t-=(e.clientX-mx)*0.008;
-    sph.p=Math.max(0.1,Math.min(3.0,sph.p-(e.clientY-my)*0.008));
-    mx=e.clientX;my=e.clientY;updateCam();
-  });
+  el.addEventListener('mousemove',function(e){if(!drag)return;sph.t-=(e.clientX-mx)*0.008;sph.p=Math.max(0.1,Math.min(3.0,sph.p-(e.clientY-my)*0.008));mx=e.clientX;my=e.clientY;updateCam()});
   el.addEventListener('mouseup',function(){drag=false});
   el.addEventListener('mouseleave',function(){drag=false});
   el.addEventListener('wheel',function(e){sph.r=Math.max(0.3,Math.min(3,sph.r+e.deltaY*0.001));updateCam();e.preventDefault()},{passive:false});
   el.addEventListener('contextmenu',function(e){e.preventDefault()});
-
   el.addEventListener('touchstart',function(e){
     if(e.touches.length===1){drag=true;mx=e.touches[0].clientX;my=e.touches[0].clientY}
     else if(e.touches.length===2){drag=false;var dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;pinchDist=Math.sqrt(dx*dx+dy*dy)}
@@ -538,24 +589,25 @@ function init3D(){
   el.addEventListener('touchend',function(){drag=false;pinchDist=0});
 
   window.addEventListener('resize',function(){
-    var w2=container.clientWidth||600,h2=container.clientHeight||500;
+    var w2=container.clientWidth||600,h2=container.clientHeight||420;
     camera.aspect=w2/h2;camera.updateProjectionMatrix();renderer.setSize(w2,h2);
   });
 
-  function animate(){
-    animId=requestAnimationFrame(animate);
-    if(currentMode==='rotate'&&heatGroup){heatGroup.rotation.y+=0.004}
-    renderer.render(scene,camera);
-  }
-  animate();
+  (function animate(){requestAnimationFrame(animate);if(currentMode==='rotate'&&heatGroup){heatGroup.rotation.y+=0.004}renderer.render(scene,camera)})();
 }
 
 function updateModel(n){
   nPlates=n;
-  if(heatGroup&&scene){buildAssembly()}
   var pm=document.getElementById('plate_model').value;
-  var mn={'APR-4':'Phoenix 2 SAPR-4','APR-7':'Phoenix 1 SAPR-7','APR-21':'Phoenix APR-21','APR-43':'Phoenix APR-43','APR-84':'Phoenix APR-84','APR-100':'Phoenix APR-100','TP-B-0.35':'Phoenix TP-B-0.35','TP-B-0.70':'Phoenix TP-B-0.70'};
-  document.getElementById('model_info').textContent=(mn[pm]||pm)+' | '+n+' пластин | '+document.getElementById('plate_material').value+' | '+document.getElementById('gasket_material').value;
+  scaleCforModel(pm);
+  if(heatGroup&&scene){buildAssembly()}
+  var mat=document.getElementById('plate_material').value;
+  var gk=document.getElementById('gasket_material').value;
+  var m=MODELS[pm];
+  var info='Phoenix '+pm;
+  if(m)info+=' | '+m.nozzleDN+' | '+m.area+' м²/пластина';
+  info+=' | '+n+' пластин | '+mat+' | '+gk;
+  document.getElementById('model_info').textContent=info;
 }
 
 function setMode(m){
