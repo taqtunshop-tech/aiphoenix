@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Калькулятор теплообменников — AIPhoenix</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="shared.css">
+<script>
+tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil-light':'#636e72',marker:'#d63031',blueprint:'#0984e3',green:'#00b894'},fontFamily:{sketch:['Caveat','cursive'],block:['"Architects Daughter"','cursive']}}}}
+</script>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+  #calculator-frame { width: 100%; height: calc(100vh - 80px); border: none; }
+  .nav-link { transition: all .2s; }
+  .nav-link:hover { background: #dfe6e9; }
+  .nav-link.active { border-bottom: 3px solid #0984e3; font-weight: 700; }
+  .loading-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: #0f172a; display: flex; align-items: center; justify-content: center;
+    z-index: 9999; transition: opacity .5s;
+  }
+  .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+  .spinner {
+    width: 48px; height: 48px; border: 4px solid rgba(0,153,230,.2);
+    border-top-color: #0099e6; border-radius: 50%; animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body class="bg-slate-950">
+
+<!-- Лоадер -->
+<div id="loader" class="loading-overlay">
+  <div class="text-center">
+    <div class="spinner mx-auto mb-4"></div>
+    <p class="text-white/60 font-block text-lg">Загрузка 3D калькулятора...</p>
+  </div>
+</div>
+
+<!-- Навигация (узкая полоса) -->
+<nav class="bg-slate-900/95 backdrop-blur border-b border-slate-700/50 px-4 py-2 flex items-center gap-4 relative z-50" style="height:56px">
+  <a href="index.html" class="flex items-center gap-2 text-white/70 hover:text-white transition-colors font-block text-sm">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="w-4 h-4"><path d="M3 12l9-9 9 9"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/></svg>
+    AIPhoenix
+  </a>
+  <span class="text-slate-600">|</span>
+  <span class="text-white font-bold text-sm flex items-center gap-1.5">
+    <span class="text-lg">🧮</span> 3D Калькулятор теплообменников
+  </span>
+  <div class="ml-auto flex items-center gap-3">
+    <span class="text-xs text-white/30 font-block hidden md:block">Phoenix Select — Online Calculator</span>
+    <a href="index.html" class="text-xs text-blueprint hover:text-blue-400 font-block transition-colors">← Назад к сайту</a>
+  </div>
+</nav>
+
+<!-- React App -->
+<iframe id="calculator-frame" src="calculator-app/index.html" onload="document.getElementById('loader').classList.add('hidden')"></iframe>
+
+<script>
+  // Автоскрытие лоадера через 8 секунд на случай если iframe не загрузится
+  setTimeout(function() {
+    var loader = document.getElementById('loader');
+    if (loader && !loader.classList.contains('hidden')) {
+      loader.classList.add('hidden');
+    }
+  }, 8000);
+</script>
+
+</body>
+</html>
