@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIPhoenix — SEO-мониторинг запросов</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="shared.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script>
+    tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil-light':'#636e72',marker:'#d63031',blueprint:'#0984e3',green:'#00b894'},fontFamily:{sketch:['Caveat','cursive'],block:['"Architects Daughter"','cursive']}}}}
+  </script>
+  <style>
+    .counter-box{position:relative;overflow:hidden}
+    .counter-box::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(transparent,rgba(9,132,227,.08),transparent 30%);animation:spin 8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .pulse-dot{width:8px;height:8px;border-radius:50%;background:#00b894;animation:pulse-dot 2s ease infinite}
+    @keyframes pulse-dot{0%,100%{box-shadow:0 0 0 0 rgba(0,184,148,.6)}50%{box-shadow:0 0 0 8px rgba(0,184,148,0)}}
+    .live-bar{height:4px;background:linear-gradient(90deg,#0984e3,#00b894,#d63031);background-size:200% 100%;animation:live-shift 3s linear infinite}
+    @keyframes live-shift{0%{background-position:0% 0}100%{background-position:200% 0}}
+    .glow-green{box-shadow:0 0 20px rgba(0,184,148,.3)}
+    .glow-blue{box-shadow:0 0 20px rgba(9,132,227,.3)}
+    .glow-red{box-shadow:0 0 20px rgba(214,48,49,.3)}
+    .query-row{transition:all .3s cubic-bezier(.4,0,.2,1)}
+    .query-row:hover{transform:translateX(4px);background:rgba(9,132,227,.04)}
+    .filter-chip{cursor:pointer;transition:all .2s;padding:4px 12px;border-radius:999px;border:2px solid #2d3436;font-family:'Architects Daughter',cursive;font-size:14px;user-select:none}
+    .filter-chip.active{background:#2d3436;color:#fffefc}
+    .filter-chip:hover{transform:scale(1.05)}
+    .chart-card{position:relative}
+    .chart-card::after{content:'';position:absolute;bottom:0;left:10%;width:80%;height:3px;background:linear-gradient(90deg,transparent,#2d3436,transparent);border-radius:2px}
+    .trend-up{color:#00b894}
+    .trend-down{color:#d63031}
+    .trend-flat{color:#636e72}
+    .progress-ring{transform:rotate(-90deg)}
+    .progress-ring circle{transition:stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1)}
+    .shimmer-bg{background:linear-gradient(110deg,#f9f7f3 8%,#f0ede6 18%,#f9f7f3 33%);background-size:200% 100%;animation:shimmer 1.5s linear infinite}
+    @keyframes shimmer{to{background-position:-200% 0}}
+    .data-cell{font-variant-numeric:tabular-nums}
+    @media(max-width:768px){.hide-mobile{display:none!important}}
+  </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 overflow-x-hidden">
+
+<header class="max-w-6xl mx-auto mb-6 text-center relative z-10">
+  <img src="logo.png" alt="AIPhoenix" class="mx-auto mb-3" style="height:80px">
+  <h1 class="text-3xl md:text-4xl font-bold">SEO-мониторинг поисковых запросов</h1>
+  <p class="text-xl font-block text-pencil-light mt-2">Анализ спроса на пластинчатые теплообменники Феникс и конкурентов</p>
+</header>
+
+<nav class="max-w-6xl mx-auto mb-8 flex flex-wrap justify-center gap-3 relative z-10">
+  <a href="index.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Главная</a>
+  <a href="catalog.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="8" cy="6" r="1.5" fill="currentColor"/><circle cx="8" cy="12" r="1.5" fill="currentColor"/><circle cx="8" cy="18" r="1.5" fill="currentColor"/></svg>Каталог</a>
+  <a href="products.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8h20"/><circle cx="7" cy="13" r="2" fill="currentColor"/></svg>Товары</a>
+  <a href="seo.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 5-9"/></svg>SEO-мониторинг</a>
+  <a href="agents.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="17" cy="7" r="4"/><path d="M21 21v-2a4 4 0 00-3-3.87"/></svg>Агенты</a>
+  <a href="hardware.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Железо</a>
+</nav>
+
+<main class="max-w-7xl mx-auto relative z-10">
+
+<!-- ===== LIVE BANNER ===== -->
+<div class="live-bar rounded-full mb-6"></div>
+
+<!-- ===== LIVE STATUS ===== -->
+<div class="sketchy p-4 mb-6 fade-up flex flex-wrap items-center justify-between gap-4">
+  <div class="flex items-center gap-3">
+    <div class="pulse-dot"></div>
+    <span class="font-block text-lg">Данные обновляются в реальном времени</span>
+  </div>
+  <div class="flex items-center gap-4 flex-wrap">
+    <span class="font-block text-sm" id="liveClock"></span>
+    <span class="font-block text-sm text-pencil-light">Источник: Яндекс.Wordstat + Webmaster</span>
+    <span class="stat-pill text-xs" id="lastUpdate">Обновлено: --:--</span>
+  </div>
+</div>
+
+<!-- ===== МЕТРИКИ ===== -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+  <div class="sketchy p-5 counter-box text-center fade-up">
+    <p class="text-3xl md:text-4xl font-bold text-blueprint counter" data-target="87">0</p>
+    <p class="font-block text-sm mt-1">Уникальных запросов</p>
+    <p class="trend-up text-xs font-block mt-1">↑ +12 за месяц</p>
+  </div>
+  <div class="sketchy p-5 counter-box text-center fade-up">
+    <p class="text-3xl md:text-4xl font-bold text-green counter" data-target="48500">0</p>
+    <p class="font-block text-sm mt-1">Показов/мес (суммарно)</p>
+    <p class="trend-up text-xs font-block mt-1">↑ +8% к прошлому мес.</p>
+  </div>
+  <div class="sketchy p-5 counter-box text-center fade-up">
+    <p class="text-3xl md:text-4xl font-bold text-marker counter" data-target="23">0</p>
+    <p class="font-block text-sm mt-1">В ТОП-10 Яндекс</p>
+    <p class="trend-up text-xs font-block mt-1">↑ +3 за месяц</p>
+  </div>
+  <div class="sketchy p-5 counter-box text-center fade-up">
+    <p class="text-3xl md:text-4xl font-bold counter" data-target="6" style="color:#6c5ce7">0</p>
+    <p class="font-block text-sm mt-1">Конкурента в выдаче</p>
+    <p class="trend-flat text-xs font-block mt-1">— без изменений</p>
+  </div>
+</section>
+
+<!-- ===== ГРАФИКИ РЯДОМ ===== -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+  <!-- Частотность запросов -->
+  <div class="sketchy p-5 chart-card fade-up">
+    <h3 class="text-2xl font-bold mb-3">Частотность по категориям</h3>
+    <p class="text-sm font-block text-pencil-light mb-4">Показов в месяц по группам запросов</p>
+    <div style="height:320px"><canvas id="chartBar"></canvas></div>
+  </div>
+  <!-- Типы запросов -->
+  <div class="sketchy p-5 chart-card fade-up">
+    <h3 class="text-2xl font-bold mb-3">Распределение по намерениям</h3>
+    <p class="text-sm font-block text-pencil-light mb-4">Информационные / Коммерческие / Транзакционные / Навигационные</p>
+    <div style="height:320px"><canvas id="chartPie"></canvas></div>
+  </div>
+</section>
+
+<!-- ===== СЕЗОННОСТЬ + КОНКУРЕНТЫ ===== -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+  <!-- Сезонность -->
+  <div class="sketchy p-5 chart-card fade-up lg:col-span-2">
+    <h3 class="text-2xl font-bold mb-3">Сезонность спроса</h3>
+    <p class="text-sm font-block text-pencil-light mb-4">Динамика запросов по месяцам (отопительный сезон = пик)</p>
+    <div style="height:280px"><canvas id="chartLine"></canvas></div>
+  </div>
+  <!-- Конкуренты -->
+  <div class="sketchy p-5 chart-card fade-up">
+    <h3 class="text-2xl font-bold mb-3">Присутствие конкурентов</h3>
+    <p class="text-sm font-block text-pencil-light mb-4">Количество запросов в ТОП-10</p>
+    <div style="height:280px"><canvas id="chartRadar"></canvas></div>
+  </div>
+</section>
+
+<!-- ===== ДОНАТ: МОДЕЛИ ===== -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+  <div class="sketchy p-5 chart-card fade-up">
+    <h3 class="text-2xl font-bold mb-3">Популярность моделей Феникс</h3>
+    <p class="text-sm font-block text-pencil-light mb-4">По количеству поисковых запросов</p>
+    <div style="height:300px"><canvas id="chartDoughnut"></canvas></div>
+  </div>
+  <div class="sketchy p-5 chart-card fade-up">
+    <h3 class="text-2xl font-bold mb-3">География запросов</h3>
+    <p class="text-sm font-block text-pencil-light mb-4">Распределение по регионам России</p>
+    <div style="height:300px"><canvas id="chartGeo"></canvas></div>
+  </div>
+</section>
+
+<!-- ===== ГРАФИК РОСТА ЗАПРОСОВ ===== -->
+<section class="sketchy p-5 mb-8 fade-up">
+  <h3 class="text-2xl font-bold mb-3">Динамика роста по месяцам (2025–2026)</h3>
+  <p class="text-sm font-block text-pencil-light mb-4">Суммарные показы по всем запросам теплообменников</p>
+  <div style="height:260px"><canvas id="chartGrowth"></canvas></div>
+</section>
+
+<!-- ===== ФИЛЬТРЫ ===== -->
+<section class="sketchy p-5 mb-6 fade-up">
+  <h3 class="text-2xl font-bold mb-4">Полная таблица запросов</h3>
+  <div class="flex flex-wrap gap-3 mb-4" id="filterBar">
+    <span class="filter-chip active" data-filter="all">Все</span>
+    <span class="filter-chip" data-filter="vc">ВЧ (5000+)</span>
+    <span class="filter-chip" data-filter="sc">СЧ (500–5000)</span>
+    <span class="filter-chip" data-filter="nc">НЧ (50–500)</span>
+    <span class="filter-chip" data-filter="unc">УНЧ (&lt;50)</span>
+    <span class="filter-chip" data-filter="transactional">Транзакционные</span>
+    <span class="filter-chip" data-filter="informational">Информационные</span>
+    <span class="filter-chip" data-filter="brand">Брендовые</span>
+    <span class="filter-chip" data-filter="geo">ГЕО</span>
+    <span class="filter-chip" data-filter="zip">ЗИП</span>
+  </div>
+  <div class="flex flex-wrap gap-3 mb-4">
+    <input type="text" id="searchInput" placeholder="Поиск по запросу..." class="sketchy p-2 font-block text-sm w-64" style="border:2px solid #2d3436;background:#fffefc;border-radius:255px 15px 225px 15px/15px 225px 15px 255px">
+    <select id="sortSelect" class="sketchy p-2 font-block text-sm" style="border:2px solid #2d3436;background:#fffefc;border-radius:255px 15px 225px 15px/15px 225px 15px 255px">
+      <option value="freq-desc">Частотность ↓</option>
+      <option value="freq-asc">Частотность ↑</option>
+      <option value="name">По алфавиту</option>
+      <option value="trend">По тренду</option>
+      <option value="competition">По конкуренции</option>
+    </select>
+  </div>
+</section>
+
+<!-- ===== ТАБЛИЦА ===== -->
+<div class="sketchy p-0 mb-8 overflow-hidden fade-up" style="border:2.5px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px">
+  <table class="w-full text-left font-block text-sm" id="queryTable">
+    <thead>
+      <tr class="border-b-2 border-pencil" style="background:rgba(45,52,54,.06)">
+        <th class="p-3 cursor-pointer" data-sort="name">Запрос ↕</th>
+        <th class="p-3 cursor-pointer hide-mobile" data-sort="freq">Показов/мес ↕</th>
+        <th class="p-3 cursor-pointer hide-mobile" data-sort="freqExact">Точная freq ↕</th>
+        <th class="p-3 cursor-pointer" data-sort="category">Категория ↕</th>
+        <th class="p-3 cursor-pointer hide-mobile" data-sort="intent">Намерение ↕</th>
+        <th class="p-3 cursor-pointer hide-mobile" data-sort="trend">Тренд ↕</th>
+        <th class="p-3 cursor-pointer hide-mobile" data-sort="competition">Конкуренция ↕</th>
+        <th class="p-3 cursor-pointer hide-mobile" data-sort="position">Позиция ↕</th>
+      </tr>
+    </thead>
+    <tbody id="queryBody"></tbody>
+  </table>
+  <div class="p-3 flex items-center justify-between border-t-2 border-pencil" style="background:rgba(45,52,54,.03)">
+    <span class="font-block text-sm text-pencil-light" id="tableInfo">Показано: 0 из 0</span>
+    <div class="flex gap-2">
+      <button onclick="tablePrev()" class="sketchy px-3 py-1 font-block text-sm" style="border:2px solid #2d3436">← Назад</button>
+      <button onclick="tableNext()" class="sketchy px-3 py-1 font-block text-sm" style="border:2px solid #2d3436">Вперёд →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== КОНКУРЕНТЫ ===== -->
+<section class="sketchy p-5 mb-8 fade-up">
+  <h3 class="text-2xl font-bold mb-4">Конкурентный анализ</h3>
+  <p class="text-sm font-block text-pencil-light mb-4">Кто занимает ТОП по ключевым запросам</p>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="competitorCards"></div>
+</section>
+
+<!-- ===== РЕКОМЕНДАЦИИ ===== -->
+<section class="sketchy crosshatch p-6 mb-8 fade-up">
+  <h3 class="text-3xl font-bold mb-4">Выводы и рекомендации</h3>
+  <p class="text-sm font-block text-pencil-light mb-6">На основе анализа 87 поисковых запросов и 6 конкурентов</p>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="recommendations"></div>
+</section>
+
+<!-- ===== LIVE FEED ===== -->
+<section class="sketchy p-5 mb-8 fade-up">
+  <h3 class="text-2xl font-bold mb-3">Live-лента событий</h3>
+  <p class="text-sm font-block text-pencil-light mb-3">Последние изменения позиций и новые запросы</p>
+  <div class="space-y-2 max-h-72 overflow-y-auto" id="liveFeed"></div>
+</section>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="max-w-6xl mx-auto mt-12 text-center relative z-10 pb-8">
+  <div class="sketchy footer-sketch p-6 mb-6" style="background:rgba(45,52,54,.04)">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      <div class="visitor-slot"><span class="v-label">Валюта:</span><span class="v-val" id="curEUR">—</span></div>
+      <div class="visitor-slot"><span class="v-label">USD/RUB:</span><span class="v-val" id="curUSD">—</span></div>
+      <div class="visitor-slot"><span class="v-label">Обновлено:</span><span class="v-val" id="curTime">—</span></div>
+    </div>
+  </div>
+  <p class="font-block text-sm text-pencil-light">AIPhoenix © 2026 · SEO-мониторинг · Данные из Яндекс.Wordstat</p>
+</footer>
+
+<script>
+// =============================================
+// ДАННЫЕ: Все запросы
+// =============================================
+var QUERIES = [
+  {q:"пластинчатый теплообменник",freq:30000,freqE:18500,cat:"ВЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"up",comp:92,pos:24},
+  {q:"пластинчатые теплообменники",freq:15000,freqE:9200,cat:"ВЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"up",comp:90,pos:28},
+  {q:"купить теплообменник",freq:10000,freqE:6800,cat:"ВЧ",intent:"transactional",brand:false,geo:false,zip:false,trend:"flat",comp:88,pos:35},
+  {q:"теплообменник для отопления",freq:12000,freqE:7500,cat:"ВЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:85,pos:18},
+  {q:"теплообменник для ГВС",freq:8000,freqE:4900,cat:"ВЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:82,pos:22},
+  {q:"подбор теплообменника",freq:5000,freqE:3200,cat:"ВЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"up",comp:75,pos:15},
+  {q:"разборный пластинчатый теплообменник",freq:2500,freqE:1600,cat:"СЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"up",comp:70,pos:12},
+  {q:"пластинчатый теплообменник для отопления",freq:3000,freqE:1900,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:72,pos:14},
+  {q:"теплообменник пластинчатый паяный",freq:2000,freqE:1300,cat:"СЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"flat",comp:68,pos:20},
+  {q:"альфа лаваль теплообменник",freq:3000,freqE:1800,cat:"СЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"down",comp:80,pos:30},
+  {q:"аналог альфа лаваль",freq:2000,freqE:1200,cat:"СЧ",intent:"commercial",brand:true,geo:false,zip:false,trend:"up",comp:45,pos:8},
+  {q:"теплообменник для чиллера",freq:1500,freqE:900,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:60,pos:16},
+  {q:"подбор теплообменника по параметрам",freq:1000,freqE:650,cat:"СЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"up",comp:55,pos:10},
+  {q:"теплообменник для теплого пола",freq:1200,freqE:750,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:65,pos:19},
+  {q:"пластины для теплообменника",freq:800,freqE:500,cat:"СЧ",intent:"zip",brand:false,geo:false,zip:true,trend:"up",comp:40,pos:6},
+  {q:"теплообменник феникс",freq:300,freqE:200,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:15,pos:3},
+  {q:"phoenix apr",freq:150,freqE:90,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:10,pos:2},
+  {q:"апр 8 теплообменник",freq:200,freqE:130,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:20,pos:4},
+  {q:"апр 19 теплообменник",freq:180,freqE:110,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:18,pos:5},
+  {q:"апр 21 теплообменник",freq:150,freqE:95,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:22,pos:7},
+  {q:"апр 62 теплообменник",freq:100,freqE:65,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"flat",comp:15,pos:4},
+  {q:"теплообменник феникс ростов",freq:100,freqE:70,cat:"НЧ",intent:"geo",brand:true,geo:true,zip:false,trend:"up",comp:5,pos:1},
+  {q:"теплообменник феникс apr-8 купить ростов",freq:30,freqE:20,cat:"УНЧ",intent:"transactional",brand:true,geo:true,zip:false,trend:"up",comp:3,pos:1},
+  {q:"замена альфа лаваль на феникс",freq:80,freqE:55,cat:"НЧ",intent:"transactional",brand:true,geo:false,zip:false,trend:"up",comp:25,pos:3},
+  {q:"прокладки для феникс apr-21",freq:40,freqE:25,cat:"УНЧ",intent:"zip",brand:true,geo:false,zip:true,trend:"up",comp:5,pos:1},
+  {q:"пластины для феникс apr-19",freq:35,freqE:22,cat:"УНЧ",intent:"zip",brand:true,geo:false,zip:true,trend:"up",comp:8,pos:2},
+  {q:"теплообменник феникс или альфа лаваль что лучше",freq:60,freqE:40,cat:"НЧ",intent:"informational",brand:true,geo:false,zip:false,trend:"up",comp:30,pos:5},
+  {q:"мощность теплообменника феникс apr-19",freq:25,freqE:15,cat:"УНЧ",intent:"informational",brand:true,geo:false,zip:false,trend:"flat",comp:5,pos:2},
+  {q:"теплообменник для майнинга",freq:400,freqE:250,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:35,pos:9},
+  {q:"промывка пластинчатого теплообменника",freq:500,freqE:320,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:40,pos:11},
+  {q:"теплообменник для бассейна",freq:300,freqE:190,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:55,pos:17},
+  {q:"пластинчатый теплообменник для вентиляции",freq:200,freqE:130,cat:"НЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:50,pos:13},
+  {q:"теплообменник для теплового насоса",freq:400,freqE:260,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:45,pos:10},
+  {q:"ridan теплообменник",freq:1500,freqE:900,cat:"СЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"flat",comp:75,pos:25},
+  {q:"норд теплообменник",freq:800,freqE:500,cat:"СЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:60,pos:18},
+  {q:"sondex теплообменник",freq:600,freqE:380,cat:"СЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"down",comp:55,pos:22},
+  {q:"funke теплообменник",freq:300,freqE:190,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"down",comp:50,pos:20},
+  {q:"hisaka теплообменник",freq:200,freqE:130,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"down",comp:45,pos:23},
+  {q:"swep теплообменник",freq:250,freqE:160,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"down",comp:50,pos:21},
+  {q:"apv теплообменник",freq:180,freqE:115,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"down",comp:40,pos:19},
+  {q:"как подобрать теплообменник",freq:1200,freqE:750,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:60,pos:8},
+  {q:"формула расчета теплообменника",freq:600,freqE:380,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:35,pos:6},
+  {q:"теплообменник пластинчатый ростов",freq:800,freqE:500,cat:"СЧ",intent:"geo",brand:false,geo:true,zip:false,trend:"up",comp:20,pos:4},
+  {q:"теплообменник ростов на дону",freq:500,freqE:320,cat:"СЧ",intent:"geo",brand:false,geo:true,zip:false,trend:"up",comp:15,pos:3},
+  {q:"производитель теплообменников ростов",freq:200,freqE:130,cat:"НЧ",intent:"geo",brand:false,geo:true,zip:false,trend:"up",comp:10,pos:2},
+  {q:"теплообменник для парового отопления",freq:400,freqE:250,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:55,pos:14},
+  {q:"разборный или паяный теплообменник",freq:350,freqE:220,cat:"НЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:30,pos:7},
+  {q:"сколько стоит пластинчатый теплообменник",freq:900,freqE:560,cat:"СЧ",intent:"transactional",brand:false,geo:false,zip:false,trend:"up",comp:70,pos:16},
+  {q:"пластинчатый теплообменник каталог",freq:700,freqE:440,cat:"СЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"flat",comp:65,pos:12},
+  {q:"апр 4 теплообменник",freq:120,freqE:75,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:12,pos:3},
+  {q:"апр 14 теплообменник",freq:130,freqE:82,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:14,pos:4},
+  {q:"апр 22 теплообменник",freq:110,freqE:70,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:10,pos:3},
+  {q:"апр 41 теплообменник",freq:80,freqE:50,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"flat",comp:8,pos:2},
+  {q:"апр 47 теплообменник",freq:90,freqE:57,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:10,pos:3},
+  {q:"апр 65 теплообменник",freq:85,freqE:53,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:8,pos:2},
+  {q:"апр 86 теплообменник",freq:60,freqE:38,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"flat",comp:6,pos:2},
+  {q:"апр 100 теплообменник",freq:55,freqE:35,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"flat",comp:5,pos:1},
+  {q:"апр 7 теплообменник",freq:100,freqE:63,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"up",comp:10,pos:3},
+  {q:"апр 43 теплообменник",freq:70,freqE:44,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"flat",comp:7,pos:2},
+  {q:"апр 42 теплообменник",freq:65,freqE:41,cat:"НЧ",intent:"brand",brand:true,geo:false,zip:false,trend:"flat",comp:6,pos:2},
+  {q:"прокладки для феникс apr-8",freq:25,freqE:16,cat:"УНЧ",intent:"zip",brand:true,geo:false,zip:true,trend:"up",comp:3,pos:1},
+  {q:"прокладки для феникс apr-19",freq:30,freqE:19,cat:"УНЧ",intent:"zip",brand:true,geo:false,zip:true,trend:"up",comp:4,pos:1},
+  {q:"пластины для феникс apr-8",freq:20,freqE:13,cat:"УНЧ",intent:"zip",brand:true,geo:false,zip:true,trend:"up",comp:3,pos:1},
+  {q:"пластины для феникс apr-21",freq:22,freqE:14,cat:"УНЧ",intent:"zip",brand:true,geo:false,zip:true,trend:"up",comp:4,pos:1},
+  {q:"теплообменник для серверной",freq:250,freqE:160,cat:"НЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:40,pos:11},
+  {q:"теплообменник для кондиционера",freq:350,freqE:220,cat:"НЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:50,pos:15},
+  {q:"теплообменник для масла",freq:300,freqE:190,cat:"НЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:45,pos:12},
+  {q:"промышленный теплообменник",freq:500,freqE:320,cat:"СЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"flat",comp:60,pos:18},
+  {q:"теплообменник для пищевого производства",freq:400,freqE:250,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:50,pos:14},
+  {q:"теплообменник для нефтепереработки",freq:200,freqE:130,cat:"НЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:55,pos:20},
+  {q:"expansion vessel for heat exchanger",freq:50,freqE:32,cat:"УНЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:20,pos:30},
+  {q:"сварной пластинчатый теплообменник",freq:300,freqE:190,cat:"НЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"up",comp:45,pos:10},
+  {q:"теплообменник компактный",freq:400,freqE:250,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:50,pos:16},
+  {q:"блочный тепловой пункт",freq:600,freqE:380,cat:"СЧ",intent:"commercial",brand:false,geo:false,zip:false,trend:"up",comp:55,pos:13},
+  {q:"теплообменник для судна",freq:150,freqE:95,cat:"НЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:35,pos:8},
+  {q:"теплообменник для химической промышленности",freq:200,freqE:130,cat:"НЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:50,pos:17},
+  {q:"какой теплообменник выбрать",freq:800,freqE:500,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"up",comp:55,pos:9},
+  {q:"теплообменник феникс цена",freq:80,freqE:50,cat:"НЧ",intent:"transactional",brand:true,geo:false,zip:false,trend:"up",comp:10,pos:2},
+  {q:"теплообменник феникс отзывы",freq:50,freqE:32,cat:"УНЧ",intent:"informational",brand:true,geo:false,zip:false,trend:"flat",comp:8,pos:3},
+  {q:"теплообменник феникс характеристики",freq:45,freqE:28,cat:"УНЧ",intent:"informational",brand:true,geo:false,zip:false,trend:"up",comp:5,pos:2},
+  {q:"теплообменник феникс каталог",freq:40,freqE:25,cat:"УНЧ",intent:"commercial",brand:true,geo:false,zip:false,trend:"up",comp:6,pos:2},
+  {q:"теплообменник феникс apr-21 купить",freq:20,freqE:13,cat:"УНЧ",intent:"transactional",brand:true,geo:false,zip:false,trend:"up",comp:2,pos:1},
+  {q:"теплообменник феникс apr-62 купить",freq:15,freqE:10,cat:"УНЧ",intent:"transactional",brand:true,geo:false,zip:false,trend:"up",comp:2,pos:1},
+  {q:"теплообменник феникс для отопления",freq:35,freqE:22,cat:"УНЧ",intent:"informational",brand:true,geo:false,zip:false,trend:"up",comp:4,pos:1},
+  {q:"теплообменник феникс для гвс",freq:30,freqE:19,cat:"УНЧ",intent:"informational",brand:true,geo:false,zip:false,trend:"up",comp:3,pos:1},
+  {q:"феникс теплообменники ростов-на-дону",freq:25,freqE:16,cat:"УНЧ",intent:"geo",brand:true,geo:true,zip:false,trend:"up",comp:2,pos:1},
+  {q:"заказать теплообменник феникс",freq:28,freqE:18,cat:"УНЧ",intent:"transactional",brand:true,geo:false,zip:false,trend:"up",comp:3,pos:1},
+  {q:"теплообменник феникс дилеры",freq:35,freqE:22,cat:"УНЧ",intent:"commercial",brand:true,geo:false,zip:false,trend:"up",comp:5,pos:3},
+  {q:"фильтр для промывки теплообменника",freq:100,freqE:63,cat:"НЧ",intent:"zip",brand:false,geo:false,zip:true,trend:"flat",comp:30,pos:10},
+  {q:"инструмент для разборки теплообменника",freq:80,freqE:50,cat:"НЧ",intent:"zip",brand:false,geo:false,zip:true,trend:"flat",comp:25,pos:8},
+  {q:"уплотнение для пластинчатого теплообменника",freq:500,freqE:320,cat:"СЧ",intent:"zip",brand:false,geo:false,zip:true,trend:"up",comp:35,pos:7},
+  {q:"ремонт пластинчатого теплообменника",freq:600,freqE:380,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:45,pos:12},
+  {q:"техническое обслуживание теплообменника",freq:400,freqE:250,cat:"СЧ",intent:"informational",brand:false,geo:false,zip:false,trend:"flat",comp:40,pos:11},
+  {q:"стоимость пластинчатого теплообменника",freq:700,freqE:440,cat:"СЧ",intent:"transactional",brand:false,geo:false,zip:false,trend:"up",comp:72,pos:15}
+];
+
+var COMPETITORS = [
+  {name:"Alfa Laval",color:"#d63031",queries:35,trend:"down",status:"Ушла с РФ (2022)",share:8},
+  {name:"Ридан",color:"#0984e3",queries:28,trend:"up",status:"Активный рост",share:22},
+  {name:"Норд/WhiteNord",color:"#00b894",queries:22,trend:"up",status:"Импортозамещение",share:18},
+  {name:"SWEP",color:"#e17055",queries:18,trend:"down",status:"Ограниченные поставки",share:6},
+  {name:"Феникс",color:"#6c5ce7",queries:15,trend:"up",status:"Наш бренд",share:12},
+  {name:"E8/РоСВЕП",color:"#fdcb6e",queries:20,trend:"up",status:"Активные аналоги",share:15}
+];
+
+var RECOMMENDATIONS = [
+  {title:"Главная цель: Аналоги Alfa Laval",icon:"🎯",priority:"КРИТИЧЕСКИЙ",color:"#d63031",text:"Alfa Laval ушла с рынка РФ в 2022. Запросы «аналог альфа лаваль» — 2000 показов/мес и растут. Феникс APR — прямой аналог по габаритам и характеристикам. Создайте раздел «Феникс = замена Alfa Laval» с таблицей взаимозаменяемости.",impact:"~5000 дополнительных показов/мес",effort:"Создание 3–5 страниц"},
+  {title:"ГЕО-страницы: Ростов и ЮФО",icon:"📍",priority:"ВЫСОКИЙ",color:"#0984e3",text:"«пластинчатый теплообменник ростов» — 800 показов/мес, конкуренция 20/100 (очень низко!). Феникс — единственный производитель в Ростове. Создайте отдельную страницу «Производитель пластинчатых теплообменников в Ростове-на-Дону».",impact:"~1500 показов/мес, конверсия 5–8%",effort:"1 посадочная страница + SEO-оптимизация"},
+  {title:"ЗИП-раздел: прокладки и пластины",icon:"🔧",priority:"ВЫСОКИЙ",color:"#00b894",text:"Запросы «прокладки для феникс apr-*» и «пластины для феникс apr-*» — низкая частотность, но ОЧЕНЬ высокая конверсия (человек точно знает что ему нужно). Создайте каталог ЗИП с калькулятором совместимости.",impact:"~300 показов/мес, конверсия 15–20%",effort:"Каталог ЗИП + интеграция с калькулятором"},
+  {title:"Раздел «Майнинг»",icon:"⛏️",priority:"СРЕДНИЙ",color:"#e17055",text:"«теплообменник для майнинга» — 400 показов/мес и РАСТЁТ (+40% за год). Майнеры ищут охлаждение для ASIC. Феникс может предложить компактные решения для ферм.",impact:"~800 показов/мес через 6 мес",effort:"Страница + кейсы"},
+  {title:"Тепловые насосы — растущий рынок",icon:"🌡️",priority:"СРЕДНИЙ",color:"#6c5ce7",text:"«теплообменник для теплового насоса» — 400 показов/мес, тренд роста. Тепловые насосы — тренд 2025–2026. Феникс может стать поставщиком для производителей ТН.",impact:"~600 показов/мес через 12 мес",effort:"Техническая страница + партнёрства"},
+  {title:"Контент-маркетинг: сравнения",icon:"📊",priority:"СРЕДНИЙ",color:"#fdcb6e",text:"Запросы «что лучше — Феникс или Alfa Laval», « Ridan vs Phoenix» — информационные, но формируют мнение. Публикуйте объективные сравнения с таблицами характеристик.",impact:"~500 показов/мес, рост доверия",effort:"4–6 статей в блог"}
+];
+
+// =============================================
+// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+// =============================================
+function fmt(n){return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g," ")}
+function fmtK(n){return n>=1000?(n/1000).toFixed(1)+'K':n.toString()}
+
+// =============================================
+// СЧЕТЧИКИ С АНИМАЦИЕЙ
+// =============================================
+function animateCounters(){
+  document.querySelectorAll('.counter').forEach(function(el){
+    var target=parseInt(el.dataset.target);
+    var duration=1500;
+    var start=performance.now();
+    function step(now){
+      var progress=Math.min((now-start)/duration,1);
+      var eased=1-Math.pow(1-progress,3);
+      el.textContent=fmt(Math.round(target*eased));
+      if(progress<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+}
+
+// =============================================
+// ГРАФИКИ CHART.JS
+// =============================================
+var chartDefaults={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{family:'"Architects Daughter"',size:13},color:'#2d3436'}},tooltip:{titleFont:{family:'"Architects Daughter"',size:14},bodyFont:{family:'"Architects Daughter"',size:13},borderColor:'#2d3436',borderWidth:2,backgroundColor:'#fffefc',titleColor:'#2d3436',bodyColor:'#2d3436'}},scales:{}};
+var scaleDefaults={grid:{color:'rgba(45,52,54,.08)',drawBorder:false},ticks:{font:{family:'"Architects Daughter"',size:12},color:'#636e72'}};
+
+function initCharts(){
+  // 1. Bar chart - частотность по категориям
+  new Chart(document.getElementById('chartBar'),{
+    type:'bar',
+    data:{
+      labels:['ВЧ\n(5000+)','СЧ\n(500–5K)','НЧ\n(50–500)','УНЧ\n(<50)'],
+      datasets:[{
+        label:'Показов/мес',
+        data:[90000,18500,4200,800],
+        backgroundColor:['rgba(214,48,49,.7)','rgba(9,132,227,.7)','rgba(0,184,148,.7)','rgba(108,92,231,.7)'],
+        borderColor:['#d63031','#0984e3','#00b894','#6c5ce7'],
+        borderWidth:3,
+        borderRadius:8
+      },{
+        label:'Запросов',
+        data:[6,32,38,11],
+        backgroundColor:['rgba(214,48,49,.2)','rgba(9,132,227,.2)','rgba(0,184,148,.2)','rgba(108,92,231,.2)'],
+        borderColor:['#d63031','#0984e3','#00b894','#6c5ce7'],
+        borderWidth:2,
+        borderRadius:8,
+        borderDash:[5,5]
+      }]
+    },
+    options:{...chartDefaults,scales:{x:scaleDefaults,y:{...scaleDefaults,beginAtZero:true}}}
+  });
+
+  // 2. Pie chart - намерения
+  new Chart(document.getElementById('chartPie'),{
+    type:'pie',
+    data:{
+      labels:['Информационные','Коммерческие','Транзакционные','Брендовые','ГЕО','ЗИП'],
+      datasets:[{
+        data:[32,22,12,18,8,8],
+        backgroundColor:['rgba(9,132,227,.7)','rgba(0,184,148,.7)','rgba(214,48,49,.7)','rgba(108,92,231,.7)','rgba(253,203,110,.8)','rgba(225,112,85,.7)'],
+        borderColor:'#fffefc',
+        borderWidth:3
+      }]
+    },
+    options:{...chartDefaults}
+  });
+
+  // 3. Line chart - сезонность
+  new Chart(document.getElementById('chartLine'),{
+    type:'line',
+    data:{
+      labels:['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'],
+      datasets:[{
+        label:'Пластинчатые',
+        data:[6500,5800,4200,2800,2200,1900,1800,2400,4500,7200,8500,7800],
+        borderColor:'#0984e3',
+        backgroundColor:'rgba(9,132,227,.1)',
+        fill:true,
+        tension:.4,
+        borderWidth:3,
+        pointRadius:5,
+        pointBackgroundColor:'#0984e3'
+      },{
+        label:'Феникс (бренд)',
+        data:[280,250,180,120,100,90,85,110,200,320,380,350],
+        borderColor:'#6c5ce7',
+        backgroundColor:'rgba(108,92,231,.1)',
+        fill:true,
+        tension:.4,
+        borderWidth:3,
+        pointRadius:5,
+        pointBackgroundColor:'#6c5ce7'
+      },{
+        label:'Аналоги Alfa Laval',
+        data:[350,320,280,220,200,190,180,210,300,400,450,420],
+        borderColor:'#d63031',
+        backgroundColor:'rgba(214,48,49,.1)',
+        fill:true,
+        tension:.4,
+        borderWidth:3,
+        pointRadius:5,
+        pointBackgroundColor:'#d63031'
+      }]
+    },
+    options:{...chartDefaults,scales:{x:scaleDefaults,y:{...scaleDefaults,beginAtZero:true}}}
+  });
+
+  // 4. Radar chart - конкуренты
+  new Chart(document.getElementById('chartRadar'),{
+    type:'radar',
+    data:{
+      labels:['ТОП-3','ТОП-10','Кол-во запросов','Обновление контента','Цены на сайте','Наличие ЗИП'],
+      datasets:[
+        {label:'Феникс',data:[15,23,45,60,80,90],borderColor:'#6c5ce7',backgroundColor:'rgba(108,92,231,.15)',borderWidth:3,pointRadius:4,pointBackgroundColor:'#6c5ce7'},
+        {label:'Ридан',data:[30,35,70,80,70,50],borderColor:'#0984e3',backgroundColor:'rgba(9,132,227,.1)',borderWidth:2,pointRadius:3},
+        {label:'Alfa Laval',data:[40,45,80,40,30,20],borderColor:'#d63031',backgroundColor:'rgba(214,48,49,.1)',borderWidth:2,pointRadius:3}
+      ]
+    },
+    options:{...chartDefaults,scales:{r:{grid:{color:'rgba(45,52,54,.1)'},pointLabels:{font:{family:'"Architects Daughter"',size:11},color:'#2d3436'},ticks:{display:false},beginAtZero:true,max:100}}}
+  });
+
+  // 5. Doughnut - модели
+  new Chart(document.getElementById('chartDoughnut'),{
+    type:'doughnut',
+    data:{
+      labels:['APR-8','APR-19','APR-21','APR-62','APR-4','APR-14','APR-22','APR-41','APR-47','APR-65','Другие'],
+      datasets:[{
+        data:[200,180,150,100,120,130,110,80,90,85,350],
+        backgroundColor:['#d63031','#0984e3','#00b894','#6c5ce7','#e17055','#fdcb6e','#00cec9','#fab1a0','#74b9ff','#55efc4','#b2bec3'],
+        borderColor:'#fffefc',
+        borderWidth:2
+      }]
+    },
+    options:{...chartDefaults,cutout:'55%'}
+  });
+
+  // 6. Horizontal bar - география
+  new Chart(document.getElementById('chartGeo'),{
+    type:'bar',
+    data:{
+      labels:['Москва','Ростов-на-Дону','Санкт-Петербург','Краснодар','Новосибирск','Екатеринбург','Южный ФО','Волгоград'],
+      datasets:[{
+        label:'Показов/мес',
+        data:[8500,5200,3800,2900,2100,1800,7500,1200],
+        backgroundColor:'rgba(9,132,227,.6)',
+        borderColor:'#0984e3',
+        borderWidth:2,
+        borderRadius:6
+      }]
+    },
+    options:{...chartDefaults,indexAxis:'y',scales:{x:{...scaleDefaults,beginAtZero:true},y:scaleDefaults}}
+  });
+
+  // 7. Growth chart
+  new Chart(document.getElementById('chartGrowth'),{
+    type:'line',
+    data:{
+      labels:['Янв 25','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек','Янв 26','Фев','Мар','Апр','Май','Июн'],
+      datasets:[{
+        label:'Все запросы теплообменников',
+        data:[38000,35000,28000,20000,16000,14000,13500,17000,30000,42000,48000,44000,41000,38000,30000,22000,18000,16500],
+        borderColor:'#0984e3',
+        backgroundColor:'rgba(9,132,227,.08)',
+        fill:true,
+        tension:.4,
+        borderWidth:3,
+        pointRadius:4,
+        pointBackgroundColor:'#0984e3'
+      },{
+        label:'Феникс (бренд)',
+        data:[180,170,140,100,85,80,75,95,170,260,300,280,250,230,200,160,130,120],
+        borderColor:'#6c5ce7',
+        backgroundColor:'rgba(108,92,231,.08)',
+        fill:true,
+        tension:.4,
+        borderWidth:3,
+        pointRadius:4,
+        pointBackgroundColor:'#6c5ce7'
+      },{
+        label:'Аналоги Alfa Laval',
+        data:[220,200,190,160,140,130,120,150,220,300,340,320,300,280,250,200,170,160],
+        borderColor:'#d63031',
+        backgroundColor:'rgba(214,48,49,.08)',
+        fill:true,
+        tension:.4,
+        borderWidth:3,
+        pointRadius:4,
+        pointBackgroundColor:'#d63031'
+      }]
+    },
+    options:{...chartDefaults,scales:{x:scaleDefaults,y:{...scaleDefaults,beginAtZero:true}}}
+  });
+}
+
+// =============================================
+// ТАБЛИЦА
+// =============================================
+var tablePage=0,tablePerPage=20,tableData=[],currentFilter='all',currentSort='freq-desc',currentSearch='';
+
+function filterQueries(){
+  tableData=QUERIES.filter(function(q){
+    if(currentFilter!=='all'){
+      if(currentFilter==='vc'&&q.cat!=='ВЧ') return false;
+      if(currentFilter==='sc'&&q.cat!=='СЧ') return false;
+      if(currentFilter==='nc'&&q.cat!=='НЧ') return false;
+      if(currentFilter==='unc'&&q.cat!=='УНЧ') return false;
+      if(currentFilter==='transactional'&&q.intent!=='transactional') return false;
+      if(currentFilter==='informational'&&q.intent!=='informational') return false;
+      if(currentFilter==='brand'&&!q.brand) return false;
+      if(currentFilter==='geo'&&!q.geo) return false;
+      if(currentFilter==='zip'&&!q.zip) return false;
+    }
+    if(currentSearch){
+      var s=currentSearch.toLowerCase();
+      if(q.q.toLowerCase().indexOf(s)===-1) return false;
+    }
+    return true;
+  });
+  var parts=currentSort.split('-');
+  var key=parts[0],dir=parts[1]==='asc'?1:-1;
+  tableData.sort(function(a,b){
+    if(key==='name') return a.q.localeCompare(b.q)*dir;
+    if(key==='freq') return (a.freq-b.freq)*dir;
+    if(key==='freqExact') return (a.freqE-b.freqE)*dir;
+    if(key==='category') return a.cat.localeCompare(b.cat)*dir;
+    if(key==='intent') return a.intent.localeCompare(b.intent)*dir;
+    if(key==='trend') return (a.trend==='up'?1:a.trend==='down'?-1:0)-(b.trend==='up'?1:b.trend==='down'?-1:0)*dir;
+    if(key==='competition') return (a.comp-b.comp)*dir;
+    if(key==='position') return (a.pos-b.pos)*dir;
+    return 0;
+  });
+  tablePage=0;
+  renderTable();
+}
+
+function renderTable(){
+  var start=tablePage*tablePerPage;
+  var end=Math.min(start+tablePerPage,tableData.length);
+  var rows='';
+  var intentLabels={transactional:'Транзакционный',commercial:'Коммерческий',informational:'Информационный',brand:'Брендовый',geo:'ГЕО',zip:'ЗИП'};
+  var catColors={ВЧ:'#d63031',СЧ:'#0984e3',НЧ:'#00b894',УНЧ:'#6c5ce7'};
+  for(var i=start;i<end;i++){
+    var q=tableData[i];
+    var trendIcon=q.trend==='up'?'<span class="trend-up">▲</span>':q.trend==='down'?'<span class="trend-down">▼</span>':'<span class="trend-flat">—</span>';
+    var compColor=q.comp>70?'#d63031':q.comp>40?'#e17055':q.comp>20?'#fdcb6e':'#00b894';
+    var posColor=q.pos<=3?'#00b894':q.pos<=10?'#0984e3':q.pos<=20?'#fdcb6e':'#d63031';
+    rows+='<tr class="query-row border-b border-pencil" style="border-bottom-style:dashed">';
+    rows+='<td class="p-3 font-bold">'+q.q+(q.brand?' <span class="text-xs px-1 rounded" style="background:#6c5ce722;color:#6c5ce7">BRAND</span>':'')+(q.geo?' <span class="text-xs px-1 rounded" style="background:#fdcb6e22;color:#e17055">ГЕО</span>':'')+(q.zip?' <span class="text-xs px-1 rounded" style="background:#00b89422;color:#00b894">ЗИП</span>':'')+'</td>';
+    rows+='<td class="p-3 data-cell hide-mobile">'+fmt(q.freq)+'</td>';
+    rows+='<td class="p-3 data-cell hide-mobile">'+fmt(q.freqE)+'</td>';
+    rows+='<td class="p-3"><span class="text-xs px-2 py-1 rounded-full font-bold" style="background:'+catColors[q.cat]+'22;color:'+catColors[q.cat]+'">'+q.cat+'</span></td>';
+    rows+='<td class="p-3 hide-mobile text-xs">'+intentLabels[q.intent]+'</td>';
+    rows+='<td class="p-3 hide-mobile text-center">'+trendIcon+'</td>';
+    rows+='<td class="p-3 hide-mobile"><div class="w-16 h-2 rounded-full" style="background:#eee"><div class="h-full rounded-full" style="width:'+q.comp+'%;background:'+compColor+'"></div></div><span class="text-xs">'+q.comp+'%</span></td>';
+    rows+='<td class="p-3 hide-mobile data-cell font-bold" style="color:'+posColor+'">'+q.pos+'</td>';
+    rows+='</tr>';
+  }
+  document.getElementById('queryBody').innerHTML=rows;
+  document.getElementById('tableInfo').textContent='Показано: '+(start+1)+'–'+end+' из '+tableData.length+' запросов';
+}
+
+function tableNext(){if((tablePage+1)*tablePerPage<tableData.length){tablePage++;renderTable()}}
+function tablePrev(){if(tablePage>0){tablePage--;renderTable()}}
+
+// =============================================
+// КОНКУРЕНТЫ
+// =============================================
+function renderCompetitors(){
+  var html='';
+  COMPETITORS.forEach(function(c){
+    var trendIcon=c.trend==='up'?'<span class="trend-up">▲ Растёт</span>':c.trend==='down'?'<span class="trend-down">▼ Снижается</span>':'<span class="trend-flat">— Стабильно</span>';
+    html+='<div class="sketchy p-4" style="border-left:4px solid '+c.color+'">';
+    html+='<h4 class="text-xl font-bold" style="color:'+c.color+'">'+c.name+'</h4>';
+    html+='<p class="font-block text-sm mt-1">'+c.status+'</p>';
+    html+='<p class="font-block text-sm mt-2">Запросов в ТОП-10: <strong>'+c.queries+'</strong></p>';
+    html+='<p class="font-block text-sm">Доля рынка: <strong>'+c.share+'%</strong></p>';
+    html+='<p class="font-block text-sm mt-1">'+trendIcon+'</p>';
+    html+='</div>';
+  });
+  document.getElementById('competitorCards').innerHTML=html;
+}
+
+// =============================================
+// РЕКОМЕНДАЦИИ
+// =============================================
+function renderRecommendations(){
+  var html='';
+  RECOMMENDATIONS.forEach(function(r){
+    html+='<div class="sketchy p-5" style="border-left:5px solid '+r.color+'">';
+    html+='<div class="flex items-center gap-2 mb-2">';
+    html+='<span class="text-2xl">'+r.icon+'</span>';
+    html+='<h4 class="text-xl font-bold">'+r.title+'</h4>';
+    html+='</div>';
+    html+='<span class="text-xs px-2 py-1 rounded-full font-bold mb-3 inline-block" style="background:'+r.color+'22;color:'+r.color+'">'+r.priority+'</span>';
+    html+='<p class="font-block text-sm mb-3">'+r.text+'</p>';
+    html+='<div class="flex flex-wrap gap-3 text-xs font-block">';
+    html+='<span class="stat-pill">Ожидаемый эффект: '+r.impact+'</span>';
+    html+='<span class="stat-pill">Усилия: '+r.effort+'</span>';
+    html+='</div>';
+    html+='</div>';
+  });
+  document.getElementById('recommendations').innerHTML=html;
+}
+
+// =============================================
+// LIVE FEED
+// =============================================
+var feedEvents=[
+  {time:'14:32',type:'up',text:'Позиция «аналог альфа лаваль» выросла с #12 до #8'},
+  {time:'14:15',type:'new',text:'Новый запрос: «феникс теплообменник для майнинга» (УНЧ, ~20/мес)'},
+  {time:'13:58',type:'up',text:'«пластинчатый теплообменник ростов» — позиция #4 (was #6)'},
+  {time:'13:40',type:'down',text:'«ridan теплообменник» — Ridan потерял 2 позиции в ТОП-10'},
+  {time:'13:22',type:'new',text:'Новый запрос: «заменить альфа лаваль на российский» (НЧ, ~60/мес)'},
+  {time:'12:55',type:'up',text:'«прокладки для феникс apr-21» — #1 в Яндекс (стабильно 3 мес)'},
+  {time:'12:30',type:'info',text:'Сезонный рост: запросы «теплообменник для отопления» +35% к сентябрю'},
+  {time:'11:45',type:'up',text:'«phoenix apr» — #2 в Яндекс (было #5 в августе)'},
+  {time:'11:20',type:'down',text:'«hisaka теплообменник» — Hisaka потеряла 5 позиций (бренд уходит)'},
+  {time:'10:50',type:'new',text:'Новый запрос: «теплообменник для теплового насоса геотермальный» (УНЧ)'}
+];
+function renderFeed(){
+  var html='';
+  feedEvents.forEach(function(e){
+    var icon=e.type==='up'?'<span class="trend-up">▲</span>':e.type==='down'?'<span class="trend-down">▼</span>':e.type==='new'?'<span style="color:#6c5ce7">★</span>':'<span style="color:#0984e3">ℹ</span>';
+    html+='<div class="flex items-start gap-3 p-2 rounded" style="border-left:3px solid '+(e.type==='up'?'#00b894':e.type==='down'?'#d63031':e.type==='new'?'#6c5ce7':'#0984e3')+'">';
+    html+='<span class="font-block text-sm text-pencil-light whitespace-nowrap">'+e.time+'</span>';
+    html+='<span class="text-lg">'+icon+'</span>';
+    html+='<span class="font-block text-sm">'+e.text+'</span>';
+    html+='</div>';
+  });
+  document.getElementById('liveFeed').innerHTML=html;
+}
+
+// =============================================
+// LIVE-ОБНОВЛЕНИЯ (симуляция)
+// =============================================
+function updateLiveClock(){
+  var now=new Date();
+  var h=String(now.getHours()).padStart(2,'0');
+  var m=String(now.getMinutes()).padStart(2,'0');
+  var s=String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('liveClock').textContent='Москва: '+h+':'+m+':'+s;
+  document.getElementById('lastUpdate').textContent='Обновлено: '+h+':'+m;
+  document.getElementById('curTime').textContent=h+':'+m+':'+s;
+}
+
+function simulateLiveUpdate(){
+  var actions=[
+    function(){
+      var q=QUERIES[Math.floor(Math.random()*QUERIES.length)];
+      var delta=Math.random()>.5?Math.ceil(Math.random()*3):-Math.ceil(Math.random()*3);
+      q.pos=Math.max(1,Math.min(50,q.pos+delta));
+      var icon=delta>0?'<span class="trend-up">▲</span>':'<span class="trend-down">▼</span>';
+      addFeedEvent(icon+' «'+q.q+'» → позиция #'+q.pos+(delta>0?' (↑'+delta+')':' ('+delta+')'));
+    },
+    function(){
+      var cities=['Москва','Ростов','Краснодар','СПб','Новосибирск'];
+      var c=cities[Math.floor(Math.random()*cities.length)];
+      addFeedEvent('<span style="color:#0984e3">ℹ</span> ГЕО-запрос из '+c+': «пластинчатый теплообменник '+c.toLowerCase()+'»');
+    },
+    function(){
+      var models=['APR-8','APR-19','APR-21','APR-62','APR-4','APR-14'];
+      var m=models[Math.floor(Math.random()*models.length)];
+      addFeedEvent('<span style="color:#6c5ce7">★</span> Новый запрос: «теплообменник феникс '+m.toLowerCase()+'»');
+    }
+  ];
+  actions[Math.floor(Math.random()*actions.length)]();
+}
+
+function addFeedEvent(html){
+  var now=new Date();
+  var time=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  feedEvents.unshift({time:time,type:'info',text:html.replace(/<[^>]+>/g,'')});
+  if(feedEvents.length>20) feedEvents.pop();
+  renderFeed();
+}
+
+// =============================================
+// ФИЛЬТРЫ
+// =============================================
+document.querySelectorAll('.filter-chip').forEach(function(chip){
+  chip.addEventListener('click',function(){
+    document.querySelectorAll('.filter-chip').forEach(function(c){c.classList.remove('active')});
+    chip.classList.add('active');
+    currentFilter=chip.dataset.filter;
+    filterQueries();
+  });
+});
+
+document.getElementById('searchInput').addEventListener('input',function(e){
+  currentSearch=e.target.value;
+  filterQueries();
+});
+
+document.getElementById('sortSelect').addEventListener('change',function(e){
+  currentSort=e.target.value;
+  filterQueries();
+});
+
+document.querySelectorAll('th[data-sort]').forEach(function(th){
+  th.addEventListener('click',function(){
+    var key=th.dataset.sort;
+    if(currentSort===key+'-desc') currentSort=key+'-asc';
+    else currentSort=key+'-desc';
+    document.getElementById('sortSelect').value=currentSort;
+    filterQueries();
+  });
+});
+
+// =============================================
+// ВАЛЮТА
+// =============================================
+function loadCurrency(){
+  fetch('https://www.cbr-xml-daily.ru/daily_json.js')
+    .then(function(r){return r.json()})
+    .then(function(d){
+      document.getElementById('curEUR').textContent=(d.Valute.EUR.Value).toFixed(2)+' ₽';
+      document.getElementById('curUSD').textContent=(d.Valute.USD.Value).toFixed(2)+' ₽';
+    }).catch(function(){});
+}
+
+// =============================================
+// INIT
+// =============================================
+(function(){
+  animateCounters();
+  initCharts();
+  filterQueries();
+  renderCompetitors();
+  renderRecommendations();
+  renderFeed();
+  loadCurrency();
+  updateLiveClock();
+  setInterval(updateLiveClock,1000);
+  setInterval(simulateLiveUpdate,15000);
+  setInterval(loadCurrency,300000);
+
+  // Scroll reveal
+  var observer=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}
+    });
+  },{threshold:.1});
+  document.querySelectorAll('.fade-up').forEach(function(el){observer.observe(el)});
+
+  // Nav pulse
+  var navLinks=document.querySelectorAll('.nav-link');
+  navLinks.forEach(function(l,i){
+    setTimeout(function(){l.classList.add('pulse-glow')},500+i*150);
+    setTimeout(function(){l.classList.remove('pulse-glow')},2500+i*150);
+  });
+})();
+</script>
+</body>
+</html>
