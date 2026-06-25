@@ -506,25 +506,22 @@ function makePlateTexture(){
 }
 
 /* ═══════ ПРОКЛАДКА (рамка с 4 отверстиями) ═══════ */
-var _gasketGeoCache=null;
 function makeGasketGeo(){
-  if(_gasketGeoCache)return _gasketGeoCache;
   var w=C.frameW*0.92,h=C.frameH*0.92;
   var holeR=C.nozzleR*1.15;
-  var npx=[C.nozzlePos[0][0],C.nozzlePos[1][0],C.nozzlePos[2][0],C.nozzlePos[3][0]];
-  var npy=[C.nozzlePos[0][1],C.nozzlePos[1][1],C.nozzlePos[2][1],C.nozzlePos[3][1]];
-  var outer=[
-    new THREE.Vector2(-w/2,-h/2),new THREE.Vector2(w/2,-h/2),
-    new THREE.Vector2(w/2,h/2),new THREE.Vector2(-w/2,h/2)
-  ];
-  var hole1=THREE.Path.prototype.absarc.call(new THREE.Path(),npx[0],npy[0],holeR,0,Math.PI*2,false);
-  var hole2=THREE.Path.prototype.absarc.call(new THREE.Path(),npx[1],npy[1],holeR,0,Math.PI*2,false);
-  var hole3=THREE.Path.prototype.absarc.call(new THREE.Path(),npx[2],npy[2],holeR,0,Math.PI*2,false);
-  var hole4=THREE.Path.prototype.absarc.call(new THREE.Path(),npx[3],npy[3],holeR,0,Math.PI*2,false);
-  var shape=new THREE.Shape(outer);
-  shape.holes=[hole1,hole2,hole3,hole4];
-  _gasketGeoCache=new THREE.ShapeGeometry(shape);
-  return _gasketGeoCache;
+  var shape=new THREE.Shape();
+  shape.moveTo(-w/2,-h/2);shape.lineTo(w/2,-h/2);
+  shape.lineTo(w/2,h/2);shape.lineTo(-w/2,h/2);shape.lineTo(-w/2,-h/2);
+  function addHole(cx,cy){
+    var hole=new THREE.Path();
+    hole.absarc(cx,cy,holeR,0,Math.PI*2,true);
+    shape.holes.push(hole);
+  }
+  addHole(C.nozzlePos[0][0],C.nozzlePos[0][1]);
+  addHole(C.nozzlePos[1][0],C.nozzlePos[1][1]);
+  addHole(C.nozzlePos[2][0],C.nozzlePos[2][1]);
+  addHole(C.nozzlePos[3][0],C.nozzlePos[3][1]);
+  return new THREE.ShapeGeometry(shape);
 }
 
 function makePlateGeo(){
