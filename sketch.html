@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIPhoenix — Эскиз архитектуры</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Patrick+Hand&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f5f0e8;font-family:'Caveat',cursive;overflow:auto;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,.03) 28px,rgba(0,0,0,.03) 29px),repeating-linear-gradient(90deg,transparent,transparent 28px,rgba(0,0,0,.03) 28px,rgba(0,0,0,.03) 29px);pointer-events:none;z-index:0}
+
+.topbar{position:fixed;top:0;left:0;right:0;z-index:900;background:rgba(255,254,249,.95);border-bottom:2px solid #c4b8a8;padding:10px 30px;display:flex;align-items:center;gap:20px;font-size:18px}
+.topbar a{color:#1a6fb5;text-decoration:none;font-weight:700;transition:color .2s}
+.topbar a:hover{color:#0984e3}
+.topbar .sep{color:#ccc}
+
+.container{position:relative;width:1800px;min-height:1050px;margin:70px auto 30px;padding:30px 40px;background:#fffef9;border:2px solid #c4b8a8;box-shadow:4px 4px 10px rgba(0,0,0,.15)}
+
+.block{position:absolute;border:2px solid #3a3a3a;border-radius:4px;padding:8px 14px;background:rgba(255,255,255,.7);cursor:pointer;transition:all .25s;color:#1a1a1a;display:flex;align-items:center;justify-content:center;text-align:center;font-size:15px;font-weight:700;line-height:1.2;box-shadow:2px 2px 0 rgba(0,0,0,.08);z-index:5;white-space:nowrap}
+.block:hover{background:rgba(255,240,200,.9);border-color:#1a6fb5;box-shadow:3px 3px 0 rgba(26,111,181,.25);transform:translate(-1px,-1px);z-index:10}
+.block:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(0,0,0,.15)}
+.block .tip{position:absolute;bottom:110%;left:50%;transform:translateX(-50%) scale(.9);background:#2c2c2c;color:#fff;padding:5px 10px;border-radius:5px;font-size:13px;font-family:'Patrick Hand',cursive;white-space:nowrap;opacity:0;pointer-events:none;transition:all .2s;z-index:100}
+.block:hover .tip{opacity:1;transform:translateX(-50%) scale(1)}
+
+.glabel{position:absolute;font-size:20px;font-family:'Caveat',cursive;color:#555;font-weight:700;pointer-events:none;z-index:2;text-decoration:underline;text-decoration-style:wavy;text-underline-offset:3px}
+.gbox{position:absolute;border:2px dashed rgba(0,0,0,.15);border-radius:10px;pointer-events:none;z-index:0}
+
+.circle-wrap{position:absolute;width:260px;height:260px;border-radius:50%;border:2px solid #3a3a3a;background:rgba(255,255,255,.4);cursor:pointer;z-index:3;transition:all .3s}
+.circle-wrap:hover{border-color:#1a6fb5;background:rgba(255,240,200,.5)}
+.circle-wrap .center-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:22px;font-weight:700;color:#333;pointer-events:none}
+.citem{position:absolute;font-size:12px;font-family:'Caveat',cursive;font-weight:700;color:#2c2c2c;cursor:pointer;padding:2px 5px;border-radius:3px;transition:all .2s;text-align:center;z-index:4}
+.citem:hover{background:rgba(255,240,200,.95);color:#1a6fb5;transform:scale(1.15)}
+
+.tnode{position:absolute;font-size:13px;font-family:'Caveat',cursive;font-weight:700;padding:5px 10px;border:1.5px solid #3a3a3a;border-radius:4px;background:rgba(255,255,255,.6);cursor:pointer;transition:all .2s;text-align:center;z-index:5}
+.tnode:hover{background:rgba(255,240,200,.95);border-color:#1a6fb5;transform:scale(1.08)}
+.tline{position:absolute;z-index:1;pointer-events:none}
+.tline line{stroke:#3a3a3a;stroke-width:1.5;fill:none}
+
+.svg-draw{position:absolute;pointer-events:none;z-index:1}
+.dollar{position:absolute;font-size:34px;color:#2a7a2a;font-family:'Caveat',cursive;font-weight:700;cursor:pointer;transition:all .3s;z-index:5}
+.dollar:hover{transform:scale(1.3) rotate(10deg);color:#1a5a1a}
+
+@keyframes pencilIn{0%{clip-path:inset(0 100% 0 0);opacity:0}30%{opacity:1}100%{clip-path:inset(0 0 0 0);opacity:1}}
+.block,.tnode,.circle-wrap,.dollar{opacity:0;animation:pencilIn .7s ease forwards}
+.block:nth-child(1){animation-delay:.05s}.block:nth-child(2){animation-delay:.1s}.block:nth-child(3){animation-delay:.15s}.block:nth-child(4){animation-delay:.2s}.block:nth-child(5){animation-delay:.25s}.block:nth-child(6){animation-delay:.3s}.block:nth-child(7){animation-delay:.35s}.block:nth-child(8){animation-delay:.4s}.block:nth-child(9){animation-delay:.45s}.block:nth-child(10){animation-delay:.5s}.block:nth-child(11){animation-delay:.55s}.block:nth-child(12){animation-delay:.6s}.block:nth-child(13){animation-delay:.65s}.block:nth-child(14){animation-delay:.7s}.block:nth-child(15){animation-delay:.75s}.block:nth-child(16){animation-delay:.8s}.block:nth-child(17){animation-delay:.85s}.block:nth-child(18){animation-delay:.9s}.block:nth-child(19){animation-delay:.95s}.block:nth-child(20){animation-delay:1s}
+
+.pencil-line{stroke:#3a3a3a;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:600;stroke-dashoffset:600}
+.pencil-line.animate{animation:drawLine 1.5s ease forwards}
+@keyframes drawLine{to{stroke-dashoffset:0}}
+
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:#fffef9;border:3px solid #3a3a3a;border-radius:8px;padding:28px 36px;max-width:480px;width:90%;font-family:'Caveat',cursive;font-size:19px;color:#2c2c2c;box-shadow:6px 6px 0 rgba(0,0,0,.15);position:relative;animation:modalIn .25s ease}
+@keyframes modalIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.modal h2{font-size:26px;margin-bottom:10px;border-bottom:2px solid #3a3a3a;padding-bottom:6px}
+.modal p{line-height:1.5}
+.modal-x{position:absolute;top:8px;right:12px;font-size:22px;cursor:pointer;color:#3a3a3a;background:none;border:none;font-family:'Caveat',cursive}
+.modal-x:hover{color:#c00}
+
+.trail{position:fixed;width:6px;height:6px;border-radius:50%;background:rgba(0,0,0,.12);pointer-events:none;z-index:9999;animation:trailFade .5s ease forwards}
+@keyframes trailFade{to{opacity:0;transform:scale(.1)}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html">← На главную AIPhoenix</a>
+  <span class="sep">|</span>
+  <span style="color:#555">Эскиз архитектуры системы — интерактивный набросок</span>
+</div>
+
+<div class="container" id="canvas">
+
+  <!-- SVG connecting lines -->
+  <svg class="svg-draw" style="top:0;left:0;width:1800px;height:1100px;">
+    <path class="pencil-line" d="M300,180 C340,200 370,210 400,200" style="animation-delay:.5s"/>
+    <path class="pencil-line" d="M660,200 C700,220 720,230 745,150" style="animation-delay:.6s"/>
+    <path class="pencil-line" d="M530,290 C530,310 530,330 530,340" style="animation-delay:.7s"/>
+    <path class="pencil-line" d="M360,395 C340,400 320,410 310,420" style="animation-delay:.8s"/>
+    <path class="pencil-line" d="M670,620 C700,640 720,660 745,650" style="animation-delay:.9s"/>
+    <path class="pencil-line" d="M545,600 C570,610 590,620 610,620" style="animation-delay:1s"/>
+    <defs>
+      <marker id="ah" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#3a3a3a"/></marker>
+    </defs>
+    <path class="pencil-line" d="M650,700 L650,750" marker-end="url(#ah)" style="animation-delay:1.1s"/>
+    <path class="pencil-line" d="M1150,680 L1150,730" marker-end="url(#ah)" style="animation-delay:1.2s"/>
+  </svg>
+
+  <!-- ===== LEFT: Компоненты ===== -->
+  <div class="glabel" style="top:15px;left:15px">Компоненты системы</div>
+  <div class="gbox" style="top:10px;left:10px;width:280px;height:290px"></div>
+
+  <div class="block" style="top:48px;left:20px;width:80px" onclick="openModal('1С','Интеграция с 1С:Предприятие. Управление учётом, документами и бизнес-процессами.')"><span class="tip">Интеграция</span>1С</div>
+  <div class="block" style="top:48px;left:110px;width:80px" onclick="openModal('CRM','Управление взаимоотношениями с клиентами. Воронка продаж, контакты, сделки.')"><span class="tip">Клиенты</span>CRM</div>
+  <div class="block" style="top:48px;left:200px;width:80px" onclick="openModal('CMS','Система управления контентом. Сайты, страницы, шаблоны.')"><span class="tip">Контент</span>CMS</div>
+  <div class="block" style="top:92px;left:20px;width:130px" onclick="openModal('Телефония','IP-телефония, АТС, автоответчики, запись звонков, IVR.')"><span class="tip">Звонки</span>ТЕЛЕФОНИЯ</div>
+  <div class="block" style="top:92px;left:160px;width:120px" onclick="openModal('Метрики','Аналитика, дашборды, KPI, отчёты в реальном времени.')"><span class="tip">Аналитика</span>МЕТРИКИ</div>
+  <div class="block" style="top:136px;left:20px;width:200px" onclick="openModal('Мониторинг почты','Отслеживание входящих писем, автоответы, парсинг.')"><span class="tip">Почта</span>МОНИТОРИНГ ПОЧТЫ</div>
+  <div class="block" style="top:180px;left:20px;width:200px" onclick="openModal('Мессенджеры','Интеграция с Telegram, WhatsApp, Zalo, SIP-шлюзами.')"><span class="tip">Чаты</span>МЕССЕНДЖЕРЫ Z-SIP</div>
+  <div class="block" style="top:224px;left:20px;width:130px" onclick="openModal('Бэкенды','Серверная логика, API, микросервисы, базы данных.')"><span class="tip">API</span>БЕКЕНДЫ</div>
+  <div class="block" style="top:268px;left:20px;width:200px" onclick="openModal('Сегменты аудит','Сегментация аудитории, профили, теги, группы клиентов.')"><span class="tip">Сегменты</span>СЕГМЕНТЫ АУДИТ</div>
+
+  <!-- ===== CENTER-TOP: Круговая диаграмма ===== -->
+  <div class="circle-wrap" style="top:30px;left:400px" onclick="openModal('Ядро системы','Центральный модуль-оркестратор. Связывает все компоненты: сотрудников, базы данных, сайты, чаты и VPS.')">
+    <span class="center-label">ЯДРО</span>
+    <div class="citem" style="top:6px;left:50%;transform:translateX(-50%)">СОТРУДНИКИ</div>
+    <div class="citem" style="top:30px;right:12px">ОПЕРАТОР</div>
+    <div class="citem" style="top:72px;right:-8px">ПРОЕКТЫ<br>ЛИДЫ</div>
+    <div class="citem" style="bottom:72px;right:-2px">ЧАТ</div>
+    <div class="citem" style="bottom:30px;right:18px">VPS</div>
+    <div class="citem" style="bottom:6px;left:50%;transform:translateX(-50%)">БАЗЫ<br>ДАННЫХ</div>
+    <div class="citem" style="bottom:30px;left:12px">АРЕНДА</div>
+    <div class="citem" style="bottom:72px;left:-8px">АВТОСЕРВ</div>
+    <div class="citem" style="top:72px;left:-12px">ОБСЛУЖИВАНИЕ</div>
+    <div class="citem" style="top:30px;left:2px">ТЕЛЕФОН<br>АБОНЕНТЫ</div>
+    <div class="citem" style="top:6px;left:5px">САЙТЫ</div>
+  </div>
+
+  <!-- ===== RIGHT-TOP: Данные и контент ===== -->
+  <div class="glabel" style="top:15px;left:740px">Данные и контент</div>
+  <div class="gbox" style="top:10px;left:735px;width:310px;height:230px"></div>
+
+  <div class="block" style="top:48px;left:745px;width:220px" onclick="openModal('Веб-сайты','Создание и управление сайтами. Лендинги, порталы, магазины.')"><span class="tip">Сайты</span>ВЕБ-САЙТЫ ВЕСЬ ИНТЕРНЕТ</div>
+  <div class="block" style="top:92px;left:745px;width:190px" onclick="openModal('Базы знаний','Вики, документация, FAQ, внутренние инструкции.')"><span class="tip">Знания</span>БАЗЫ ЗНАНИЙ</div>
+  <div class="block" style="top:136px;left:745px;width:210px" onclick="openModal('Документооборот','ЭДО, согласование, подписи, архив документов.')"><span class="tip">Документы</span>ДОКУМЕНТООБОРОТ</div>
+  <div class="block" style="top:180px;left:745px;width:120px" onclick="openModal('JSON','Структурированные данные, API-ответы, конфигурации.')"><span class="tip">Данные</span>JSON</div>
+  <div class="block" style="top:180px;left:875px;width:70px" onclick="openModal('Markdown','Документация, README, заметки в формате MD.')"><span class="tip">Документы</span>MD</div>
+  <div class="block" style="top:136px;left:965px;width:175px" onclick="openModal('Файловое хранилище','S3, NAS, облачные диски, версионирование файлов.')"><span class="tip">Хранилище</span>ФАЙЛ. ХРАНИЛИЩЕ</div>
+
+  <!-- ===== CENTER: Экономика ===== -->
+  <div class="glabel" style="top:310px;left:350px">Экономика</div>
+  <div class="gbox" style="top:305px;left:345px;width:310px;height:155px"></div>
+
+  <div class="block" style="top:340px;left:360px;width:160px;font-size:18px" onclick="openModal('Экономика','Финансовая модель, P&L, бюджетирование, прогнозирование.')"><span class="tip">Финансы</span>ЭКОНОМИКА</div>
+  <div class="block" style="top:385px;left:360px;width:130px" onclick="openModal('Ресурсы','CPU, RAM, диски, трафик, лицензии.')"><span class="tip">Ресурсы</span>РЕСУРСЫ</div>
+  <div class="block" style="top:385px;left:500px;width:140px" onclick="openModal('Реквизиты','Реквизиты контрактов, ИНН, расчётные счета.')"><span class="tip">Реквизиты</span>РЕКВИЗИТЫ</div>
+  <div class="block" style="top:430px;left:380px;width:120px" onclick="openModal('Данные','Хранилище данных, ETL, миграции, бэкапы.')"><span class="tip">Хранилище</span>ДАННЫЕ</div>
+
+  <!-- Человечек -->
+  <svg class="svg-draw" style="top:340px;left:620px;width:50px;height:70px" viewBox="0 0 50 70">
+    <circle cx="25" cy="10" r="8" fill="none" stroke="#3a3a3a" stroke-width="2"/>
+    <line x1="25" y1="18" x2="25" y2="45" stroke="#3a3a3a" stroke-width="2"/>
+    <line x1="25" y1="26" x2="10" y2="38" stroke="#3a3a3a" stroke-width="2"/>
+    <line x1="25" y1="26" x2="40" y2="38" stroke="#3a3a3a" stroke-width="2"/>
+    <line x1="25" y1="45" x2="12" y2="65" stroke="#3a3a3a" stroke-width="2"/>
+    <line x1="25" y1="45" x2="38" y2="65" stroke="#3a3a3a" stroke-width="2"/>
+  </svg>
+
+  <!-- ===== BOTTOM-LEFT: Инфраструктура ===== -->
+  <div class="glabel" style="top:500px;left:15px">Инфраструктура</div>
+  <div class="gbox" style="top:495px;left:10px;width:380px;height:310px"></div>
+
+  <svg class="svg-draw" style="top:530px;left:30px;width:130px;height:170px;pointer-events:auto;cursor:pointer" viewBox="0 0 130 170" onclick="openModal('Серверная стойка','Физические серверы. 24/7 работа, RAID-массивы, резервное питание.')">
+    <rect x="10" y="5" width="110" height="160" rx="4" fill="rgba(255,255,255,.5)" stroke="#3a3a3a" stroke-width="2"/>
+    <rect x="18" y="15" width="94" height="22" rx="2" fill="none" stroke="#3a3a3a" stroke-width="1.5"/>
+    <rect x="18" y="45" width="94" height="22" rx="2" fill="none" stroke="#3a3a3a" stroke-width="1.5"/>
+    <rect x="18" y="75" width="94" height="22" rx="2" fill="none" stroke="#3a3a3a" stroke-width="1.5"/>
+    <rect x="18" y="105" width="94" height="22" rx="2" fill="none" stroke="#3a3a3a" stroke-width="1.5"/>
+    <circle cx="26" cy="26" r="3" fill="#4a4"/><circle cx="26" cy="56" r="3" fill="#4a4"/>
+    <circle cx="26" cy="86" r="3" fill="#aa4"/><circle cx="26" cy="116" r="3" fill="#4a4"/>
+    <text x="65" y="148" text-anchor="middle" font-family="Caveat" font-size="13" fill="#333">24/7</text>
+  </svg>
+
+  <div class="block" style="top:530px;left:180px;width:180px" onclick="openModal('Аренда сервера','VPS/VDS выделенные серверы. Аренда по тарифам 24/7.')"><span class="tip">VPS/VDS</span>АРЕНДА СЕРВЕРА</div>
+  <div class="block" style="top:575px;left:180px;width:160px" onclick="openModal('Свой сервер','Выделенный сервер в собственности.')"><span class="tip">Hardware</span>СВОЙ СЕРВЕР</div>
+
+  <svg class="svg-draw" style="top:660px;left:20px;width:180px;height:70px;pointer-events:auto;cursor:pointer" viewBox="0 0 180 70" onclick="openModal('Своё облако','Приватное облако. Kubernetes, Docker, масштабируемая инфраструктура.')">
+    <path d="M35,55 Q8,55 8,38 Q8,22 30,22 Q34,8 58,12 Q72,2 90,12 Q108,2 125,12 Q152,8 160,25 Q178,28 174,45 Q174,58 150,55Z" fill="rgba(255,255,255,.6)" stroke="#3a3a3a" stroke-width="2"/>
+    <text x="90" y="42" text-anchor="middle" font-family="Caveat" font-size="13" fill="#333">СВОЕ ОБЛАКО</text>
+  </svg>
+
+  <!-- ===== BOTTOM-CENTER: Арка + Конвертор ===== -->
+  <div class="glabel" style="top:500px;left:430px">Запрос</div>
+
+  <svg class="svg-draw" style="top:530px;left:445px;width:100px;height:130px;pointer-events:auto;cursor:pointer" viewBox="0 0 100 130" onclick="openModal('Запрос','Входящий запрос от клиента. Триггер автоматизации.')">
+    <path d="M15,120 L15,45 Q15,8 50,8 Q85,8 85,45 L85,120" fill="none" stroke="#3a3a3a" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="50" y1="50" x2="50" y2="120" stroke="#3a3a3a" stroke-width="2"/>
+    <polygon points="45,115 50,125 55,115" fill="#3a3a3a"/>
+  </svg>
+
+  <div class="block" style="top:670px;left:420px;width:160px;font-size:17px" onclick="openModal('Конвертор','Трансформация данных между форматами. Парсинг, маппинг, нормализация.')"><span class="tip">Трансформация</span>КОНВЕРТОР</div>
+
+  <!-- ===== BOTTOM-RIGHT: Агенты и продажи ===== -->
+  <div class="glabel" style="top:500px;left:600px">Автоматизация продаж</div>
+  <div class="gbox" style="top:495px;left:595px;width:420px;height:310px"></div>
+
+  <div class="block" style="top:530px;left:610px;width:180px;font-size:20px" onclick="openModal('Агенты','AI-агенты: оркестратор, аналитик, архивариус. Автоматизация бизнес-процессов.')"><span class="tip">AI-агенты</span>АГЕНТЫ</div>
+  <div class="block" style="top:578px;left:610px;width:170px" onclick="openModal('Оркестратор','Управление потоками, маршрутизация задач, цепочки действий.')"><span class="tip">Управление</span>ОРКЕСТРАТОР</div>
+  <div class="block" style="top:578px;left:790px;width:170px" onclick="openModal('Хранилище / Архив','Долгосрочное хранение данных, архивация, поиск.')"><span class="tip">Архив</span>ХРАНИЛИЩЕ АРХИВ</div>
+  <div class="block" style="top:624px;left:610px;width:130px" onclick="openModal('Анализ','Аналитика продаж, конверсия, LTV, ROI.')"><span class="tip">Аналитика</span>АНАЛИЗ</div>
+  <div class="block" style="top:624px;left:750px;width:110px" onclick="openModal('Оферт','Генерация коммерческих предложений.')"><span class="tip">КП</span>ОФЕРТ</div>
+  <div class="block" style="top:670px;left:610px;width:150px" onclick="openModal('Отрудник','Профиль сотрудника, задачи, KPI, авторизация.')"><span class="tip">Сотрудник</span>ОТРУДНИК</div>
+
+  <div class="dollar" style="top:526px;left:870px" onclick="openModal('Продажа','Закрытие сделки, выставление счёта, оплата.')">$</div>
+  <div class="block" style="top:570px;left:840px;width:140px;font-size:18px" onclick="openModal('Продажа','Финальный этап: сделка закрыта, деньги получены.')"><span class="tip">Сделка</span>ПРОДАЖА</div>
+  <div class="block" style="top:616px;left:840px;width:140px" onclick="openModal('Договор','Заключение договора, ЭЦП, шаблоны.')"><span class="tip">Контракт</span>ДОГОВОР</div>
+  <div class="block" style="top:662px;left:840px;width:140px" onclick="openModal('Оплата','Платежи, инвойсы, автосверка, уведомления.')"><span class="tip">Финансы</span>ОПЛАТА</div>
+
+  <!-- ===== FAR RIGHT: Дерево структуры ===== -->
+  <div class="glabel" style="top:310px;left:1120px">Структура</div>
+  <div class="gbox" style="top:305px;left:1115px;width:340px;height:430px"></div>
+
+  <div class="tnode" style="top:345px;left:1200px;width:130px;animation-delay:.3s" onclick="openModal('Веки / Темы','Иерархия тем и подтем. Классификация данных по периодам.')">ВЕКИ / ТЕМЫ</div>
+  <svg class="tline" style="top:375px;left:1264px;width:2px;height:18px"><line x1="1" y1="0" x2="1" y2="18"/></svg>
+  <div class="tnode" style="top:393px;left:1145px;width:100px;animation-delay:.4s" onclick="openModal('Статика','Статические страницы, шаблоны, неизменяемый контент.')">СТАТИ</div>
+  <div class="tnode" style="top:393px;left:1260px;width:130px;animation-delay:.45s" onclick="openModal('Динамические','Динамический контент, генерация на лету, API-driven.')">ДИНАМИЧЕСКИЕ</div>
+  <svg class="tline" style="top:428px;left:1264px;width:2px;height:18px"><line x1="1" y1="0" x2="1" y2="18"/></svg>
+  <div class="tnode" style="top:446px;left:1175px;width:160px;animation-delay:.5s" onclick="openModal('Оркестрация','Управление процессами, workflow, автоматизация цепочек.')">ОРКЕСТРАЦИЯ</div>
+  <svg class="tline" style="top:480px;left:1264px;width:2px;height:18px"><line x1="1" y1="0" x2="1" y2="18"/></svg>
+  <div class="tnode" style="top:498px;left:1140px;width:110px;animation-delay:.55s" onclick="openModal('Категории','Классификация товаров, услуг, проектов.')">КАТЕГОРИИ</div>
+  <div class="tnode" style="top:498px;left:1265px;width:100px;animation-delay:.6s" onclick="openModal('Подряд','Управление подрядчиками, субподряд.')">ПОДРЯД</div>
+  <svg class="tline" style="top:533px;left:1264px;width:2px;height:18px"><line x1="1" y1="0" x2="1" y2="18"/></svg>
+  <div class="tnode" style="top:551px;left:1130px;width:100px;animation-delay:.65s" onclick="openModal('Отделы','Структура организации. Подразделения, роли, доступы.')">ОТДЕЛЫ</div>
+  <div class="tnode" style="top:551px;left:1245px;width:100px;animation-delay:.7s" onclick="openModal('Отрасли','Вертикальные рынки: IT, производство, услуги, ритейл.')">ОТРАСЛИ</div>
+  <svg class="tline" style="top:586px;left:1264px;width:2px;height:18px"><line x1="1" y1="0" x2="1" y2="18"/></svg>
+  <div class="tnode" style="top:604px;left:1120px;width:130px;animation-delay:.75s" onclick="openModal('Совместная','Совместная работа, мультидоступ, ролевая модель.')">СОВМЕСТНАЯ</div>
+  <div class="tnode" style="top:604px;left:1265px;width:100px;animation-delay:.8s" onclick="openModal('Сфера','Область применения, контекст, домен.')">СФЕРА</div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal()">&times;</button>
+    <h2 id="m-title"></h2>
+    <p id="m-text"></p>
+  </div>
+</div>
+
+<script>
+function openModal(t,d){document.getElementById('m-title').textContent=t;document.getElementById('m-text').textContent=d;document.getElementById('modal').classList.add('open')}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()});
+
+let lastT=0;
+document.addEventListener('mousemove',function(e){
+  const n=Date.now();if(n-lastT<40)return;lastT=n;
+  const d=document.createElement('div');d.className='trail';
+  d.style.left=(e.clientX-3)+'px';d.style.top=(e.clientY-3)+'px';
+  document.body.appendChild(d);setTimeout(()=>d.remove(),500);
+});
+
+window.addEventListener('load',function(){
+  document.querySelectorAll('.pencil-line').forEach((l,i)=>{setTimeout(()=>l.classList.add('animate'),i*150+300)});
+});
+</script>
+</body>
+</html>
