@@ -70,45 +70,6 @@ tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil
 
 <main class="max-w-7xl mx-auto relative z-10">
 
-<!-- ===== ГЕРОЙ ===== -->
-<section class="sketchy crosshatch p-8 mb-6 fade-up">
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-    <div class="text-left">
-      <div class="hero-note mb-4 inline-block">
-        <strong>Эскиз идеи:</strong> локальная ИИ-система для завода-производителя пластинчатых теплообменников.
-      </div>
-      <h2 class="text-4xl md:text-5xl font-bold mb-4">
-        <span class="pencil-underline">Производство теплообменников</span>, усиленное ИИ
-      </h2>
-      <p class="text-2xl font-block mb-4">AIPhoenix помогает заводу «Феникс» быстрее обрабатывать заявки, подбирать оборудование и готовить коммерческие документы без потери инженерной точности.</p>
-      <ul class="pencil-list text-xl font-block mb-5">
-        <li class="checked">Считывание сканов, писем и опросных листов</li>
-        <li class="checked">Извлечение параметров для подбора теплообменника</li>
-        <li class="checked">Подбор пластин TK/TL и конфигурации аппарата</li>
-        <li class="checked">Импортозамещение и подготовка данных для 1С/CRM</li>
-      </ul>
-      <div class="flex flex-wrap gap-3 mt-5">
-        <span class="stat-pill">On-Premise</span>
-        <span class="stat-pill">RAG + 1С + CRM</span>
-        <span class="stat-pill">Человек проверяет финал</span>
-      </div>
-      <div class="mt-6">
-        <a href="calculator.html" class="inline-block px-8 py-4 bg-blueprint text-white text-xl font-bold shadow-lg hover:bg-blue-600 transition-all hover:scale-105" style="border:2px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px">
-          Запустить 3D Калькулятор ⚡
-        </a>
-      </div>
-    </div>
-    <div class="space-y-4">
-      <img src="img/heat_exchanger.png" alt="Пластинчатый теплообменник завода Феникс" class="w-full max-w-md mx-auto" style="filter:drop-shadow(4px 8px 16px rgba(0,0,0,.08));border:2.5px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:8px;background:#fffefc">
-      <div class="hero-note alt text-left">
-        <strong>Что меняется:</strong> меньше ручной рутины, быстрее ответ клиенту, прозрачнее цикл от запроса до черновика ТКП.
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="sketch-divider mb-6 fade-up"></div>
-
 <!-- ===== ИИ АССИСТЕНТ ===== -->
 <section class="sketchy crosshatch p-6 mb-8 fade-up relative max-w-4xl mx-auto" id="ai-chat-section">
 
@@ -130,7 +91,6 @@ tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil
   </div>
   
   <div class="relative">
-    <!-- Вишенка на торте (карандашный скетч) заходит на чат -->
     <div class="absolute -top-8 left-1/2 -translate-x-1/2 w-24 h-24 opacity-100" style="transform: rotate(5deg); z-index: 20; pointer-events: none;">
       <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full" style="filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.15));">
         <path d="M 42 45 Q 48 10 70 15 M 41 46 Q 49 12 69 16" stroke="#2d3436" stroke-width="2" fill="none" stroke-linecap="round"/>
@@ -185,6 +145,45 @@ tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil
     <div class="bg-white p-4 rounded-xl border-2 border-pencil max-w-[85%] flex items-center gap-3 shadow-sm" style="border-radius: 15px 15px 15px 0;">
       <svg class="animate-spin h-5 w-5 text-blueprint shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
       <span class="font-block text-lg text-gray-700 animate-pulse">Думаю...</span>
+    </div>
+  </div>
+</section>
+
+<div class="sketch-divider mb-6 fade-up"></div>
+
+<!-- ===== ГЕРОЙ ===== -->
+<section class="sketchy crosshatch p-8 mb-6 fade-up">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+    <div class="text-left">
+      <div class="hero-note mb-4 inline-block">
+        <strong>Эскиз идеи:</strong> локальная ИИ-система для завода-производителя пластинчатых теплообменников.
+      </div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-4">
+        <span class="pencil-underline">Производство теплообменников</span>, усиленное ИИ
+      </h2>
+      <p class="text-2xl font-block mb-4">AIPhoenix помогает заводу «Феникс» быстрее обрабатывать заявки, подбирать оборудование и готовить коммерческие документы без потери инженерной точности.</p>
+      <ul class="pencil-list text-xl font-block mb-5">
+        <li class="checked">Считывание сканов, писем и опросных листов</li>
+        <li class="checked">Извлечение параметров для подбора теплообменника</li>
+        <li class="checked">Подбор пластин TK/TL и конфигурации аппарата</li>
+        <li class="checked">Импортозамещение и подготовка данных для 1С/CRM</li>
+      </ul>
+      <div class="flex flex-wrap gap-3 mt-5">
+        <span class="stat-pill">On-Premise</span>
+        <span class="stat-pill">RAG + 1С + CRM</span>
+        <span class="stat-pill">Человек проверяет финал</span>
+      </div>
+      <div class="mt-6">
+        <a href="calculator.html" class="inline-block px-8 py-4 bg-blueprint text-white text-xl font-bold shadow-lg hover:bg-blue-600 transition-all hover:scale-105" style="border:2px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px">
+          Запустить 3D Калькулятор ⚡
+        </a>
+      </div>
+    </div>
+    <div class="space-y-4">
+      <img src="img/heat_exchanger.png" alt="Пластинчатый теплообменник завода Феникс" class="w-full max-w-md mx-auto" style="filter:drop-shadow(4px 8px 16px rgba(0,0,0,.08));border:2.5px solid #2d3436;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:8px;background:#fffefc">
+      <div class="hero-note alt text-left">
+        <strong>Что меняется:</strong> меньше ручной рутины, быстрее ответ клиенту, прозрачнее цикл от запроса до черновика ТКП.
+      </div>
     </div>
   </div>
 </section>
