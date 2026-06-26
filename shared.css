@@ -896,15 +896,27 @@ body{
   }
   .nn-stage{overflow:hidden;margin-bottom:-60px}
 
-  /* Футер */
-  .currency-chart-wrap{display:none}
+  /* Футер — валюта скроллится на мобилке */
   .currency-bar{
-    flex-wrap:wrap;
-    justify-content:center;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    justify-content:flex-start;
     gap:8px;
-    padding:10px;
+    padding:10px 12px;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
   }
-  .currency-bar .rate{font-size:.85rem}
+  .currency-bar::-webkit-scrollbar{display:none}
+  .currency-bar .rate{font-size:.82rem;white-space:nowrap;flex-shrink:0}
+  .currency-chart-wrap{
+    display:block;
+    flex-shrink:0;
+  }
+  .currency-chart-wrap canvas{
+    width:320px!important;
+    height:120px!important;
+  }
   #visitorInfo{
     grid-template-columns:repeat(2,1fr)!important;
     gap:6px!important;
