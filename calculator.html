@@ -414,12 +414,12 @@ var scene,camera,renderer;
 var heatGroup,plateGroup,frontFrame,backFrame,guideBars=[],tieRods=[];
 var nPlates=31,currentMode='assembled',xrayOn=false;
 var explodeTarget=0,explodeCurrent=0;
-var sph={t:0.7,p:0.85,r:1.8};
-var targetSph={t:0.7,p:0.85,r:1.8};
+var sph={t:0.7,p:0.8,r:1.8};
+var targetSph={t:0.7,p:0.8,r:1.8};
 function updateCam(){
   if(!camera)return;
   camera.position.set(sph.r*Math.sin(sph.p)*Math.cos(sph.t),sph.r*Math.cos(sph.p),sph.r*Math.sin(sph.p)*Math.sin(sph.t));
-  camera.lookAt(0,-C.frameH*0.08,0);
+  camera.lookAt(0,-C.frameH*0.18,0);
 }
 
 /* Масштаб модели — всё подгоняется под реальные размеры */
@@ -615,25 +615,31 @@ function makeFrameGroup(z,isFront){
     addEdges(plateMesh,0xffffff);
     g.add(plateMesh);
 
-    var logoMat=new THREE.MeshBasicMaterial({transparent:true,side:THREE.FrontSide,alphaTest:0.05,color:0xffffff});
+    var logoMat=new THREE.MeshBasicMaterial({transparent:true,side:THREE.FrontSide,alphaTest:0.05,color:0xffffff,depthWrite:false});
     var logoMesh=new THREE.Mesh(new THREE.PlaneGeometry(plateW*0.88,plateH*0.76),logoMat);
     logoMesh.position.set(0,0,-C.frameTh/2-0.0065);
     g.add(logoMesh);
 
-    var fallbackCanvas=document.createElement('canvas');fallbackCanvas.width=1024;fallbackCanvas.height=512;
-    var fctx=fallbackCanvas.getContext('2d');
-    fctx.clearRect(0,0,1024,512);
-    fctx.fillStyle='#ffffff';fctx.font='bold 88px Arial';fctx.textAlign='center';fctx.textBaseline='middle';
-    fctx.fillText('\u0424\u0415\u041D\u0418\u041A\u0421',512,390);
-    var fallbackTex=new THREE.CanvasTexture(fallbackCanvas);fallbackTex.minFilter=THREE.LinearFilter;
-    logoMat.map=fallbackTex;logoMat.needsUpdate=true;
-
-    new THREE.TextureLoader().load('logo.png?v=20260626',function(tex){
-      tex.minFilter=THREE.LinearFilter;
-      tex.magFilter=THREE.LinearFilter;
-      logoMat.map=tex;
-      logoMat.needsUpdate=true;
-    });
+    var img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=function(){
+      var c=document.createElement('canvas');
+      c.width=img.width;c.height=img.height;
+      var ctx=c.getContext('2d');
+      ctx.drawImage(img,0,0);
+      var tex=new THREE.CanvasTexture(c);
+      tex.minFilter=THREE.LinearFilter;tex.magFilter=THREE.LinearFilter;
+      logoMat.map=tex;logoMat.needsUpdate=true;
+    };
+    img.onerror=function(){
+      var c=document.createElement('canvas');c.width=1024;c.height=512;
+      var ctx=c.getContext('2d');
+      ctx.fillStyle='#ffffff';ctx.font='bold 88px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText('\u0424\u0415\u041D\u0418\u041A\u0421',512,390);
+      var tex=new THREE.CanvasTexture(c);tex.minFilter=THREE.LinearFilter;
+      logoMat.map=tex;logoMat.needsUpdate=true;
+    };
+    img.src='logo.png?v=20260627';
 
     var labels=['\u041F1','\u041F4','\u041F2','\u041F3'];
     C.nozzlePos.forEach(function(np,idx){
@@ -1021,7 +1027,7 @@ function init3D(){
     momentum.vx*=0.9;momentum.vy*=0.9;updateCam();requestAnimationFrame(applyMomentum);
   }
   function resetView(){
-    targetSph.t=0.7;targetSph.p=0.85;
+    targetSph.t=0.7;targetSph.p=0.8;
     targetSph.r=Math.max(2.4,Math.max(C.frameW,C.frameH)*3.4);animateToTarget();
   }
   function animateToTarget(){
