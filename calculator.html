@@ -620,7 +620,8 @@ function makeFrameGroup(z,isFront){
     lc.width=lcw; lc.height=lch;
     var lctx=lc.getContext('2d');
     function drawFallback(){
-      lctx.clearRect(0,0,lcw,lch);
+      lctx.fillStyle='#1a3a8a';
+      lctx.fillRect(0,0,lcw,lch);
       lctx.fillStyle='#ffffff';lctx.font='bold 110px Arial';lctx.textAlign='center';lctx.textBaseline='middle';
       lctx.fillText('\u0424\u0415\u041D\u0418\u041A\u0421',lcw/2,lch/2);
     }
@@ -628,7 +629,7 @@ function makeFrameGroup(z,isFront){
     var ltex=new THREE.CanvasTexture(lc);
     ltex.minFilter=THREE.LinearFilter;ltex.magFilter=THREE.LinearFilter;
 
-    var logoMat=new THREE.MeshBasicMaterial({map:ltex,transparent:true,side:THREE.FrontSide,color:0xffffff,depthWrite:false});
+    var logoMat=new THREE.MeshBasicMaterial({map:ltex,side:THREE.FrontSide,color:0xffffff});
     var logoMesh=new THREE.Mesh(new THREE.PlaneGeometry(plateW*0.88,plateH*0.76),logoMat);
     logoMesh.position.set(0,0,-C.frameTh/2-0.0065);
     g.add(logoMesh);
@@ -636,7 +637,8 @@ function makeFrameGroup(z,isFront){
     var img=new Image();
     img.crossOrigin='anonymous';
     img.onload=function(){
-      lctx.clearRect(0,0,lcw,lch);
+      lctx.fillStyle='#1a3a8a';
+      lctx.fillRect(0,0,lcw,lch);
       var sc=Math.min((lcw*0.8)/img.width, (lch*0.6)/img.height);
       var w=img.width*sc, h=img.height*sc;
       var x=(lcw-w)/2, y=(lch-h)/2 - 30;
@@ -940,8 +942,6 @@ function init3D(){
   renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
   renderer.setSize(w,h);
-  renderer.shadowMap.enabled=false;
-  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
   renderer.domElement.id='canvas3d';
 
@@ -950,11 +950,6 @@ function init3D(){
   scene.add(new THREE.HemisphereLight(0xddeeff,0x888888,0.3));
   var dl=new THREE.DirectionalLight(0xffffff,1.0);
   dl.position.set(4,8,5);
-  dl.shadow.mapSize.set(1024,1024);
-  dl.shadow.camera.near=0.5;dl.shadow.camera.far=15;
-  dl.shadow.camera.left=-2.0;dl.shadow.camera.right=2.0;dl.shadow.camera.top=2.0;dl.shadow.camera.bottom=-2.0;
-  dl.shadow.bias=-0.0005;
-  dl.shadow.normalBias=0.04;
   scene.add(dl);
   scene.add(new THREE.DirectionalLight(0xe0e8f0,0.35).translateX(-3).translateY(5).translateZ(-3));
   var fl=new THREE.DirectionalLight(0xe2e8f0,0.15);fl.position.set(0,-2,4);scene.add(fl);
@@ -1037,7 +1032,7 @@ function init3D(){
   }
   function resetView(){
     targetSph.t=0.7;targetSph.p=0.8;
-    targetSph.r=Math.max(2.4,Math.max(C.frameW,C.frameH)*3.4);animateToTarget();
+    targetSph.r=Math.max(3.0,Math.max(C.frameW,C.frameH)*4.0);animateToTarget();
   }
   function animateToTarget(){
     var dx=targetSph.t-sph.t,dp=targetSph.p-sph.p,dr=targetSph.r-sph.r;
