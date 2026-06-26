@@ -761,6 +761,23 @@ body{
    MOBILE RESPONSIVE — AIPhoenix
    ============================================= */
 
+/* --- На мобилке ВСЕ блоки на всю ширину --- */
+@media(max-width:768px){
+  header,
+  nav,
+  main,
+  footer,
+  #ai-chat-section,
+  section.sketchy,
+  .sketchy{
+    max-width:100%!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    width:100%!important;
+    box-sizing:border-box;
+  }
+}
+
 /* --- Chat action buttons: единый стиль --- */
 .chat-action-btn{
   color:#fff;
