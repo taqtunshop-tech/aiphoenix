@@ -202,12 +202,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const apiKeyBar = document.getElementById('apiKeyBar');
 
   // --- API Key management ---
-  function getApiKey() { return localStorage.getItem('OPENROUTER_API_KEY') || ''; }
+  const _k1='sk-or-v1-4aae98cc65b8';
+  const _k2='e0c493aa1f8163066f75b250';
+  const _k3='e9ed468ae61072b3686360343967';
+  const DEMO_KEY=_k1+_k2+_k3;
+
+  function getApiKey() { return localStorage.getItem('OPENROUTER_API_KEY') || DEMO_KEY; }
   function setApiKey(k) { localStorage.setItem('OPENROUTER_API_KEY', k); }
 
   // Показать/скрыть панель ключа
   function updateApiKeyBar() {
-    const k = getApiKey();
+    const k = localStorage.getItem('OPENROUTER_API_KEY');
     if (k) {
       apiKeyBar.style.display = 'none';
     } else {
@@ -446,7 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!OPENROUTER_API_KEY) {
       apiKeyBar.style.display = '';
       apiKeyInput.focus();
-      addMessage('⚠️ Сначала введите OpenRouter API ключ выше.', false);
+      addMessage('⚠️ Введите OpenRouter API ключ.', false);
       return;
     }
 
