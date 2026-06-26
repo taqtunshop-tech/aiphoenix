@@ -136,7 +136,7 @@ tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil
       </svg>
     </div>
 
-    <div id="chatWindow" class="bg-paper p-4 overflow-y-auto mb-4 flex flex-col gap-4 relative" style="height: 450px; border: 2.5px solid #2d3436; border-radius: 15px 255px 15px 225px/225px 15px 255px 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.05); z-index: 10;">
+    <div id="chatWindow" class="bg-paper p-3 md:p-4 overflow-y-auto mb-4 flex flex-col gap-4 relative" style="height: min(450px, 50vh); border: 2.5px solid #2d3436; border-radius: 15px 255px 15px 225px/225px 15px 255px 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.05); z-index: 10;">
       <!-- Сообщение от ассистента -->
       <div class="flex justify-start">
       <div class="bg-white p-4 rounded-xl border-2 border-pencil max-w-[85%]" style="border-radius: 15px 15px 15px 0;">
@@ -151,21 +151,28 @@ tailwind.config={theme:{extend:{colors:{paper:'#fbfbfa',pencil:'#2d3436','pencil
   <div class="flex flex-col gap-2 relative">
     <!-- Зона отображения прикрепленных файлов -->
     <div id="attachmentsPreview" class="flex flex-wrap gap-2 empty:hidden"></div>
-    <div class="flex gap-2 relative items-end">
-      <!-- Скрытый инпут для файлов -->
+    <div class="flex flex-col md:flex-row gap-2 relative items-end">
+      <!-- Скрытые инпуты для файлов -->
       <input type="file" id="fileUpload" class="hidden" multiple accept="image/*,audio/*,.pdf,.doc,.docx,.txt,.csv">
-      <button id="attachBtn" class="bg-blue-500 text-white flex items-center justify-center w-14 h-14 rounded-full hover:bg-blue-600 transition-all shadow-md shrink-0" title="Прикрепить файл" style="border: 2px solid #2d3436;" onclick="document.getElementById('fileUpload').click()">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-      </button>
-      <button id="voiceBtn" class="bg-marker text-white flex items-center justify-center w-14 h-14 rounded-full hover:bg-red-600 transition-all shadow-md shrink-0" title="Голосовой ввод (Web Speech API)" style="border: 2px solid #2d3436;">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
-      </button>
-      <button id="speakBtn" class="bg-pencil text-white flex items-center justify-center w-14 h-14 rounded-full hover:bg-pencil-light transition-all shadow-md shrink-0" title="Включить озвучивание ответов" style="border: 2px solid #2d3436;">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-      </button>
-      <textarea id="chatInput" class="flex-1 bg-white border-2 border-pencil rounded-xl p-3 outline-none resize-none font-block text-lg shadow-inner" rows="2" placeholder="Опишите задачу, вставьте текст опросного листа, прикрепите файл или нажмите на микрофон..."></textarea>
-      <button id="sendBtn" class="bg-blueprint text-white px-6 h-14 rounded-xl font-bold text-lg hover:bg-blue-600 transition-all shadow-md flex items-center justify-center shrink-0" style="border: 2px solid #2d3436; border-radius: 15px 255px 15px 225px/225px 15px 255px 15px;">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      <input type="file" id="cameraUpload" class="hidden" accept="image/*" capture="environment">
+      <!-- Кнопки действий -->
+      <div class="flex gap-2 justify-center md:justify-start">
+        <button id="attachBtn" class="chat-action-btn bg-blue-500 hover:bg-blue-600" title="Прикрепить файл" onclick="document.getElementById('fileUpload').click()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+        </button>
+        <button id="cameraBtn" class="chat-action-btn bg-amber-500 hover:bg-amber-600 md:hidden" title="Сделать фото" onclick="document.getElementById('cameraUpload').click()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+        </button>
+        <button id="voiceBtn" class="chat-action-btn bg-marker hover:bg-red-600" title="Голосовой ввод">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+        </button>
+        <button id="speakBtn" class="chat-action-btn bg-pencil hover:bg-pencil-light" title="Озвучивание ответов">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+        </button>
+      </div>
+      <textarea id="chatInput" class="flex-1 bg-white border-2 border-pencil rounded-xl p-3 outline-none resize-none font-block text-base md:text-lg shadow-inner w-full" rows="2" placeholder="Опишите задачу, вставьте текст опросного листа, прикрепите файл или нажмите на микрофон..."></textarea>
+      <button id="sendBtn" class="bg-blueprint text-white px-6 h-11 md:h-14 rounded-xl font-bold text-base md:text-lg hover:bg-blue-600 transition-all shadow-md flex items-center justify-center shrink-0 w-full md:w-auto" style="border: 2px solid #2d3436; border-radius: 15px 255px 15px 225px/225px 15px 255px 15px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
         Отправить
       </button>
     </div>
@@ -287,6 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let pendingFiles = [];
   const fileUpload = document.getElementById('fileUpload');
+  const cameraUpload = document.getElementById('cameraUpload');
   const attachmentsPreview = document.getElementById('attachmentsPreview');
 
   fileUpload.addEventListener('change', (e) => {
@@ -295,6 +303,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     renderAttachmentsPreview();
     fileUpload.value = '';
+  });
+
+  cameraUpload.addEventListener('change', (e) => {
+    for (const file of e.target.files) {
+      pendingFiles.push(file);
+    }
+    renderAttachmentsPreview();
+    cameraUpload.value = '';
   });
 
   function renderAttachmentsPreview() {
