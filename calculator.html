@@ -344,6 +344,11 @@ function doCalc(){
   var Fr=(Q*1000)/(k*dT)*(1+rv/100);
   var nP=Math.max(12,Math.ceil(Fr/pa)+2);
 
+  var cp_cold=CP[cm]||4.18;
+  var G_cold=Q/(cp_cold*(t4-t3));
+  var cfElement = document.getElementById('cold_flow');
+  if(cfElement) cfElement.value = (G_cold*3.6).toFixed(2);
+
   document.getElementById('r_power').textContent=Q.toFixed(1);
   document.getElementById('r_area').textContent=Fr.toFixed(2);
   document.getElementById('r_plates').textContent=nP;
@@ -1281,6 +1286,17 @@ function toggleFlowPlay(){
 function setFlowSpeed(v){flowSpeedMul=parseInt(v)}
 
 updateTempLegend();
+
+(function(){
+  var inputs = ['hot_medium', 'hot_flow', 'hot_tin', 'hot_tout', 'cold_medium', 'cold_tin', 'cold_tout', 'surface_reserve', 'plate_model'];
+  inputs.forEach(function(id) {
+    var el = document.getElementById(id);
+    if(el) {
+      el.addEventListener('input', doCalc);
+      el.addEventListener('change', doCalc);
+    }
+  });
+})();
 
 /* ═══════ Инициализация 3D (после объявления всех переменных) ═══════ */
 if(typeof THREE!=='undefined') init3D();
