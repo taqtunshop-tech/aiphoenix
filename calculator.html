@@ -1165,8 +1165,8 @@ function init3D(){
     momentum.vx*=0.9;momentum.vy*=0.9;updateCam();requestAnimationFrame(applyMomentum);
   }
   function resetView(){
-    targetSph.t=0.6;targetSph.p=1.05;
-    var mH=C.frameH+C.legStandH+C.legH;targetSph.r=Math.max(3.2,Math.max(C.frameW,mH)*4.5);animateToTarget();
+    targetSph.t=0.7;targetSph.p=0.8;
+    targetSph.r=Math.max(3.2,Math.max(C.frameW,C.frameH)*4.5);animateToTarget();
   }
   function animateToTarget(){
     var dx=targetSph.t-sph.t,dp=targetSph.p-sph.p,dr=targetSph.r-sph.r;
