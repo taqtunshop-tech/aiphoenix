@@ -459,25 +459,33 @@ function scaleCforModel(pm){
 var MAT={};
 var EDGE_COL=0x4b5563;
 function addEdges(mesh,col){
+  if(!xrayOn) return; // Убираем грани в обычном режиме для фотореализма
   var eg=new THREE.EdgesGeometry(mesh.geometry,15);
-  mesh.add(new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:col||EDGE_COL})));
+  mesh.add(new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:col||EDGE_COL, transparent:true, opacity:0.3})));
 }
 function initMAT(){
   var op=xrayOn?0.25:1.0;
-  var met=xrayOn?0.3:0.75,rgh=xrayOn?0.6:0.30;
-  MAT.frameF=new THREE.MeshStandardMaterial({color:0x1a3a8a,metalness:met,roughness:rgh,transparent:xrayOn,opacity:op});
-  MAT.frameB=new THREE.MeshStandardMaterial({color:0xcc2222,metalness:met,roughness:rgh,transparent:xrayOn,opacity:op});
-  MAT.plate=new THREE.MeshStandardMaterial({color:0xa8adb2,metalness:0.65,roughness:0.40,side:2,transparent:xrayOn,opacity:xrayOn?0.08:1,map:makePlateTexture()});
+  var fmet=0.25, frgh=0.7; // Крашеный металл рамы
+  MAT.frameF=new THREE.MeshStandardMaterial({color:0x1a3a8a,metalness:fmet,roughness:frgh,transparent:xrayOn,opacity:op});
+  MAT.frameB=new THREE.MeshStandardMaterial({color:0xcc2222,metalness:fmet,roughness:frgh,transparent:xrayOn,opacity:op});
+  
+  // Полированная нержавеющая сталь / титан для пластин
+  MAT.plate=new THREE.MeshStandardMaterial({color:0xffffff,metalness:0.95,roughness:0.15,side:2,transparent:xrayOn,opacity:xrayOn?0.08:1,map:makePlateTexture()});
+  
   MAT.gasketHot=new THREE.MeshStandardMaterial({color:0xef4444,metalness:0,roughness:0.85,side:2,transparent:true,opacity:0.4});
   MAT.gasketCold=new THREE.MeshStandardMaterial({color:0x3b82f6,metalness:0,roughness:0.85,side:2,transparent:true,opacity:0.4});
-  MAT.nozzle=new THREE.MeshStandardMaterial({color:0xb0b5ba,metalness:0.78,roughness:0.28});
-  MAT.flange=new THREE.MeshStandardMaterial({color:0xb0b5ba,metalness:0.78,roughness:0.28});
-  MAT.bolt=new THREE.MeshStandardMaterial({color:0x8a9098,metalness:0.80,roughness:0.25});
-  MAT.nut=new THREE.MeshStandardMaterial({color:0x6b7280,metalness:0.85,roughness:0.20});
-  MAT.leg=new THREE.MeshStandardMaterial({color:0xc0c4c8,metalness:met,roughness:rgh});
-  MAT.label=new THREE.MeshStandardMaterial({color:0x1a3a8a,metalness:met,roughness:rgh});
+  
+  // Матовый металл патрубков и фланцев
+  MAT.nozzle=new THREE.MeshStandardMaterial({color:0xa0a5aa,metalness:0.7,roughness:0.4});
+  MAT.flange=new THREE.MeshStandardMaterial({color:0xa0a5aa,metalness:0.7,roughness:0.4});
+  
+  // Блестящая сталь для шпилек и гаек
+  MAT.bolt=new THREE.MeshStandardMaterial({color:0xcccccc,metalness:0.85,roughness:0.25});
+  MAT.nut=new THREE.MeshStandardMaterial({color:0xbbbbbb,metalness:0.85,roughness:0.25});
+  MAT.leg=new THREE.MeshStandardMaterial({color:0xc0c4c8,metalness:fmet,roughness:frgh});
+  MAT.label=new THREE.MeshStandardMaterial({color:0x1a3a8a,metalness:fmet,roughness:frgh});
   MAT.dark=new THREE.MeshStandardMaterial({color:0x374151,metalness:0.5,roughness:0.5});
-  MAT.washer=new THREE.MeshStandardMaterial({color:0x8a9098,metalness:0.80,roughness:0.25});
+  MAT.washer=new THREE.MeshStandardMaterial({color:0xcccccc,metalness:0.85,roughness:0.25});
 }
 
 /* ═══════ ГЕОМЕТРИЯ ПЛАСТИНЫ — ГОФРА (как эталон) ═══════ */
@@ -765,6 +773,15 @@ function buildAssembly(){
   });
 
   scene.add(heatGroup);
+  
+  // Включаем отбрасывание теней для всех элементов теплообменника
+  heatGroup.traverse(function(child){
+    if(child.isMesh) {
+      child.castShadow = true;
+      child.receiveShadow = true;
+    }
+  });
+  
   buildFlowSystem();
 }
 
@@ -942,30 +959,54 @@ function init3D(){
   renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
   renderer.setSize(w,h);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
   renderer.domElement.id='canvas3d';
 
   bumpLoad(50,'Подсветка...');
-  scene.add(new THREE.AmbientLight(0xffffff,0.45));
-  scene.add(new THREE.HemisphereLight(0xddeeff,0x888888,0.3));
-  var dl=new THREE.DirectionalLight(0xffffff,1.0);
-  dl.position.set(4,8,5);
+  scene.add(new THREE.AmbientLight(0xffffff,0.6));
+  
+  // 3-point studio lighting
+  var dl=new THREE.DirectionalLight(0xfff5e6,1.8); // Warm key light
+  dl.position.set(4,8,6);
+  dl.castShadow = true;
+  dl.shadow.mapSize.width = 2048;
+  dl.shadow.mapSize.height = 2048;
+  dl.shadow.camera.near = 0.5;
+  dl.shadow.camera.far = 25;
+  dl.shadow.camera.left = -3;
+  dl.shadow.camera.right = 3;
+  dl.shadow.camera.top = 3;
+  dl.shadow.camera.bottom = -3;
+  dl.shadow.bias = -0.002;
   scene.add(dl);
-  scene.add(new THREE.DirectionalLight(0xe0e8f0,0.35).translateX(-3).translateY(5).translateZ(-3));
-  var fl=new THREE.DirectionalLight(0xe2e8f0,0.15);fl.position.set(0,-2,4);scene.add(fl);
+  
+  var fillLight = new THREE.DirectionalLight(0xaaccff, 1.0); // Cool fill light
+  fillLight.position.set(-6, 3, 5);
+  scene.add(fillLight);
+  
+  var rimLight = new THREE.DirectionalLight(0xffffff, 2.0); // Sharp rim light
+  rimLight.position.set(0, 5, -8);
+  scene.add(rimLight);
 
-  var envCanvas=document.createElement('canvas');envCanvas.width=64;envCanvas.height=64;
+  // Студийная карта окружения для реалистичных бликов на металле
+  var envCanvas=document.createElement('canvas');envCanvas.width=512;envCanvas.height=256;
   var envCtx=envCanvas.getContext('2d');
-  var grad=envCtx.createLinearGradient(0,0,0,64);
-  grad.addColorStop(0,'#f0f0f0');grad.addColorStop(0.4,'#d0d0d0');
-  grad.addColorStop(0.6,'#b0b0b0');grad.addColorStop(1,'#909090');
-  envCtx.fillStyle=grad;envCtx.fillRect(0,0,64,64);
+  envCtx.fillStyle='#0f0f11';envCtx.fillRect(0,0,512,256); // Темная студия
+  envCtx.shadowColor='#ffffff';envCtx.shadowBlur=20; // Мягкий свет софтбоксов
+  envCtx.fillStyle='#ffffff';
+  envCtx.fillRect(40, 80, 100, 40); // Левый софтбокс
+  envCtx.fillRect(350, 60, 80, 80); // Правый софтбокс
+  envCtx.fillRect(180, 160, 150, 20); // Верхний свет
   var envTex=new THREE.CanvasTexture(envCanvas);
   envTex.mapping=THREE.EquirectangularReflectionMapping;
   scene.environment=envTex;
 
-  var ground=new THREE.Mesh(new THREE.PlaneGeometry(8,8),new THREE.MeshBasicMaterial({color:0xeef1f5}));
-  ground.rotation.x=-Math.PI/2;ground.position.y=-0.02;scene.add(ground);
+  var ground=new THREE.Mesh(new THREE.PlaneGeometry(15,15),new THREE.MeshStandardMaterial({color:0xeef1f5, roughness:0.8, metalness:0.1}));
+  ground.rotation.x=-Math.PI/2;ground.position.y=-0.02;
+  ground.receiveShadow = true;
+  scene.add(ground);
 
   bumpLoad(70,'Построение модели...');
   scaleCforModel(document.getElementById('plate_model').value);
