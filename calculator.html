@@ -375,7 +375,7 @@ function onModelChange(){
     scaleCforModel(pm);
     initMAT();
     buildAssembly();
-    var mH2=C.frameH+C.legStandH+C.legH;sph.r=Math.max(1.1,Math.max(C.frameW,mH2)*2.2);targetSph.r=sph.r;
+    var mH2=C.frameH+C.legStandH+C.legH;sph.r=Math.max(3.2,Math.max(C.frameW,mH2)*4.5);targetSph.r=sph.r;
     updateCam();
     var mat=document.getElementById('plate_material').value;
     var gk=document.getElementById('gasket_material').value;
@@ -418,14 +418,12 @@ var scene,camera,renderer;
 var heatGroup,plateGroup,frontFrame,backFrame,guideBars=[],tieRods=[];
 var nPlates=31,currentMode='assembled',xrayOn=false;
 var explodeTarget=0,explodeCurrent=0;
-var sph={t:0.6,p:1.05,r:1.8};
-var targetSph={t:0.6,p:1.05,r:1.8};
+var sph={t:0.7,p:0.8,r:1.8};
+var targetSph={t:0.7,p:0.8,r:1.8};
 function updateCam(){
   if(!camera)return;
-  // Геометрический центр модели: верх = +frameH/2, низ = -(frameH/2+legStandH+legH)
-  var lookY = -(C.legStandH+C.legH)/2;
-  camera.position.set(sph.r*Math.sin(sph.p)*Math.cos(sph.t), lookY + sph.r*Math.cos(sph.p), sph.r*Math.sin(sph.p)*Math.sin(sph.t));
-  camera.lookAt(0, lookY, 0);
+  camera.position.set(sph.r*Math.sin(sph.p)*Math.cos(sph.t),sph.r*Math.cos(sph.p),sph.r*Math.sin(sph.p)*Math.sin(sph.t));
+  camera.lookAt(0,-C.frameH*0.22,0);
 }
 
 /* Масштаб модели — всё подгоняется под реальные размеры */
@@ -867,8 +865,6 @@ function buildAssembly(){
   // Включаем отбрасывание теней для всех элементов теплообменника
   heatGroup.traverse(function(child){
     if(child.isMesh) {
-      child.castShadow = true;
-      child.receiveShadow = true;
     }
   });
   
@@ -1043,7 +1039,7 @@ function init3D(){
   scene=new THREE.Scene();
   scene.background=new THREE.Color(0xeef1f5);
   var w=container.clientWidth||600,h=container.clientHeight||420;
-  camera=new THREE.PerspectiveCamera(35,w/h,0.05,50);
+  camera=new THREE.PerspectiveCamera(36,w/h,0.05,50);
 
   bumpLoad(30,'Инициализация рендерера...');
   renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
@@ -1060,7 +1056,6 @@ function init3D(){
   // 3-point studio lighting
   var dl=new THREE.DirectionalLight(0xfff5e6,1.8); // Warm key light
   dl.position.set(4,8,6);
-  dl.castShadow = true;
   dl.shadow.mapSize.width = 2048;
   dl.shadow.mapSize.height = 2048;
   dl.shadow.camera.near = 0.5;
@@ -1100,9 +1095,8 @@ function init3D(){
 
   // Плоскость земли — точно под подошвой ног аппарата
   var groundY=-(C.frameH/2+C.legStandH+C.legH+0.005);
-  var ground=new THREE.Mesh(new THREE.PlaneGeometry(15,15),new THREE.MeshStandardMaterial({color:0xeef1f5, roughness:0.8, metalness:0.1}));
+  var ground=new THREE.Mesh(new THREE.PlaneGeometry(15,15),new THREE.MeshBasicMaterial({color:0xeef1f5}));
   ground.rotation.x=-Math.PI/2;ground.position.y=groundY;
-  ground.receiveShadow = true;
   scene.add(ground);
 
   bumpLoad(70,'Построение модели...');
@@ -1110,7 +1104,7 @@ function init3D(){
   initMAT();buildAssembly();
   // Камера: автоподгон расстояния под реальный размер модели
   var modelH=C.frameH+C.legStandH+C.legH;
-  sph.r=Math.max(1.1,Math.max(C.frameW,modelH)*2.2);
+  sph.r=Math.max(3.2,Math.max(C.frameW,modelH)*4.5);
   targetSph.r=sph.r;
   updateCam();
 
@@ -1172,7 +1166,7 @@ function init3D(){
   }
   function resetView(){
     targetSph.t=0.6;targetSph.p=1.05;
-    var mH=C.frameH+C.legStandH+C.legH;targetSph.r=Math.max(1.1,Math.max(C.frameW,mH)*2.2);animateToTarget();
+    var mH=C.frameH+C.legStandH+C.legH;targetSph.r=Math.max(3.2,Math.max(C.frameW,mH)*4.5);animateToTarget();
   }
   function animateToTarget(){
     var dx=targetSph.t-sph.t,dp=targetSph.p-sph.p,dr=targetSph.r-sph.r;
@@ -1252,7 +1246,7 @@ function updateModel(n){
   scaleCforModel(pm);
   initMAT();buildAssembly();
   if(backFrame)backFrame.userData.baseZ=backFrame.position.z;
-  var mH=C.frameH+C.legStandH+C.legH;sph.r=Math.max(1.1,Math.max(C.frameW,mH)*2.2);targetSph.r=sph.r;updateCam();
+  var mH=C.frameH+C.legStandH+C.legH;sph.r=Math.max(3.2,Math.max(C.frameW,mH)*4.5);targetSph.r=sph.r;updateCam();
   var mat=document.getElementById('plate_material').value;
   var gk=document.getElementById('gasket_material').value;
   var m=MODELS[pm];
