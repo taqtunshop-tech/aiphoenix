@@ -370,7 +370,7 @@ function onModelChange(){
     scaleCforModel(pm);
     initMAT();
     buildAssembly();
-    sph.r=Math.max(2.4,Math.max(C.frameW,C.frameH)*3.4);
+    sph.r=Math.max(3.0,Math.max(C.frameW,C.frameH)*4.0);
     targetSph.r=sph.r;
     updateCam();
     var mat=document.getElementById('plate_material').value;
@@ -419,7 +419,7 @@ var targetSph={t:0.7,p:0.8,r:1.8};
 function updateCam(){
   if(!camera)return;
   camera.position.set(sph.r*Math.sin(sph.p)*Math.cos(sph.t),sph.r*Math.cos(sph.p),sph.r*Math.sin(sph.p)*Math.sin(sph.t));
-  camera.lookAt(0,-C.frameH*0.18,0);
+  camera.lookAt(0,-C.frameH*0.25,0);
 }
 
 /* Масштаб модели — всё подгоняется под реальные размеры */
@@ -567,7 +567,7 @@ function makeFrameGroup(z,isFront){
   var fmat=isFront?MAT.frameF:MAT.frameB;
 
   var body=new THREE.Mesh(new THREE.BoxGeometry(C.frameW,C.frameH,C.frameTh),fmat);
-  body.castShadow=true;body.receiveShadow=true;addEdges(body);g.add(body);
+  addEdges(body);g.add(body);
 
   for(var i=0;i<5;i++){
     var y=C.frameH*(-0.4+0.2*i);
@@ -615,7 +615,20 @@ function makeFrameGroup(z,isFront){
     addEdges(plateMesh,0xffffff);
     g.add(plateMesh);
 
-    var logoMat=new THREE.MeshBasicMaterial({transparent:true,side:THREE.FrontSide,alphaTest:0.05,color:0xffffff,depthWrite:false});
+    var lcw=1024, lch=512;
+    var lc=document.createElement('canvas');
+    lc.width=lcw; lc.height=lch;
+    var lctx=lc.getContext('2d');
+    function drawFallback(){
+      lctx.clearRect(0,0,lcw,lch);
+      lctx.fillStyle='#ffffff';lctx.font='bold 110px Arial';lctx.textAlign='center';lctx.textBaseline='middle';
+      lctx.fillText('\u0424\u0415\u041D\u0418\u041A\u0421',lcw/2,lch/2);
+    }
+    drawFallback();
+    var ltex=new THREE.CanvasTexture(lc);
+    ltex.minFilter=THREE.LinearFilter;ltex.magFilter=THREE.LinearFilter;
+
+    var logoMat=new THREE.MeshBasicMaterial({map:ltex,transparent:true,side:THREE.FrontSide,color:0xffffff,depthWrite:false});
     var logoMesh=new THREE.Mesh(new THREE.PlaneGeometry(plateW*0.88,plateH*0.76),logoMat);
     logoMesh.position.set(0,0,-C.frameTh/2-0.0065);
     g.add(logoMesh);
@@ -623,21 +636,18 @@ function makeFrameGroup(z,isFront){
     var img=new Image();
     img.crossOrigin='anonymous';
     img.onload=function(){
-      var c=document.createElement('canvas');
-      c.width=img.width;c.height=img.height;
-      var ctx=c.getContext('2d');
-      ctx.drawImage(img,0,0);
-      var tex=new THREE.CanvasTexture(c);
-      tex.minFilter=THREE.LinearFilter;tex.magFilter=THREE.LinearFilter;
-      logoMat.map=tex;logoMat.needsUpdate=true;
+      lctx.clearRect(0,0,lcw,lch);
+      var sc=Math.min((lcw*0.8)/img.width, (lch*0.6)/img.height);
+      var w=img.width*sc, h=img.height*sc;
+      var x=(lcw-w)/2, y=(lch-h)/2 - 30;
+      lctx.drawImage(img,x,y,w,h);
+      lctx.fillStyle='#ffffff';lctx.font='bold 70px Arial';lctx.textAlign='center';lctx.textBaseline='middle';
+      lctx.fillText('\u0424\u0415\u041D\u0418\u041A\u0421',lcw/2,y+h+55);
+      ltex.needsUpdate=true;
     };
     img.onerror=function(){
-      var c=document.createElement('canvas');c.width=1024;c.height=512;
-      var ctx=c.getContext('2d');
-      ctx.fillStyle='#ffffff';ctx.font='bold 88px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.fillText('\u0424\u0415\u041D\u0418\u041A\u0421',512,390);
-      var tex=new THREE.CanvasTexture(c);tex.minFilter=THREE.LinearFilter;
-      logoMat.map=tex;logoMat.needsUpdate=true;
+      drawFallback();
+      ltex.needsUpdate=true;
     };
     img.src='logo.png?v=20260627';
 
@@ -685,7 +695,6 @@ function buildAssembly(){
     zm.position.z=baseZ;
     zm.userData.baseZ=baseZ;
     zm.userData.plateIdx=i;
-    zm.castShadow=true;zm.receiveShadow=true;
     addEdges(zm,0x6b7280);
     plateGroup.add(zm);
 
@@ -925,7 +934,7 @@ function init3D(){
   scene=new THREE.Scene();
   scene.background=new THREE.Color(0xeef1f5);
   var w=container.clientWidth||600,h=container.clientHeight||420;
-  camera=new THREE.PerspectiveCamera(32,w/h,0.05,50);
+  camera=new THREE.PerspectiveCamera(35,w/h,0.05,50);
 
   bumpLoad(30,'Инициализация рендерера...');
   renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
@@ -966,7 +975,7 @@ function init3D(){
   bumpLoad(70,'Построение модели...');
   scaleCforModel(document.getElementById('plate_model').value);
   initMAT();buildAssembly();
-    sph.r=Math.max(2.4,Math.max(C.frameW,C.frameH)*3.4);
+    sph.r=Math.max(3.0,Math.max(C.frameW,C.frameH)*4.0);
   targetSph.r=sph.r;
   updateCam();
 
@@ -1108,7 +1117,7 @@ function updateModel(n){
   scaleCforModel(pm);
   initMAT();buildAssembly();
   if(backFrame)backFrame.userData.baseZ=backFrame.position.z;
-    sph.r=Math.max(2.4,Math.max(C.frameW,C.frameH)*3.4);targetSph.r=sph.r;updateCam();
+    sph.r=Math.max(3.0,Math.max(C.frameW,C.frameH)*4.0);targetSph.r=sph.r;updateCam();
   var mat=document.getElementById('plate_material').value;
   var gk=document.getElementById('gasket_material').value;
   var m=MODELS[pm];
