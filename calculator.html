@@ -370,8 +370,7 @@ function onModelChange(){
     scaleCforModel(pm);
     initMAT();
     buildAssembly();
-    sph.r=Math.max(3.0,Math.max(C.frameW,C.frameH)*4.0);
-    targetSph.r=sph.r;
+    var mH2=C.frameH+C.legStandH+C.legH;sph.r=Math.max(1.1,Math.max(C.frameW,mH2)*2.2);targetSph.r=sph.r;
     updateCam();
     var mat=document.getElementById('plate_material').value;
     var gk=document.getElementById('gasket_material').value;
@@ -414,13 +413,14 @@ var scene,camera,renderer;
 var heatGroup,plateGroup,frontFrame,backFrame,guideBars=[],tieRods=[];
 var nPlates=31,currentMode='assembled',xrayOn=false;
 var explodeTarget=0,explodeCurrent=0;
-var sph={t:0.7,p:0.8,r:1.8};
-var targetSph={t:0.7,p:0.8,r:1.8};
+var sph={t:0.6,p:1.05,r:1.8};
+var targetSph={t:0.6,p:1.05,r:1.8};
 function updateCam(){
   if(!camera)return;
-  camera.position.set(sph.r*Math.sin(sph.p)*Math.cos(sph.t),sph.r*Math.cos(sph.p),sph.r*Math.sin(sph.p)*Math.sin(sph.t));
-  // Смотрим точно на центр масс модели (с учётом ног)
-  camera.lookAt(0,-(C.legStandH+C.legH)/2,0);
+  // Геометрический центр модели: верх = +frameH/2, низ = -(frameH/2+legStandH+legH)
+  var lookY = -(C.legStandH+C.legH)/2;
+  camera.position.set(sph.r*Math.sin(sph.p)*Math.cos(sph.t), lookY + sph.r*Math.cos(sph.p), sph.r*Math.sin(sph.p)*Math.sin(sph.t));
+  camera.lookAt(0, lookY, 0);
 }
 
 /* Масштаб модели — всё подгоняется под реальные размеры */
@@ -483,7 +483,7 @@ function initMAT(){
   // Блестящая сталь для шпилек и гаек
   MAT.bolt=new THREE.MeshStandardMaterial({color:0xcccccc,metalness:0.85,roughness:0.25});
   MAT.nut=new THREE.MeshStandardMaterial({color:0xbbbbbb,metalness:0.85,roughness:0.25});
-  MAT.leg=new THREE.MeshStandardMaterial({color:0xc0c4c8,metalness:fmet,roughness:frgh});
+  MAT.leg=new THREE.MeshStandardMaterial({color:0x1a3a8a,metalness:fmet,roughness:frgh});
   MAT.label=new THREE.MeshStandardMaterial({color:0x1a3a8a,metalness:fmet,roughness:frgh});
   MAT.dark=new THREE.MeshStandardMaterial({color:0x374151,metalness:0.5,roughness:0.5});
   MAT.washer=new THREE.MeshStandardMaterial({color:0xcccccc,metalness:0.85,roughness:0.25});
@@ -615,52 +615,104 @@ function makeFrameGroup(z,isFront){
       }
     });
 
-    var plateW=C.frameW*0.40,plateH=C.frameH*0.20;
-    var plateMesh=new THREE.Mesh(
-      new THREE.BoxGeometry(plateW,plateH,0.004),
-      new THREE.MeshStandardMaterial({color:0x1a3a8a,metalness:0.55,roughness:0.35})
+    // Unified Nameplate (Technical Data + Logo)
+    var nameplateW = C.frameW * 0.50, nameplateH = C.frameH * 0.45;
+    var nameplateY = -C.frameH * 0.05;
+    
+    // Metallic base plate
+    var npMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(nameplateW, nameplateH, 0.003),
+      new THREE.MeshStandardMaterial({color: 0xdddddd, metalness: 0.8, roughness: 0.3})
     );
-    plateMesh.position.set(0,0,-C.frameTh/2-0.004);
-    addEdges(plateMesh,0xffffff);
-    g.add(plateMesh);
+    npMesh.position.set(0, nameplateY, -C.frameTh/2 - 0.003);
+    addEdges(npMesh, 0x9ca3af);
+    g.add(npMesh);
 
-    var lcw=1024, lch=512;
-    var lc=document.createElement('canvas');
-    lc.width=lcw; lc.height=lch;
-    var lctx=lc.getContext('2d');
-    function drawFallback(){
-      lctx.fillStyle='#1a3a8a';
-      lctx.fillRect(0,0,lcw,lch);
-      lctx.fillStyle='#ffffff';lctx.font='bold 110px Arial';lctx.textAlign='center';lctx.textBaseline='middle';
-      lctx.fillText('\u0424\u0415\u041D\u0418\u041A\u0421',lcw/2,lch/2);
+    // 4 bolts for nameplate
+    for(var ix=-1; ix<=1; ix+=2){
+      for(var iy=-1; iy<=1; iy+=2){
+        var bolt = new THREE.Mesh(new THREE.CylinderGeometry(0.002, 0.002, 0.005, 8), MAT.bolt);
+        bolt.rotation.x = Math.PI/2;
+        bolt.position.set(ix*nameplateW*0.44, nameplateY + iy*nameplateH*0.44, -C.frameTh/2 - 0.005);
+        g.add(bolt);
+      }
     }
-    drawFallback();
-    var ltex=new THREE.CanvasTexture(lc);
-    ltex.minFilter=THREE.LinearFilter;ltex.magFilter=THREE.LinearFilter;
 
-    var logoMat=new THREE.MeshBasicMaterial({map:ltex,side:THREE.FrontSide,color:0xffffff});
-    var logoMesh=new THREE.Mesh(new THREE.PlaneGeometry(plateW*0.88,plateH*0.76),logoMat);
-    logoMesh.position.set(0,0,-C.frameTh/2-0.0065);
-    g.add(logoMesh);
+    // Canvas for nameplate content
+    var cw = 1024, ch = 1024;
+    var cc = document.createElement('canvas');
+    cc.width = cw; cc.height = ch;
+    var ctx = cc.getContext('2d');
+    
+    function drawNameplateText() {
+      ctx.fillStyle = '#d1d5db'; ctx.fillRect(0,0,cw,ch);
+      ctx.strokeStyle = '#111827'; ctx.lineWidth = 6;
+      ctx.strokeRect(20, 20, 984, 984);
+      
+      // Technical Text
+      ctx.fillStyle = '#111827'; ctx.textAlign = 'center';
+      
+      ctx.font = 'bold 45px Arial';
+      ctx.fillText('\u0422\u0415\u041F\u041B\u041E\u041E\u0411\u041C\u0415\u041D\u041D\u0418\u041A', cw/2, 450);
+      ctx.fillText('\u041F\u041B\u0410\u0421\u0422\u0418\u041D\u0427\u0410\u0422\u042B\u0419', cw/2, 510);
+      
+      ctx.beginPath(); ctx.moveTo(20, 540); ctx.lineTo(1004, 540); ctx.stroke();
+      
+      ctx.font = 'bold 36px Arial'; ctx.textAlign = 'left';
+      ctx.fillText('\u041C\u043E\u0434\u0435\u043B\u044C: Phoenix APR', 50, 620);
+      ctx.fillText('\u0420\u0430\u0441\u0447\u0435\u0442\u043D\u043E\u0435 \u0434\u0430\u0432\u043B\u0435\u043D\u0438\u0435: 1.6 \u041C\u041F\u0430', 50, 700);
+      ctx.fillText('\u0420\u0430\u0441\u0447\u0435\u0442\u043D\u0430\u044F \u0442\u0435\u043C\u043F\u0435\u0440\u0430\u0442\u0443\u0440\u0430: 150 \u00B0C', 50, 780);
+      ctx.fillText('\u0417\u0430\u0432\u043E\u0434\u0441\u043A\u043E\u0439 \u043D\u043E\u043C\u0435\u0440: 2026-X8', 50, 860);
+      ctx.fillText('\u041F\u0440\u043E\u0438\u0437\u0432\u043E\u0434\u0438\u0442\u0435\u043B\u044C: \u041E\u041E\u041E "\u0422\u0435\u043F\u043B\u043E\u0445\u0438\u0442"', 50, 940);
+    }
+    
+    function drawLogoFallback() {
+      ctx.fillStyle='#dc2626';
+      ctx.beginPath();
+      var ly = 50, lh = 300;
+      ctx.moveTo(cw/2, ly + lh);
+      ctx.bezierCurveTo(cw*0.3, ly + lh*0.8, cw*0.2, ly + lh*0.3, cw*0.2, ly + lh*0.1);
+      ctx.lineTo(cw*0.8, ly + lh*0.1);
+      ctx.bezierCurveTo(cw*0.8, ly + lh*0.3, cw*0.7, ly + lh*0.8, cw/2, ly + lh);
+      ctx.fill();
+      
+      ctx.fillStyle='#ffffff';
+      ctx.font='bold 70px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('\u0424\u0415\u041D\u0418\u041A\u0421', cw/2, ly + lh*0.45);
+      ctx.font='bold 30px Arial';
+      ctx.fillText('HEAT EXCHANGERS', cw/2, ly + lh*0.65);
+      ctx.textBaseline='alphabetic'; // reset
+    }
 
-    var img=new Image();
-    img.crossOrigin='anonymous';
-    img.onload=function(){
-      lctx.fillStyle='#1a3a8a';
-      lctx.fillRect(0,0,lcw,lch);
-      var sc=Math.min((lcw*0.8)/img.width, (lch*0.6)/img.height);
-      var w=img.width*sc, h=img.height*sc;
-      var x=(lcw-w)/2, y=(lch-h)/2 - 30;
-      lctx.drawImage(img,x,y,w,h);
-      lctx.fillStyle='#ffffff';lctx.font='bold 70px Arial';lctx.textAlign='center';lctx.textBaseline='middle';
-      lctx.fillText('\u0424\u0415\u041D\u0418\u041A\u0421',lcw/2,y+h+55);
-      ltex.needsUpdate=true;
+    drawNameplateText();
+    drawLogoFallback();
+    
+    var npTex = new THREE.CanvasTexture(cc);
+    npTex.minFilter = THREE.LinearFilter; npTex.magFilter = THREE.LinearFilter;
+    
+    var npMat = new THREE.MeshBasicMaterial({map: npTex, depthWrite: false, transparent: true, opacity: 0.95});
+    var npPlane = new THREE.Mesh(new THREE.PlaneGeometry(nameplateW*0.95, nameplateH*0.95), npMat);
+    npPlane.position.set(0, nameplateY, -C.frameTh/2 - 0.0045);
+    g.add(npPlane);
+
+    // Load actual logo image via Base64 to bypass CORS on file://
+    var img = new Image();
+    img.onload = function() {
+      drawNameplateText(); // Redraw base
+      // Draw image in top area
+      var targetH = 350;
+      var targetW = cw * 0.8;
+      var sc = Math.min(targetW/img.width, targetH/img.height);
+      var w = img.width * sc, h = img.height * sc;
+      var x = (cw - w)/2, y = 40 + (targetH - h)/2;
+      ctx.drawImage(img, x, y, w, h);
+      npTex.needsUpdate = true;
     };
-    img.onerror=function(){
-      drawFallback();
-      ltex.needsUpdate=true;
+    img.onerror = function() {
+      // Fallback is already drawn
+      npTex.needsUpdate = true;
     };
-    img.src='logo.png?v=20260627';
+    img.src = 'data:image/png;base64,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';
 
     var labels=['\u041F1','\u041F4','\u041F2','\u041F3'];
     C.nozzlePos.forEach(function(np,idx){
@@ -760,15 +812,47 @@ function buildAssembly(){
   });
 
   [-1,1].forEach(function(side){
-    [frontZ,backZ].forEach(function(lz){
-      var xPos=side*(C.frameW/2+0.005);
-      var lg=new THREE.Group();lg.position.set(xPos,-C.frameH/2,lz);
-      var stand=new THREE.Mesh(new THREE.BoxGeometry(C.legStandTh,C.legStandH,C.legD*0.4),MAT.leg);
-      stand.position.y=-C.legStandH/2;addEdges(stand,EDGE_COL);lg.add(stand);
-      var foot=new THREE.Mesh(new THREE.BoxGeometry(C.legW,C.legH,C.legD),MAT.leg);
-      foot.position.set(C.legW/2-C.legStandTh/2,-C.legStandH,0);addEdges(foot,EDGE_COL);lg.add(foot);
-      var gusset=new THREE.Mesh(new THREE.BoxGeometry(C.legW*0.25,C.legStandH*0.35,C.legStandTh),MAT.leg);
-      gusset.position.set(C.legW*0.15,-C.legStandH*0.6,0);addEdges(gusset,0x6b7280);lg.add(gusset);
+    [frontZ,backZ].forEach(function(lz, idx){
+      var isFront = idx === 0;
+      var xPos = side*(C.frameW/2 - C.legW/2 + 0.015);
+      var lg = new THREE.Group();
+      lg.position.set(xPos, -C.frameH/2, lz);
+
+      // Main thick stand supporting the frame plate from underneath
+      var standW = C.legW * 0.6;
+      var stand = new THREE.Mesh(new THREE.BoxGeometry(standW, C.legStandH, C.frameTh), MAT.leg);
+      stand.position.y = -C.legStandH/2;
+      addEdges(stand, EDGE_COL);
+      lg.add(stand);
+
+      // Foot base
+      var footD = C.frameTh * 1.8;
+      var foot = new THREE.Mesh(new THREE.BoxGeometry(C.legW, C.legH, footD), MAT.leg);
+      foot.position.set(0, -C.legStandH - C.legH/2, 0);
+      addEdges(foot, EDGE_COL);
+      lg.add(foot);
+
+      // Connecting bracket overlapping the frame plate face
+      var bracketW = standW;
+      var bracketH = C.legStandH * 1.2;
+      var bracketTh = 0.015;
+      var bracket = new THREE.Mesh(new THREE.BoxGeometry(bracketW, bracketH, bracketTh), MAT.leg);
+      var zOff = isFront ? -C.frameTh/2 - bracketTh/2 : C.frameTh/2 + bracketTh/2;
+      // Position it so it overlaps the bottom part of the frame plate
+      bracket.position.set(0, bracketH/2 - C.legStandH*0.2, zOff);
+      addEdges(bracket, 0x6b7280);
+      lg.add(bracket);
+
+      // Bolts for the bracket
+      for(var b=0; b<4; b++){
+        var bx = (b%2===0 ? -1 : 1) * bracketW * 0.3;
+        var by = bracket.position.y + (b<2 ? -1 : 1) * bracketH * 0.3;
+        var boltHead = new THREE.Mesh(new THREE.CylinderGeometry(C.nutR*0.7, C.nutR*0.7, bracketTh+0.01, 6), MAT.nut);
+        boltHead.rotation.x = Math.PI/2;
+        boltHead.position.set(bx, by, zOff);
+        lg.add(boltHead);
+      }
+      
       heatGroup.add(lg);
     });
   });
@@ -1021,7 +1105,7 @@ function init3D(){
   initMAT();buildAssembly();
   // Камера: автоподгон расстояния под реальный размер модели
   var modelH=C.frameH+C.legStandH+C.legH;
-  sph.r=Math.max(0.9,Math.max(C.frameW,modelH)*1.5);
+  sph.r=Math.max(1.1,Math.max(C.frameW,modelH)*2.2);
   targetSph.r=sph.r;
   updateCam();
 
@@ -1082,8 +1166,8 @@ function init3D(){
     momentum.vx*=0.9;momentum.vy*=0.9;updateCam();requestAnimationFrame(applyMomentum);
   }
   function resetView(){
-    targetSph.t=0.7;targetSph.p=0.8;
-    var mH=C.frameH+C.legStandH+C.legH;targetSph.r=Math.max(0.9,Math.max(C.frameW,mH)*1.5);animateToTarget();
+    targetSph.t=0.6;targetSph.p=1.05;
+    var mH=C.frameH+C.legStandH+C.legH;targetSph.r=Math.max(1.1,Math.max(C.frameW,mH)*2.2);animateToTarget();
   }
   function animateToTarget(){
     var dx=targetSph.t-sph.t,dp=targetSph.p-sph.p,dr=targetSph.r-sph.r;
@@ -1163,7 +1247,7 @@ function updateModel(n){
   scaleCforModel(pm);
   initMAT();buildAssembly();
   if(backFrame)backFrame.userData.baseZ=backFrame.position.z;
-    var mH=C.frameH+C.legStandH+C.legH;sph.r=Math.max(0.9,Math.max(C.frameW,mH)*1.5);targetSph.r=sph.r;updateCam();
+  var mH=C.frameH+C.legStandH+C.legH;sph.r=Math.max(1.1,Math.max(C.frameW,mH)*2.2);targetSph.r=sph.r;updateCam();
   var mat=document.getElementById('plate_material').value;
   var gk=document.getElementById('gasket_material').value;
   var m=MODELS[pm];
