@@ -263,7 +263,7 @@ input[type=number]:focus,select:focus{border-color:#0984e3;box-shadow:2px 3px 0 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js" async onload="init3D()"></script>
 <script>
-if(typeof THREE!=='undefined') init3D();
+/* init3D() вызывается в конце скрипта, после объявления всех переменных */
 
 /* ═══════════════════════════════════
    ДАННЫЕ МОДЕЛЕЙ (офиц. phoenix-apr.ru)
@@ -1187,6 +1187,9 @@ function toggleFlowPlay(){
 function setFlowSpeed(v){flowSpeedMul=parseInt(v)}
 
 updateTempLegend();
+
+/* ═══════ Инициализация 3D (после объявления всех переменных) ═══════ */
+if(typeof THREE!=='undefined') init3D();
 </script>
 </body>
 </html>
