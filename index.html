@@ -209,15 +209,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function getApiKey() { return localStorage.getItem('OPENROUTER_API_KEY') || DEMO_KEY; }
   function setApiKey(k) { localStorage.setItem('OPENROUTER_API_KEY', k); }
 
-  // Показать/скрыть панель ключа
+  // Показать/скрыть панель ключа (демо — всегда скрыта)
   function updateApiKeyBar() {
-    const k = localStorage.getItem('OPENROUTER_API_KEY');
-    if (k) {
-      apiKeyBar.style.display = 'none';
-    } else {
-      apiKeyBar.style.display = '';
-      apiKeyInput.value = '';
-    }
+    apiKeyBar.style.display = 'none';
   }
   updateApiKeyBar();
 
@@ -447,12 +441,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!text && pendingFiles.length === 0) return;
 
     const OPENROUTER_API_KEY = getApiKey();
-    if (!OPENROUTER_API_KEY) {
-      apiKeyBar.style.display = '';
-      apiKeyInput.focus();
-      addMessage('⚠️ Введите OpenRouter API ключ.', false);
-      return;
-    }
 
     sendBtn.disabled = true;
     chatInput.disabled = true;
